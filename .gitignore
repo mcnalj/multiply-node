@@ -1,0 +1,13 @@
+node_modules
+package-lock.json
+server/.vscode
+server/node_modules
+server/config.env
+server/credentials.development
+server/package-lock.json
+client/node_modules
+client/package-lock.json
+.DS_Store
+
+
+

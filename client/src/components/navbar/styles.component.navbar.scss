@@ -1,0 +1,11 @@
+@use '../../App.scss' as *;
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600,700,800');
+
+.nav-text {
+    color: $textSilver !important;
+}
+
+.nav-text:hover {
+    color: $textGray !important;
+}
+

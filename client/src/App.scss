@@ -1,0 +1,222 @@
+//  backgrounds
+$oliveGreen: #494D17;
+$oliveDarkerGreen: #4E4611;
+$burntOrange: #D75805;
+$plumPurple: #740F12;
+$purpleGray: #7C748C;
+$lightPurple: #DEEEFB;
+
+
+//text
+$textTan: #E6DFBB;
+$textTanGreen: #E1E4BE;
+$textGray: #C8CEC6;
+$textWhite: #E7E7E7;
+$textSilver: #ADADAD;
+
+$myColor: #003348;
+
+//subtler highlights
+$yellowGold: #FBB441;
+$slateGray: #A0B2CC;
+$funYellow: #FFC508;
+
+//bright highlights
+$redPink:#FF0591;
+$peptoPink: #EDA5EA;
+$lightPurple: #AA93FF;
+$orangeOrRed: #E84D00;
+$limeGreen: #A3D31B;
+$limeGreeDarkerHighlight: #9C9D29;
+
+// navbackground
+$burntRed: #722400;
+$burnterRed: #773521;
+$brownThatGivesWeightToLightPurple: #4B3027;
+
+// successButton
+$paleGreen: #B0A75F;
+// $limeGreen: #B4BA21;
+$limeGreen: #3CF72F;
+
+$primary: $limeGreen; // buttons and progress
+// $secondary: #D56C33; // orange
+$secondary: $limeGreen; // orange
+$success: $limeGreen; // button
+// $danger: #BD533F;  // red
+$danger: $limeGreen;  // red
+$warning: yellow;
+$info: $purpleGray; // progress and score (dark blue), maybe text, maybe html
+$light: $slateGray;  // sand tan
+// $dark: $brownThatGivesWeightToLightPurple; // nav background
+$dark: #332E33;
+$white: $textWhite;
+$background: #003348;
+$color: $textWhite;
+
+$purpleBase: #44016C;
+// $paleLimeBackground: #A5FEAD;
+$paleLimeBackground: #38AD47;
+
+// kinda close to bootstrap defaults
+// $primary: #00348; // dark blue
+// $secondary: #D56C33; // orange
+// $success: #77925F; // dark green
+// $danger: #BD533F;  // red
+// $warning: yellow;
+// $info: #93DBD4; // aqua /sky blue
+// $light: #D2B278;  // sand tan
+// $dark: black;
+// $white: white;
+
+.App {
+  text-align: center;
+}
+
+// .App-header {
+//   // background-color: #282c34;
+//   background-color: blue;
+//   min-height: 100vh;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   font-size: calc(10px + 2vmin);
+//   color: white;
+// }
+
+// .App-link {
+//   color: #61dafb;
+// }
+
+.appContent {
+  background: #A5FEAD !important;
+  min-height: 100vh;
+  display: flex;
+  font-weight: 400;
+  font-family: 'Fira Sans', sans-serif;
+}
+
+// #questionArea {
+//   font-size: 2em;
+// }
+// #answerArea {
+//   text-align:left;
+//   font-size: 0.9em;
+//   margin-left: 10%;
+// }
+
+// .stockDisplay {
+//   text-align: center;
+//   align-content:center;
+//   width: 100%;
+// }
+
+// .stock {
+//   display: inline-block;
+//   text-align: center;
+//   font-size: 1.2em;
+//   margin-bottom: 2%;
+//   border-radius: 2px;
+//   border-style: solid;
+//   border-color:black;
+//   padding: 2%;
+//   width: 60%;
+// }
+
+// .ticker {
+//   font-size: 1.2em;
+// }
+
+// .positive {
+//   color: green;
+// }
+
+// .negative {
+//   color: red;
+// }
+
+// .quest {
+//   font-size: 2em;
+// }
+// .aArea {
+//   padding-left: 100px;
+//   text-align: left;
+//   font-size: 1.3em;
+// }
+
+// .dropdown {
+//   position: relative;
+// }
+
+// .menu {
+//   position: absolute;
+//   list-style-type: none;
+  
+//   margin: 5px 0;
+//   padding: 0;
+
+//   border: 1px solid grey;
+//   width: 300px;
+// }
+
+// .menu > li {
+//   margin: 0;
+
+//   background-color: white;
+// }
+
+// .menu > li:hover {
+//   background-color: lightgray;
+// }
+
+// .menu > li > button {
+//   width: 100%;
+//   height: 100%;
+//   text-align: left;
+
+//   background: none;
+//   // color: inherit;
+//   color: $plumPurple;
+//   border: none;
+//   padding: 5px;
+//   margin: 0;
+//   font: inherit;
+//   cursor: pointer;
+// }
+
+// #buttonField {
+//   background-color: #313c3f;
+//   align-items: center;
+//   width: 100%;
+//   display: flex;
+//   justify-content: center;
+//   text-align: center;
+//   flex-wrap: wrap;
+//   margin: 10px;
+//   padding-top: 20px;
+//   padding-bottom: 20px;
+// }
+
+// .buttonContainer {
+//   width: 250px;
+//   margin: 5px;
+
+  
+// }
+
+// .categoryButton {
+//   width: 100%;
+//   height: 60px;
+//   color:lightGray;
+//   background-color: #0275d8;
+//   padding: 2%;
+//   border: 2px solid #0099CC;
+//   border-radius: 6px;
+// }
+
+// .categoryButton:hover {
+//   border-color: white;
+// }
+
+@import '~bootstrap/scss/bootstrap.scss';
