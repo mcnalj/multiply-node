@@ -8,6 +8,9 @@ const axios = require('axios');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
+
 
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
@@ -513,7 +516,40 @@ passport.use(new LocalStrategy(async function verify(username, password, cb) {
 // }); 
 
 // add sessionData to progress array when user meets a standard.
-recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, res) {
+// recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, res) {
+//   const sessionData = req.body;
+//   let msg = '';
+//   let success = false;
+//   try {
+//     let updateSuccess = await dbo.client.db("employees")
+//     .collection("userData")
+//     .updateOne(
+//       {username: sessionData.userData.username},
+//       {
+//         $inc:{
+//           totalQuestionsAttempted: sessionData.userData.questionsAttempted,
+//           totalQuestionsCorrect: sessionData.userData.questionsCorrect
+//         },
+//         $addToSet: { "progress.calculus.exponents.simplePowers.sessionsData":
+//                       sessionData.progress.calculus.exponents.simplePowers.sessionsData} 
+//       },
+//       // do we want upsert to be true?
+//       {upsert: true}
+//     );
+//     if (updateSuccess.modifiedCount == 1) {
+//       msg ='Data was added to the progress array.';
+//     } else {
+//       msg = 'No data was added to the progress array';
+//     }
+//     success = true;
+//   } catch {
+//     msg = 'Error on attempt to updateOne';
+//   }
+//   res.send({msg:msg, success: success});
+// });
+
+// This is untested. Is there a way to combine it with metStandard?
+recordRoutes.route('/metStandard/derivatives').post(checkAuthenticated, async function(req, res) {
   const sessionData = req.body;
   let msg = '';
   let success = false;
@@ -527,8 +563,9 @@ recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, 
           totalQuestionsAttempted: sessionData.userData.questionsAttempted,
           totalQuestionsCorrect: sessionData.userData.questionsCorrect
         },
-        $addToSet: { "progress.calculus.exponents.simplePowers.sessionsData":
-                      sessionData.progress.calculus.exponents.simplePowers.sessionsData} 
+        $addToSet: { "progress.calculus.derivatives.skillData":
+                      sessionData.progress.calculus.derivatives.skillData
+                    } 
       },
       // do we want upsert to be true?
       {upsert: true}
@@ -543,6 +580,67 @@ recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, 
     msg = 'Error on attempt to updateOne';
   }
   res.send({msg:msg, success: success});
+});
+
+recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, res) {
+  const sessionData = req.body;
+  let msg = '';
+  let success = false;
+  try {
+    let updateSuccess = await dbo.client.db("employees")
+    .collection("userData")
+    .updateOne(
+      {username: sessionData.userData.username},
+      {
+        $inc:{
+          totalQuestionsAttempted: sessionData.userData.questionsAttempted,
+          totalQuestionsCorrect: sessionData.userData.questionsCorrect
+        },
+        $addToSet: { "progress.calculus.exponents.skillData":
+                      sessionData.progress.calculus.exponents.skillData
+                    } 
+      },
+      // do we want upsert to be true?
+      {upsert: true}
+    );
+    if (updateSuccess.modifiedCount == 1) {
+      msg ='Data was added to the progress array.';
+    } else {
+      msg = 'No data was added to the progress array';
+    }
+    success = true;
+  } catch {
+    msg = 'Error on attempt to updateOne';
+  }
+  res.send({msg:msg, success: success});
+});
+
+// derivative routes
+recordRoutes.route("/topic/:unitName").get(async function (req, response) {
+  console.log("Got to the derivative route.");
+  let projection = { _id: false, unitTopics: true}
+  let myQuery = {unitName: req.params.unitName};
+  let results =  await dbo.client.db("calculus")
+    .collection("units")
+    .findOne(myQuery, projection, function(err, res) {
+      if (err) throw err;
+        response.json(res)
+  });
+  console.log(results)
+  response.json(results);
+});
+
+
+recordRoutes.route("/markdownRoute").get(async function(req, res, next) {
+  console.log("Requesting markdown file from server");
+  const markdownFilePath = path.join(__dirname, '../public/markdown/newtonsLaw.md');
+
+  fs.readFile(markdownFilePath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send('Error reading markdown file.')
+    }
+    res.send(data);
+  })
 });
 
 

@@ -27,7 +27,10 @@ import GetTrivia from './components/sandbox/getTrivia.component';
 
 import Multiplication from './components/multiply/multiplication.component.multiply';
 import Calculus from './components/calculus/calculus.component.calculus';
+import ExponentsTopics from './components/calculus/calculus.component.exponentsTopics';
 import Exponents from './components/calculus/calculus.component.exponents';
+import TopDerivatives from './components/calculus/calculus.component.derivatives';
+import Markdown from './components/calculus/calculus.component.markdown';
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -106,10 +109,31 @@ function App() {
                   </Protected>
                 }
           />
-          <Route path="/exponents"
+          <Route path="/exponentsTopics"
+              element={
+                <Protected isSignedIn={loggedIn}>
+                  <ExponentsTopics username={username}/>
+                </Protected>
+              }
+          />        
+          <Route path="/exponents/:topic"
                 element={
                   <Protected isSignedIn={loggedIn}>
                     <Exponents username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/derivatives"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <TopDerivatives username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/markdown"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <Markdown username={username}/>
                   </Protected>
                 }
           />

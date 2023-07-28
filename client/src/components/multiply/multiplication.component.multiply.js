@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from 'react-dom';
 import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
@@ -11,19 +12,27 @@ import './styles.component.multiply.scss';
 export default function Multiplication(){
   const [numWrong, setNumWrong] = useState();
   const [numCorrect, setNumCorrect] = useState(0)
-  const [initialTime, setInitialTime] = useState(180)
-  var [multiplicand, setMultiplicand] = useState(5);
-  var [multiplier, setMultiplier] = useState(4);
-  const [questionDisplay, setQuestionDisplay] = useState(0);
+  // const [initialTime, setInitialTime] = useState(180)
+  const [multiplicand, setMultiplicand] = useState(5);
+  const [multiplier, setMultiplier] = useState(4);
+  const [questionDisplay, setQuestionDisplay] = useState("5 x 4 = ");
+  const [questionsArray, setQuestionsArray] = useState([]);
+  const [questionNumber, setQuestionNumber] = useState(0);
+  const [sequential, setSequential] = useState(true);
+  const [wantsSequential, setWantsSequential] = useState(false);
+  const [timesTable, setTimesTable] = useState(1);
+  const [isCorrect, setIsCorrect] = useState("");
 
-  let questionsArray = [];
-  var wantsSequential = false;
-  var sequential = false;
+  
+  var initialTime = 180;
+  // var multiplicand = 5;
+  // var multiplier = 4;
+  var questionsArrayX = [];
+  const [makeChoice, setMakeChoice] = useState(true);
   // let timesTable = Math.floor(Math.random() * 6) + 5;
-  let timesTable = 1 // starts out as 6-9 randoms
+  // let timesTable = 1 // starts out as 6-9 randoms
   var missedList = [];
   var sessionMissedList = [];
-  var questionNumber = 0;
   var startTime = 0;
   var questionTime = 0;
   var totalTime = 0;
@@ -35,120 +44,188 @@ export default function Multiplication(){
   var userAnswer = "none";
 
   function handleTableChange(e) {
-    timesTable = e.target.value;
-    if (timesTable > 1) {
+    let multiplicandX = 0
+    let multiplierX = 0;
+    let timesTableX = 1
+    questionsArrayX = [];
+    timesTableX = e.target.value;
+    setTimesTable(timesTableX);
+    if (timesTableX > 1) {
       // figure out if it's sequential
-      sequential = true;
+      // sequential = true;
     } else {
-      sequential = false;
-      tableArray = populateTableArray(tableArray, timesTable);
+      // sequential = false;
+      tableArray = populateTableArray(tableArray, timesTableX);
       tableArraySet = 0;
     }
+    setMakeChoice(false);
     missedList = [];
-    numCorrect = 0;
+    // numCorrect = 0;
+    setNumCorrect(0);
     totalTime = 0;
-    questionsArray = loadQuestionsArray(timesTable, questionsArray, sequential, tableArraySet);
-    [multiplicand, multiplier, startTime] = pickNumbersAndDrawCircles(questionNumber, questionsArray);
+    questionsArrayX = loadQuestionsArray(timesTableX, sequential, tableArraySet);
+    setQuestionsArray(questionsArrayX);
+    [multiplicandX, multiplierX, startTime] = pickNumbersAndDrawCircles(questionNumber, questionsArrayX);
+    setMultiplicand(multiplicandX);
+    setMultiplier(multiplierX);
   };
 
   function handleSequentialChange(e) {
-    sequential = e.target.value;
+    questionsArrayX = [];
+    let multiplicandX = 0;
+    let multiplierX = 0;
+    // sequential = e.target.value;
+    setSequential(e.target.value);
     missedList = [];
-    numCorrect = 0;
-    questionsArray = loadQuestionsArray(timesTable, questionsArray, sequential, tableArraySet);
-    [multiplicand, multiplier, startTime] = pickNumbersAndDrawCircles(questionNumber, questionsArray);
+    // numCorrect = 0;
+    setNumCorrect(0);
+
+    // this should be e.target.value instead of sequential
+    questionsArrayX = loadQuestionsArray(timesTable, sequential, tableArraySet);
+    setQuestionsArray(questionsArrayX);
+    [multiplicandX, multiplierX, startTime] = pickNumbersAndDrawCircles(questionNumber, questionsArrayX);
+    setMultiplicand(multiplicandX);
+    setMultiplier(multiplierX);
   };
 
   // This is the main loop
-  tableArray = populateTableArray(tableArray, timesTable);
-  questionsArray = loadQuestionsArray(timesTable, questionsArray, sequential, tableArraySet);
-  [multiplicand, multiplier, startTime] = pickNumbersAndDrawCircles(questionNumber, questionsArray);
-  function handleSubmit(e) {
-    e.preventDefault();
-    userAnswer = "Whatever they typed into the input."
+  // tableArray = populateTableArray(tableArray, timesTable);
+  // questionsArray = loadQuestionsArray(timesTable, questionsArray, sequential, tableArraySet);
+  // [multiplicand, multiplier, startTime] = pickNumbersAndDrawCircles(questionNumber, questionsArrayX);
+  const handleSubmitAnswer = (userAnswer) => {
+    let timesTableX = timesTable;
+    let tempQuestionNumber = questionNumber;
+    let questionsArrayChanged = false;
+    let multiplicandX = 0;
+    let multiplierX = 0;
+
     questionTime = recordTime(startTime);
     totalTime = totalTime + questionTime;
+    // If the answer is correct
     if (checkAnswer(multiplicand, multiplier, questionTime, userAnswer)) {
-      numCorrect = numCorrect + 1;
+      // numCorrect = numCorrect + 1;
+      setNumCorrect(numCorrect + 1);
       console.log("apply correct answer styles");
-      const myTimeout = setTimeout(function() {
-        questionNumber++
-        if (questionNumber >= questionsArray.length) {
+      setIsCorrect("√")
+
+      setTimeout(function() {
+        tempQuestionNumber++
+        setQuestionNumber(tempQuestionNumber);
+        // We've reached the end of this array of questions
+        // if (tempQuestionNumber >= questionsArray.length) {
+          if (tempQuestionNumber >= 3) {
+          console.log("At the end of the array.");
+          // there are missed questions
           if (missedList.length>0) {
-            questionsArray = missedList;
+            console.log("Presenting missed quesions");
+            // questionsArray = missedList;
+            questionsArrayX = missedList
+            setQuestionsArray(questionsArrayX);
+            questionsArrayChanged = true;
             missedList = [];
-            console.log(questionsArray);
-            questionNumber = 0;
+            setQuestionNumber(0);
+          // there are no more missed questions
           } else {
+            console.log("At the end of the array, no missed questions.")
             if (sequential) {
-              sequential = switchToRandomMode(sequential);
-              questionNumber = 0;
-              questionsArray = loadQuestionsArray(timesTable, questionsArray, sequential, tableArraySet);
+              console.log("Finished a number in sequence. Setting sequential to false.")
+              // switchToRandomMode(sequential);
+              setSequential(false);
+              setQuestionNumber(0);
+              questionsArrayX = loadQuestionsArray(timesTable, false, tableArraySet);
+              // why is questionsArrayX undefined here?
+              setQuestionsArray(questionsArrayX);
+              questionsArrayChanged = true;
             } else {
+              console.log("Finished sequential and random, now moving to next table");
               console.log("Excellent, let's move to the next times table.")
               // TODO we will have to deal with when we're at 9 later
               if (timesTable > 1) {
-                timesTable++;
+                timesTableX++
+                setTimesTable(timesTableX);
               } else {
                 tableArraySet++;
               }
               // if they have gone through all the tables
-              if (timesTable >= 11 || tableArraySet >= tableArray.length) {
+              if (timesTableX >= 11 || (tableArraySet >= tableArray.length && timesTable <=1)) {
                 // review questions they've missed this session
                 if (sessionMissedList > 0) {
                   console.log("Great work. Let's go over the ones you missed.");
-                  questionsArray = sessionMissedList;
-                  questionNumber = 0;
+                  questionsArrayX = sessionMissedList;
+                  setQuestionsArray(questionsArrayX);
+                  questionsArrayChanged = true;
+                  setQuestionNumber(0);
                 } else {
-                  timesTable = 1;
+                  timesTableX = 1;
+                  setTimesTable(timesTableX);
                   if (tableArraySet >= tableArray.length) {
-                    tableArray = populateTableArray(tableArray, timesTable);
+                    tableArray = populateTableArray(tableArray, timesTableX);
                     tableArraySet = 0
                   }
                   console.log("Congratulations! You know this! Here's more if you want to keep practicing.");
-                  wantsSequential = false;
-                  sequential = false;
-                  questionsArray = loadQuestionsArray(timesTable, questionsArray, sequential, tableArraySet);
-                  questionNumber = 0;
+                  // wantsSequential = false;
+                  setWantsSequential(false);
+                  // sequential = false;
+                  setSequential(false);
+                  questionsArrayX = loadQuestionsArray(timesTableX, false, tableArraySet);
+                  setQuestionsArray(questionsArrayX);
+                  questionsArrayChanged = true;
+                  setQuestionNumber(0);
                 }
               // this is if they are not done with all the tables
               } else {
-                questionNumber = 0;
+                console.log("Got to Not done with all tables.")
+                setQuestionNumber(0);
                 if (wantsSequential) {
-                  sequential = true;
+                  // sequential = true;
+                  setSequential(true);
                 }
-                questionsArray = loadQuestionsArray(timesTable, questionsArray, sequential, tableArraySet);
+                // This sequentiual need to flip if that's appropriate, it will never flip to true as is
+                questionsArrayX = loadQuestionsArray(timesTableX, wantsSequential, tableArraySet);
+                setQuestionsArray(questionsArrayX);
+                questionsArrayChanged = true;
               }
             }
           }
         }
-        [multiplicand, multiplier, startTime] = pickNumbersAndDrawCircles(questionNumber, questionsArray);
+        if (questionsArrayChanged) {
+          [multiplicandX, multiplierX, startTime] = pickNumbersAndDrawCircles(0, questionsArrayX);  
+        } else {
+          [multiplicandX, multiplierX, startTime] = pickNumbersAndDrawCircles(tempQuestionNumber, questionsArray);
+        }
+        setMultiplicand(multiplicandX);
+        setMultiplier(multiplierX);
         console.log("resetAnswerStyles");
+        setIsCorrect("");
       }, 1000);
     } else {
       console.log("applyIncorrectAnswerStyles");
+      setIsCorrect("X");
       // I should add a check to see if it's already in the missedList
       missedList = addQuestionToMissedList(questionsArray[questionNumber], missedList);
       sessionMissedList = addQuestionToSessionMissedList(questionsArray[questionNumber], sessionMissedList);
       const wrongTimeout = setTimeout(function(){
         console.log("resetAnswerStyles");
+        setIsCorrect("")
         startTime = setStartTime();
       }, 1600);
     }
   };
 
-  function pickNumbersAndDrawCircles(questionNumber, questionsArray) {  
-    [multiplicand, multiplier] = pickNumbers(questionsArray, questionNumber);
-    setQuestion(multiplicand, multiplier);
+  function pickNumbersAndDrawCircles(questionNumber, questionsArrayX) {
+    let multiplicandX = 0;
+    let multiplierX = 0;  
+    [multiplicandX, multiplierX] = pickNumbers(questionsArrayX, questionNumber);
+    setQuestion(multiplicandX, multiplierX);
     startTime = setStartTime();
-    return [multiplicand, multiplier, startTime];
+    return [multiplicandX, multiplierX, startTime];
   }
 
-  function setQuestion(multiplicand, multiplier) {
+  function setQuestion(multiplicandX, multiplierX) {
     // setMultiplicand(multiplicand);
     // setMultiplier(multiplier);
-    let question = multiplicand + " x " + multiplier + " =";
-    // setQuestionDisplay(question);
+    let question = multiplicandX + " x " + multiplierX + " =";
+     setQuestionDisplay(question);
     // setNumCorrect(numCorrect);
   }
 
@@ -163,10 +240,10 @@ export default function Multiplication(){
   }
 
   // TODO This had the move to missed fuctionality
-  function pickNumbers(questionsArray, questionNumber) {
-    multiplicand = questionsArray[questionNumber][0];
-    multiplier = questionsArray[questionNumber][1];
-    return [multiplicand, multiplier];
+  function pickNumbers(questionsArrayX, questionNumber) {
+    let multiplicandX = questionsArrayX[questionNumber][0];
+    let multiplierX = questionsArrayX[questionNumber][1];
+    return [multiplicandX, multiplierX];
   }
 
   function setStartTime() {
@@ -199,8 +276,9 @@ export default function Multiplication(){
 
   function switchToRandomMode(sequential) {
     console.log("Excellent! Let's mix it up and test your knowledge of the " + timesTable + "'s table.")
-    sequential = false;
-    return sequential;
+    // sequential = false;
+    // return sequential;
+    setSequential(false);
   }
 
 
@@ -240,18 +318,19 @@ export default function Multiplication(){
   //   messageParagraph.style.visibility = "visible";
   // }
 
-  function loadQuestionsArray(timesTable, questionsArray, sequential, tableArraySet) {
-    questionsArray = [];
+  function loadQuestionsArray(timesTable, sequential, tableArraySet) {
+    let questionsArrayX = [];
     if (timesTable == 0) {
       // questionsArray = getQuestions(questionsArray, 10, 1, 0);
-      questionsArray = tableArray[tableArraySet];
+      questionsArrayX = tableArray[tableArraySet];
     } else if (timesTable == 1) {
       // questionsArray = getQuestions(questionsArray, 6, 5, 1);
-      questionsArray = tableArray[tableArraySet];
+      questionsArrayX = tableArray[tableArraySet];
     } else if (timesTable > 1) {
-      questionsArray = getQuestionsForSingleMultiplicand(timesTable, sequential, questionsArray);
+      questionsArrayX = getQuestionsForSingleMultiplicand(timesTable, sequential, questionsArray);
+      console.log("This is quesionsArrayX inside loadQuestionsArray: " + questionsArrayX);
     }
-    return questionsArray;
+    return questionsArrayX;
   }
 
   function getQuestions(questionsArray, topRand, offset, fixedMultiplicand) {
@@ -288,7 +367,6 @@ export default function Multiplication(){
     } else {
       multiplicands = [...Array(4).keys()].map(x => 5 + (x + 1));
       multipliers = [...Array(5).keys()].map(x => 4 + (x + 1));
-      console.log(multiplicands)
     }
     for (let multiplicant of multiplicands) {
       for (let multiple of multipliers) {
@@ -316,8 +394,11 @@ export default function Multiplication(){
   }
 
   function getQuestionsForSingleMultiplicand(timesTable, sequential, questionsArray) {
+    questionsArray = [];
     let multipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    console.log("In getQuestionsForSingleMultiplicand");
     if (!sequential) {
+      console.log("sufflingMultipliers");
       multipliers = shuffleMultipliers(multipliers);
     }
     for (let i = 0; i < 10; i++) {
@@ -335,11 +416,7 @@ export default function Multiplication(){
     }
     return multipliers;
   }
-  console.log(multiplicand);
-  console.log(multiplier);
 
-
-  let makeChoice = false;
   if (makeChoice) {
   return (
     <>
@@ -350,7 +427,7 @@ export default function Multiplication(){
           </h3>
           <p>Practice and lock in your times tables.</p> 
         </div>
-        <Form onSubmit={handleSubmit}>
+        <Form>
           <Form.Select size="lg" aria-label="select a challenge" onChange={handleTableChange}>
             <option>Select your challenge</option>
             <option value="0">Full Table (Random)</option>
@@ -384,6 +461,9 @@ export default function Multiplication(){
           initialTime={initialTime}
           multiplicand={multiplicand}
           multiplier={multiplier}
+          questionDisplay={questionDisplay}
+          handleSubmitAnswer={handleSubmitAnswer}
+          isCorrect={isCorrect}
         />
       </>
 
@@ -391,9 +471,9 @@ export default function Multiplication(){
   }
 }
 
-function CirclesPage({numCorrect, numWrong, initialTime, multiplicand, multiplier})  {
-
+function CirclesPage({numCorrect, numWrong, initialTime, multiplicand, multiplier, questionDisplay, handleSubmitAnswer, isCorrect})  {
       const [inputs, setInputs] = useState({});
+      const inputRef = useRef(null);
 
       const handleChange = (event) => {
         const name = event.target.name;
@@ -403,9 +483,40 @@ function CirclesPage({numCorrect, numWrong, initialTime, multiplicand, multiplie
 
       const handleSubmit = (event) => {
         event.preventDefault();
-        alert(inputs.table);
-        console.dir(inputs);
+        let answer = parseInt(inputs.answerInput);
+        handleSubmitAnswer(answer);
+        setTimeout(function() {
+          inputRef.current.value = '';
+        }, 1000);
       }
+
+      useEffect(() => {
+        inputRef.current.focus();
+      }, []);
+
+      function setInputAnswerStyles(isCorrect) {
+        let inputBackgroundColor = "";
+        let textColor = "black";
+        if (isCorrect) {
+          if (isCorrect === "√") {
+            inputBackgroundColor = 'green';
+            textColor = "white";
+          } else {
+            inputBackgroundColor = 'red';
+            textColor = "white";
+          }
+        }
+        return [inputBackgroundColor, textColor];
+      }
+
+      const [inputBackgroundColor, textColor] = setInputAnswerStyles(isCorrect);
+      const inputAnswerStyle = {
+        backgroundColor: inputBackgroundColor,
+        color: textColor
+        // borderColor: inputBorderColor,
+        // borderWidth: "3px"
+      }
+
   return (
     <Container>
         <Row id="infoRow">
@@ -428,14 +539,20 @@ function CirclesPage({numCorrect, numWrong, initialTime, multiplicand, multiplie
           id="answerForm" 
           onSubmit={handleSubmit}>
           <InputGroup>
-            <InputGroup.Text id="questionLabel">5 x 9 = </InputGroup.Text>
+            <InputGroup.Text
+              id="questionLabel"
+            >
+              {questionDisplay}
+            </InputGroup.Text>
             <Form.Control
+              ref={inputRef}
               type="text"
               name="answerInput"
               placeholder="your answer"
               aria-label="your answer"
               aria-describedby="questionLabel"
               onChange={handleChange}
+              style={inputAnswerStyle}
             />
           </InputGroup>
           <Button
@@ -445,7 +562,15 @@ function CirclesPage({numCorrect, numWrong, initialTime, multiplicand, multiplie
             size="lg"  
           >
             SUBMIT
-          </Button>
+          </Button><br></br>
+          <Form.Text>
+            {isCorrect === "√" ? (
+              <span style={{ color: 'green'}}>{isCorrect}</span>
+            ) : (
+              <span style={{ color: 'red'}}>{isCorrect}</span>
+            )}
+          </Form.Text>
+
         </Form>
     </Container>
   );
@@ -528,11 +653,10 @@ export function SVGComponent({color, multiplier, multiplicand}) {
     let fillColor = "lightGray";
     let x = 50;
     let y = 60;
-    console.log("Multiplicand: " + multiplicand);
-    for (let j = 0; j < 12; j++) {
-      for (let i = 0; i<12; i++) {
+    for (let j = 0; j < 10; j++) {
+      for (let i = 0; i<10; i++) {
         if (j < multiplicand && i < multiplier) {
-          fillColor = fillColors[i];
+          fillColor = fillColors[multiplier];
         } else {
           fillColor = "lightGray"
         }
@@ -543,7 +667,7 @@ export function SVGComponent({color, multiplier, multiplicand}) {
       x = 50;
       y = y + 80;
     }
-    console.log(circles)
+    // console.log(circles)
     return circles;
   }
   let circleList2 = populateCircleList(circles, multiplicand, multiplier); 
@@ -551,7 +675,7 @@ export function SVGComponent({color, multiplier, multiplicand}) {
       <Container>
         <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox ="0 0 1000 1000"
+        viewBox ="0 0 810 810"
         id="circleField"
         >
           {circleList2.map(circle => <circle key={circle.x.toString() + circle.y.toString()}

@@ -1,0 +1,39 @@
+import React from "react";
+import { Link } from 'react-router-dom';
+export default function ExponentsTopics() {
+    const topic = "simple";
+    return (
+        <div>
+            <div>
+                <h1>Exponents Practice</h1>
+            </div>
+            <div>
+                <div>
+                    <Link to="/exponents/positive">
+                        <button type="button" className="btn btn-lg btn-success">Simple Exponents</button><br /><br />
+                    </Link>
+                </div>
+                <div>
+                    <Link to="/exponents/negative">
+                        <button type="button" className="btn btn-lg btn-success">Negative Exponents</button><br /><br />
+                    </Link>
+                </div>
+                <div>
+                    <Link to="/exponents/fractional">
+                        <button type="button" className="btn btn-lg btn-success">Fractional Exponents</button><br /><br />
+                    </Link>
+                </div>
+                <div>
+                    <Link to="/exponents/negativeFractional">
+                        <button type="button" className="btn btn-lg btn-success">Negative Fractional Exponents</button><br /><br />
+                    </Link>
+                </div>
+                <div>
+                    <Link to="/exponents/mixed">
+                        <button type="button" className="btn btn-lg btn-success">Mix of All Types</button><br /><br />
+                    </Link>
+                </div>                
+            </div>
+        </div>
+    );
+}

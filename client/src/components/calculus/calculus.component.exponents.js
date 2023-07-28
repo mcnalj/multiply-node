@@ -1,14 +1,16 @@
 //TODO fix the unit depending on type of Exponent
-// figure out how to save it to the databese with different units.
-// Maybe it's just an array of objects with unit and sesstionData
-// Fix it so that it doesn't keep saving each question after we've met the standard.
-// Add a mix it up option.
+// figure out how to save it to the database with different units. DONE
+// Fix it so that it doesn't keep saving each question after we've met the standard. DONE
+// Add a mix it up option. DONE
 // maybe add simple polynomials
-// Add user ability to choose which type of quetsions.
+// Add user ability to choose which type of questions. DONE
+// Makes sure all the questions to the 0 power are correct.
 // Deploy
 // Fix the look
 // Put a timer on the screen or give some kind of time option to exceed.
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
+import { useParams } from "react-router-dom";
 import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
 
@@ -28,7 +30,15 @@ import '../../index.scss';
 import './styles.component.calculus.scss';
 
 addStyles();
+
 export default function Exponents({username}) {
+
+    const parameter = useParams()
+    console.log("Getting the parameter to set topic.")
+    let topic = parameter.topic;
+    console.log(topic);
+    
+  
     function setFunction(typeOfExponent) {
       // typeOfExponent can be positive, negative, fractional
       let min = 1;
@@ -116,13 +126,18 @@ export default function Exponents({username}) {
               xValue = xChoice ** power
           }
         }
+        xValue = xValue.toString();
         return [xValue, xChoice];
     }
 
     function setAnswer(xValue, power, typeOfExponent, xChoice) {
+      xValue = parseInt(xValue);
       // It's a problem that this returns different types depending on the typeOfExponent.
       if (typeOfExponent == "positive") {
-        return xValue ** power;
+        // return xValue ** power;
+        let tempAnswer = xValue ** power;
+        const answerLatex = tempAnswer.toString();
+        return answerLatex;
       } else if(typeOfExponent == "negative"){
         const denom = xValue ** power;
         const answerLatex = '\\frac{1}{' + denom + '}';
@@ -135,23 +150,41 @@ export default function Exponents({username}) {
       }
     }
 
-    function questionEngine() {
-        const [power, functionLatex] = setFunction("negativeFractional");
-        const [xValue, xChoice] = setXValue(power, "negativeFractional");
-        const answer = setAnswer(xValue, power, "negativeFractional", xChoice);
+    function questionEngine(topic) {
+        let engine = "positive";
+        if (topic == "mixed") {
+          let engineArray = ["positive", "negative", "fractional", "negativeFractional"];
+          let num = getRandomIntInclusive(0, 3);
+          engine = engineArray[num];
+
+        } else {
+          engine = topic;
+        }
+        const [power, functionLatex] = setFunction(engine);
+        const [xValue, xChoice] = setXValue(power, engine);
+        const answer = setAnswer(xValue, power, engine, xChoice);
         return [functionLatex, xValue, answer]
     }
-    let [functionLatex, xValue, answer] = questionEngine();
+    console.log("Running question engine in the main body.");
+    let [functionLatex, xValue, answer] = questionEngine(topic);
+    console.log("Value returned from questionEngine.");
+    console.log("functionLatex: " + functionLatex);
+    console.log("xValue: " + xValue);
+    console.log("answer " + answer);
 
 // hardcoded to eliminate errors
     const startTime = new Date();
+    console.log("resetting start time");
     const standard = 3;
-    // if this is anything but simplePowers, the updateOne will fail.
-    const unit = "simplePowers";
+    
 
     function next(liftedState){
       // let [questionLatex, answerLatex] = questionEngine();
-      let [functionLatex, xValue, answer] = questionEngine(); 
+      let [functionLatex, xValue, answer] = questionEngine(topic); 
+      console.log("Setting question object in next.");
+      console.log("fucntionLatex: " + functionLatex);
+      console.log("xValue: " + xValue);
+      console.log("answer: " + answer);
       setQuestionObject(
         {
           questionEngine: questionEngine,
@@ -170,6 +203,7 @@ export default function Exponents({username}) {
           doneWithTopic: done,
           questionTopic: questionObject.questionTopic,
           questionPrompt: questionObject.questionPrompt,
+          metStandard: false
         }
       );
     }
@@ -195,15 +229,25 @@ export default function Exponents({username}) {
             questionsAttempted: liftedState.questionsAttempted,
             questionsCorrect: liftedState.questionsCorrect,
         },
+        // progress: {
+        //     calculus: {
+        //         exponents: {
+        //             [topic]: {
+        //               sessionsData: sessionObj
+        //             }
+        //         }
+        //     }        
+        // }
         progress: {
-            calculus: {
-                exponents: {
-                    [unit]: {
-                      sessionsData: sessionObj
-                    }
-                }
-            }        
-        }
+          calculus: {
+              exponents: {
+                  skillData: {
+                    skill: topic,
+                    sessionsData: sessionObj
+                  }
+              }
+          }        
+      }
       }
       const response = await fetch("http://localhost:5000/record/metStandard", {
         method: "POST",
@@ -220,7 +264,74 @@ export default function Exponents({username}) {
       });
       const answer = await response.json();
       console.log(answer.msg);
+      setQuestionObject(
+        {
+          questionEngine: questionEngine,
+          functionLatex: functionLatex,
+          answer: answer,
+          xValue: xValue,
+          getNextQuestion: next,
+          questionsAttempted: 0,
+          questionsCorrect: 0,
+          questionsIncorrect: 0,
+          questionsStreak: 0,
+          questionsToMeet: questionObject.questionsToMeet,
+          progressBar: 0,
+          doneWithTopic: done,
+          questionTopic: questionObject.questionTopic,
+          questionPrompt: questionObject.questionPrompt,
+          metStandard: true,
+        }
+      );
     };
+
+    const navigate = useNavigate()
+
+    function calculus() {
+      console.log("continue");  
+      navigate("/calculus");
+    }
+
+    function sameTopic() {
+      console.log("same");
+      let stateToLift = {
+        questionsAttempted: 0,
+        questionsCorrect: 0,
+        questionsStreak: 0,
+        questionsIncorrect: 0,
+      }
+      next(stateToLift);
+      // navigate(`/exponents/${topic}`);
+    }
+    function nextTopic() {
+      console.log("This is topic: " + topic);
+      console.log("next");
+      if (topic == "mixed") {
+        topic = "mixed";
+      } if (topic == "negativeFractional") {
+        topic = "mixed";
+      } if (topic == "fractional") {
+        topic = "negativeFractional";
+      } if (topic == "negative") {
+        topic = "fractional"
+      } if (topic == "positive") {
+        topic = "negative";
+      }
+      navigate(`/exponents/${topic}`);
+      let stateToLift = {
+        questionsAttempted: 0,
+        questionsCorrect: 0,
+        questionsStreak: 0,
+        questionsIncorrect: 0,
+      }
+      next(stateToLift);
+    }
+  
+
+    console.log("At initial question Object")
+    console.log("functionLatex: " + functionLatex);
+    console.log("xValue: " + xValue);
+    console.log("answer: " + answer);
 
     const [questionObject, setQuestionObject] = useState({
         questionEngine: questionEngine,
@@ -234,35 +345,54 @@ export default function Exponents({username}) {
         questionsStreak: 0,
         questionsToMeet: standard,
         progressBar: 0,
-        doneWithTopic: done,       
+        doneWithTopic: done,
+        metStandard: false,       
     })
-
+    console.log("This is met standards: " + questionObject.metStandard);
+    if (questionObject.metStandard) {
+      return (
+        <div className="col-sm-12 mt-3">
+            <div className="row">
+                <h1>Exponents</h1>
+            </div>
+            <div className="row">
+                <h2 className="text-center mt-4">Excellent!</h2>
+                <p className="col-sm-12">You met the standard for!</p>
+            </div>
+            <div className="row">
+              <button onClick={nextTopic} className="btn btn-success col-4 offset-4">NEXT TOPIC</button>
+              <button onClick={sameTopic} className="btn btn-success col-4 offset-4">MORE OF THE SAME</button>
+              <button onClick={calculus} className="btn btn-success col-4 offset-4">BACK TO CALCULUS</button>
+            </div>
+        </div>
+      )
+    }
     return (
       <div className="col-sm-12 mt-3">
-          <div className="row">
-              <h1>Exponents</h1>
-          </div>
-          <div className="row">
-              <h2 className="text-center mt-4">Simple Powers</h2>
-                  <p className="col-sm-12">Evaluate each exponential term for the given value.</p>
-          </div>
-          <div className="row">
-              <p className="col-sm-8 offset-2 text-center mt-2">
-              <StaticMathField>{questionObject.functionLatex}</StaticMathField>
-              </p>
-          </div>
-          <AnswerForm
-              questionObj={questionObject}
-          />
-          <div className="progressBar mt-4 mb-4 col-8 offset-2">
-              <ProgressBar now={questionObject.progressBar} label={`${questionObject.progressBar}%`} max='100'/>
-          </div>
+        <div className="row">
+            <h1>Exponents</h1>
+        </div>
+        <div className="row">
+            <h2 className="text-center mt-4">Simple Powers</h2>
+                <p className="col-sm-12">Evaluate each exponential term for the given value.</p>
+        </div>
+        <div className="row">
+            <p className="col-sm-8 offset-2 text-center mt-2">
+            <StaticMathField>{questionObject.functionLatex}</StaticMathField>
+            </p>
+        </div>
+        <AnswerForm
+            questionObj={questionObject}
+        />
+        <div className="progressBar mt-4 mb-4 col-8 offset-2">
+            <ProgressBar now={questionObject.progressBar} label={`${questionObject.progressBar}%`} max='100'/>
+        </div>
       </div>
-    );
-}
-
+    )
+};
 
 function AnswerForm({questionObj}) {
+  console.dir(questionObj);
   const [userObj, setUserAnswer] = useState({
     userAnswer: '',
     answerMessage: ''
@@ -343,18 +473,22 @@ function AnswerForm({questionObj}) {
       stateToLift.questionsStreak = 0
     }
     updateSituation({answerMessage: answerMessage, userAnswer: ''})
-    questionObj.getNextQuestion(stateToLift);
+    
     if (stateToLift.questionsCorrect >= questionObj.questionsToMeet) {
       questionObj.doneWithTopic(stateToLift);
+    } else {
+      questionObj.getNextQuestion(stateToLift);
     }
   }
+
+
 
   return (
     <div className="row col-sm-12">
     <form onSubmit={handleSubmit} method="post" action="#" role="form">
       <div className="row col-sm-6 offset-4">    
         <div className="col-sm-2">
-            <StaticMathField>{'f('+ questionObj.xValue + ')'}</StaticMathField>
+            <StaticMathField>{'f(' + questionObj.xValue + ') ='}</StaticMathField>
         </div>
         <div className="col-sm-4">
                 <EditableMathField

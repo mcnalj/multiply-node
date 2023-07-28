@@ -3,8 +3,9 @@ package-lock.json
 server/.vscode
 server/node_modules
 server/config.env
-server/credentials.development
+server/credentials.development.json
 server/package-lock.json
+client/build
 client/node_modules
 client/package-lock.json
 .DS_Store
