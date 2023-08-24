@@ -4,6 +4,9 @@ import Button from 'react-bootstrap/Button'
 import { useParams } from "react-router-dom";
 import './quizBase.component.quiz.scss';
 
+import { config} from '../constants.js';
+var url = config.url.API_URL;
+
 export default function GetQuestions() {
     const [data, setData] = useState({
         questionsArray: [{question: "", correct_answer:"", incorrect_answers: ["", "", ""]}]
@@ -36,7 +39,7 @@ export default function GetQuestions() {
 
     async function handleClick() {
         // await fetch("http://localhost:5000/quiz/getQuestions")
-        await fetch(`http://localhost:5000/quiz/getQuestions/${categoryId}`)
+        await fetch(`${url}/quiz/getQuestions/${categoryId}`)
             .then(res => res.json())
             .then(
                 (result) => {

@@ -46,13 +46,14 @@ export default function Navigation({username, loggedIn}) {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link className="nav-text" href="/">Home</Nav.Link>
-              <Nav.Link className="nav-text" href="/categories">Trivia</Nav.Link>
-              <Nav.Link className="nav-text" href="/multiply">Multiply</Nav.Link>
               <Nav.Link className="nav-text" href="/calculus">Calculus</Nav.Link>
+              {/* <Nav.Link className="nav-text" href="/categories">Trivia</Nav.Link>
+              <Nav.Link className="nav-text" href="/multiply">Multiply</Nav.Link> */}
+              
             </Nav>
             <Nav>
               <Nav.Link className="nav-text" href="/">{username}</Nav.Link>
+              <Nav.Link className="nav-text" href="/userProgress">{loggedIn ? "Progress" : ""}</Nav.Link>
               <Nav.Link className="nav-text" href={loggedIn ? "/logout" : "/login"}>{loggedIn ? "Logout" : "Login" }</Nav.Link>
             </Nav>
           </Navbar.Collapse>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { config} from '../constants';
+var url = config.url.API_URL;
 
 export default function GetAPIWithRef() {
     const [data, setData] = useState({
@@ -39,7 +41,7 @@ export default function GetAPIWithRef() {
     }
     
     async function getAPIData() {
-        await fetch("http://localhost:5000/record/getAPI")
+        await fetch(`${url}/record/getAPI`)
             .then(res => res.json())
             .then(
                 (result) => {

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+import { config} from '../constants';
+var url = config.url.API_URL;
+
 export default function GetAPI() {
     const [data, setData] = useState({
         tickerArray: []
@@ -35,7 +38,7 @@ export default function GetAPI() {
     }
     
     async function handleClick() {
-        await fetch("http://localhost:5000/record/getAPI")
+        await fetch(`${url}/record/getAPI`)
             .then(res => res.json())
             .then(
                 (result) => {

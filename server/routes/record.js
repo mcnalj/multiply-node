@@ -155,39 +155,20 @@ recordRoutes.route('/add').get(checkAuthenticated, async function(req, response)
     // response.json(rough);
 });
 
-recordRoutes.route("/navLogout").get(checkAuthenticated, function(req, res) {
-  console.log("In the logout route");
-  console.dir(req.user);
+recordRoutes.route("/navLogout").post( checkAuthenticated, function(req, res) {
   req.logout(function(err) {
     if (err) {
-      console.error(err)
-      return
-    } else {
-      console.log("logout success");
-      console.log(req.user);
-      console.log(res.user);
-      res.clearCookie("username");
-      res.json({msg: "Logout was successful"});
+      console.error("Error during logout:", err);
+      res.status(500).json({error: "Logout failed"});
+      return;
     }
-  });
+  
+    res.clearCookie("username");
+
+    res.json({msg: "Logout was successful"});
+  });    
 });
 
-recordRoutes.route("/navLogout").post( checkAuthenticated, function(req, res) {
-  console.log("In the logout post route");
-  console.dir(req.user);
-  req.logout(function(err) {
-    if (err) {
-      console.error(err)
-      return
-    } else {
-      console.log("logout success");
-      console.log(req.user);
-      console.log(res.user);
-      res.clearCookie("username");
-      res.json({msg: "Logout from postwas successful"});
-    }
-  });
-});
 
 recordRoutes.route("/loginPassport").post(function(req, res) {
   console.log("Made it to the Passport POST");
@@ -549,7 +530,11 @@ passport.use(new LocalStrategy(async function verify(username, password, cb) {
 // });
 
 // This is untested. Is there a way to combine it with metStandard?
+// IT DOESN'T SEEM TO RECORD IF THE USER JUST REGISTERED - NOT AUTHENTICATED??
+// Does this work if there's not yet any skillData?
+// This def worked for user: daytwo
 recordRoutes.route('/metStandard/derivatives').post(checkAuthenticated, async function(req, res) {
+  console.log("Made it to met standard derivatives.");
   const sessionData = req.body;
   let msg = '';
   let success = false;
@@ -583,6 +568,7 @@ recordRoutes.route('/metStandard/derivatives').post(checkAuthenticated, async fu
 });
 
 recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, res) {
+  console.log("Made it to met standard plain (exponents).");
   const sessionData = req.body;
   let msg = '';
   let success = false;
@@ -633,6 +619,12 @@ recordRoutes.route("/topic/:unitName").get(async function (req, response) {
 
 recordRoutes.route("/markdownRoute").get(async function(req, res, next) {
   console.log("Requesting markdown file from server");
+  req.session.dude = "McKenroe";
+  console.log("Here is the request session variable: ");
+  console.log(req.session);
+  const passportUser = req.session.passport.user.username;
+  console.log(passportUser);
+
   const markdownFilePath = path.join(__dirname, '../public/markdown/newtonsLaw.md');
 
   fs.readFile(markdownFilePath, 'utf8', (err, data) => {
@@ -643,5 +635,7 @@ recordRoutes.route("/markdownRoute").get(async function(req, res, next) {
   })
 });
 
-
 module.exports = recordRoutes;
+
+
+

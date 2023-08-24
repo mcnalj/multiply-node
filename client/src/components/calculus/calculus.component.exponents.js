@@ -24,10 +24,12 @@ import {
     getReducedFraction,
     findGreatestCommonFactor
   } from '../math-scripts/utilities-scripts.js';
-  
 import '../../App.scss';
 import '../../index.scss';
 import './styles.component.calculus.scss';
+
+import { config} from '../constants.js';
+var url = config.url.API_URL;
 
 addStyles();
 
@@ -249,9 +251,9 @@ export default function Exponents({username}) {
           }        
       }
       }
-      const response = await fetch("http://localhost:5000/record/metStandard", {
+      const response = await fetch(`${url}/record/metStandard`, {
         method: "POST",
-        mode: 'cors',
+        // mode: 'cors',
         credentials: 'include',
         headers: {
           "Content-Type": "application/json",

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
 import '../../App.scss';
@@ -17,13 +18,20 @@ import {
   simplePowerRuleWithNegativeExponent,
   simplePowerRuleWithNegativeExponentAndIntegerCoefficient,
   simplePowerRuleWithNegativeExponentAndFractionalCoefficient,
-
+  simplePowerRuleWithFractionalExponent,
+  simplePowerRuleWithFractionalExponentAndIntegerCoefficient,
+  simplePowerRuleWithFractionalExponentAndFractionalCoefficient,
+  simplePowerRuleWithNegativeFractionalExponent,
+  simplePowerRuleWithNegativeFractionalExponentAndIntegerCoefficient,
+  simplePowerRuleWithNegativeFractionalExponentAndFractionalCoefficient,
+  powerRuleMix,
 } from '../math-scripts/derivative-scripts.js'
 
 import { getRandomIntInclusive } from '../math-scripts/utilities-scripts.js';
 
-// We're not using exponents.
-// It also seems heavy to pass the derivatives array down just so I have the topic name when I record a metStandard
+import { config} from '../constants.js';
+var url = config.url.API_URL;
+
 const questionTopics = {
   "derivatives": [
     {
@@ -56,7 +64,41 @@ const questionTopics = {
       topicName: "simplePowerRuleWithNegativeExponentAndFractionalCoefficient",
       questionEngine: simplePowerRuleWithNegativeExponentAndFractionalCoefficient,
     },
-
+    {
+      topicId: 270,
+      topicName: "simplePowerRuleWithFractionalExponent",
+      questionEngine: simplePowerRuleWithFractionalExponent,
+    },
+    {
+      topicId: 280,
+      topicName: "simplePowerRuleWithFractionalExponentAndIntegerCoefficient",
+      questionEngine: simplePowerRuleWithFractionalExponentAndIntegerCoefficient,
+    },
+    {
+      topicId: 290,
+      topicName: "simplePowerRuleWithFractionalExponentAndFractionalCoefficient",
+      questionEngine: simplePowerRuleWithFractionalExponentAndFractionalCoefficient,
+    },
+    {
+      topicId: 300,
+      topicName: "simplePowerRuleWithNegativeFractionalExponent",
+      questionEngine: simplePowerRuleWithNegativeFractionalExponent,
+    },
+    {
+      topicId: 310,
+      topicName: "simplePowerRuleWithNegativeFractionalExponentAndIntegerCoefficient",
+      questionEngine: simplePowerRuleWithNegativeFractionalExponentAndIntegerCoefficient,
+    },
+    {
+      topicId: 320,
+      topicName: "simplePowerRuleWithNegativeFractionalExponentAndFractionalCoefficient",
+      questionEngine: simplePowerRuleWithNegativeFractionalExponentAndFractionalCoefficient,
+    },                           
+    {
+      topicId: 330,
+      topicName: "powerRuleMix",
+      questionEngine: powerRuleMix,
+    },                           
 ],
   "exponents": [
     {
@@ -68,7 +110,7 @@ const questionTopics = {
       questionEngine: rewriteFractionalExponents,
     },
     {
-      topicId: 40,
+      topicId: 30,
       questionEngine: useNegativeExponents,
     },
     {
@@ -82,6 +124,7 @@ addStyles();
 const startTime = new Date();
 
 function setQuestionEngine(topicId) {
+
   let engineArray = questionTopics["derivatives"];
   let engine = engineArray.find((engine) => engine.topicId == topicId)
   // TODO Need proper error handling.
@@ -93,7 +136,13 @@ function setQuestionEngine(topicId) {
 }
 
 export default function TopDerivatives({username}) {
-  const [currentTopic, setCurrentTopic] = useState(210);
+
+  const parameter = useParams()
+  console.log("Getting the parameter to set topic.")
+  var initialTopic = parseInt(parameter.topic);
+  
+
+  const [currentTopic, setCurrentTopic] = useState(initialTopic);
   return (
     <>
       <Derivatives 
@@ -108,7 +157,7 @@ export default function TopDerivatives({username}) {
 
 export function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
   let unit = "derivatives";
-  let standard = 12
+  let standard = 3;
   
   const [topics, setTopics] = useState(
     {
@@ -137,30 +186,6 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     }
   }
 
-// This is the good one to play with async/await vs then.
-// let thisWorks = async function getTopics(unitName){
-//   const myData = await fetch(`http://localhost:5000/topic/${unitName}`)
-//   .then((response) => {
-//     return response.json()
-//   })
-//   .then((response) => {
-//     let topicList = response.unitTopics
-//     console.log(topicList);  // this is the array
-//     return topicList;
-//   })
-//   .catch(error => console.log(error))
-//   return myData;
-//
-// }
-// // Need to implement use Refs?
-// // Here, everyting is resolved, but how to get it out
-// let unitTopicsPromise = thisWorks("derivatives");
-// let unitTopics = Promise.resolve(unitTopicsPromise);
-// unitTopics.then(value => {
-//   console.log(value)
-// })
-
-
   let questionEngine = setQuestionEngine(currentTopic);
   const [questionState, setQuestionState] = useState({
     questionEngine: questionEngine,
@@ -181,7 +206,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
 
   useEffect(() => {
     async function getTopics(unitName) {
-      const response = await fetch(`http://localhost:5000/record/topic/${unitName}`)
+      const response = await fetch(`${url}/record/topic/${unitName}`)
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);
@@ -277,7 +302,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
         }        
       }
     }
-    const response = await fetch("http://localhost:5000/record/metStandard/derivatives", {
+    const response = await fetch(`${url}/record/metStandard/derivatives`, {
       method: "POST",
       mode: 'cors',
       credentials: 'include',
@@ -373,7 +398,11 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       <div className="progressBar mt-4 mb-4 col-8 offset-2">
         <ProgressBar now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
       </div>
-        <Sidebar function={topicsList} />
+      <div>
+        <Link to="/derivativesTopics">
+          <button type="button" className="btn btn-lg btn-success">Back to Topics</button><br /><br />
+        </Link>
+      </div>
     </div>
   );
 }
@@ -381,6 +410,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
 function AnswerForm(props) {
   const [userObj, setUserAnswer] = useState({
     userAnswer: '\\3x^2',
+    correctAnswer: '',
     answerMessage: ''
   });
 
@@ -401,18 +431,18 @@ function AnswerForm(props) {
     }
 
     let correctMessages = [
-      `Yes, ${props.questionState.answerLatex} is correct!`,
-      `Great, ${props.questionState.answerLatex} is a correct answer.`,
+      `Yes, that is correct!`,
+      `Great answer.`,
       `Exactly!`,
       `Yup, that's right . . .`,
-      `You got it! ${props.questionState.answerLatex} is right.`,
+      `You got it!`,
       `Boom!!`,
-      `Ka-ching. that's right!`,
+      `Ka-ching!`,
       `Exacto!`,
-      `Superb! ${props.questionState.answerLatex} is a correct answer`,
-      `Right on! ${props.questionState.answerLatex} is a correct answer`,
-      `Uh, huh, You got it. ${props.questionState.answerLatex} works.`,
-      `That's it. ${props.questionState.answerLatex} is right. Keep it up!`,
+      `Superb!`,
+      `Right on!`,
+      `Uh, huh, You got it.`,
+      `That's it. Keep it up!`,
     ];
 
     let incorrectMessages = [
@@ -456,7 +486,7 @@ function AnswerForm(props) {
       stateToLift.questionsInorrect = stateToLift.questionsIncorrect + 1;
       stateToLift.questionsStreak = 0
     }
-    updateSituation({answerMessage: answerMessage, userAnswer: ''})
+    updateSituation({answerMessage: answerMessage, userAnswer: '', correctAnswer: props.questionState.answerLatex})
     props.questionState.getNextQuestion(stateToLift);
     if (stateToLift.questionsCorrect >= props.questionState.questionsToMeet) {
       props.questionState.doneWithTopic(stateToLift);
@@ -482,34 +512,38 @@ function AnswerForm(props) {
         <p id="answerFeedback" className="col-sm-12 text-center mt-3">{userObj.answerMessage}</p>
       </div>
       <div className="row">
+        <p className="col-3 text-right">It was</p>
+        <StaticMathField id="correctAnswer" className="col-3 text-left">{userObj.correctAnswer}</StaticMathField>
+      </div>
+      <div className="row">
         <button id="submitButton" type="submit" className="btn btn-success col-4 offset-4">SUBMIT</button>
       </div>
     </form>
   )
 }
 
-function Sidebar(props) {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+// function Sidebar(props) {
+//   const [show, setShow] = useState(false);
+//   const handleClose = () => setShow(false);
+//   const handleShow = () => setShow(true);
 
-  return (
-    <>
-      <Button variant="primary" onClick={handleShow} className="col-sm-4 offset-4" id="changeTopics">
-        CHANGE TOPICS
-      </Button>
+//   return (
+//     <>
+//       <Button variant="primary" onClick={handleShow} className="col-sm-4 offset-4" id="changeTopics">
+//         CHANGE TOPICS
+//       </Button>
 
-      <Offcanvas show={show} onHide={handleClose} style={{backgroundColor: "#E7E7E7", color: "#003348", paddingTop: "2em", fontSize: "1.3em"}}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title style={{fontSize: "1.6em"}}>TOPICS</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          {props.function()}
+//       <Offcanvas show={show} onHide={handleClose} style={{backgroundColor: "#E7E7E7", color: "#003348", paddingTop: "2em", fontSize: "1.3em"}}>
+//         <Offcanvas.Header closeButton>
+//           <Offcanvas.Title style={{fontSize: "1.6em"}}>TOPICS</Offcanvas.Title>
+//         </Offcanvas.Header>
+//         <Offcanvas.Body>
+//           {props.function()}
 
-        </Offcanvas.Body>
-      </Offcanvas>
-    </>
-  );
-}
+//         </Offcanvas.Body>
+//       </Offcanvas>
+//     </>
+//   );
+// }
 
 

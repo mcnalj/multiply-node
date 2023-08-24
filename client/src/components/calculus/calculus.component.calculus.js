@@ -10,7 +10,7 @@ export default function Calculus() {
                 <NavLink to="/exponentsTopics">
                     <button type="button" className="btn btn-lg btn-success">Exponents</button><br /><br />
                 </NavLink>
-                <NavLink to="/derivatives">
+                <NavLink to="/derivativesTopics">
                     <button type="button" className="btn btn-lg btn-success">Derivatives</button>
                 </NavLink>
                 <NavLink to="/markdown">

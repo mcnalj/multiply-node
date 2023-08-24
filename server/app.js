@@ -104,7 +104,8 @@ const http = require('http');
 app.use(logger('dev'));
 app.use(express.urlencoded({ extended: false }));
 // app.use(cookieParser()); // deleted during login
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('../client/build'));
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -113,10 +114,15 @@ const quizRouter = require('./routes/quiz');
 // const { ExtractJwt } = require('passport-jwt');
 
 
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/record', routesRecord);
 app.use('/quiz', quizRouter);
+
+app.get('/*', function(req, res) {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

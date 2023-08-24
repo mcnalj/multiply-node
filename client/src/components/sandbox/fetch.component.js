@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+
+import { config} from '../constants';
+var url = config.url.API_URL;
+
 export default function MyComponent() {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -10,7 +14,7 @@ export default function MyComponent() {
     useEffect(() => {
       async function getRecord() {
         console.log("Running get Record");
-        const response = await fetch("http://localhost:5000/record/fetch");
+        const response = await fetch(`${url}/record/fetch`);
 
         if (!response.ok) {
           setIsLoaded(true);

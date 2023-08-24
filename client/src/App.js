@@ -29,8 +29,11 @@ import Multiplication from './components/multiply/multiplication.component.multi
 import Calculus from './components/calculus/calculus.component.calculus';
 import ExponentsTopics from './components/calculus/calculus.component.exponentsTopics';
 import Exponents from './components/calculus/calculus.component.exponents';
-import TopDerivatives from './components/calculus/calculus.component.derivatives';
+import Derivatives from './components/calculus/calculus.component.derivatives';
+import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
 import Markdown from './components/calculus/calculus.component.markdown';
+
+import UserProgress from './components/userInfo/userInfo.component.progress';
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -123,17 +126,31 @@ function App() {
                   </Protected>
                 }
           />
-          <Route path="/derivatives"
+          <Route path="/derivatives/:topic"
                 element={
                   <Protected isSignedIn={loggedIn}>
-                    <TopDerivatives username={username}/>
+                    <Derivatives username={username}/>
                   </Protected>
                 }
           />
+          <Route path="/derivativesTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <DerivativesTopics username={username}/>
+                  </Protected>
+                }
+          />          
           <Route path="/markdown"
                 element={
                   <Protected isSignedIn={loggedIn}>
                     <Markdown username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/userProgress"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <UserProgress username={username}/>
                   </Protected>
                 }
           />

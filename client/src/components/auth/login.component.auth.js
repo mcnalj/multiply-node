@@ -4,6 +4,10 @@ import { Cookies, useCookies } from 'react-cookie';
 
 import { useNavigate } from "react-router";
 import './styles.component.auth.scss';
+
+import { config } from '../constants.js';
+var url = config.url.API_URL;
+
 export default function Login({setCookie, setUsername})  {
   const [form, setForm] = useState({
     username: "",
@@ -69,8 +73,10 @@ export default function Login({setCookie, setUsername})  {
   async function onSubmit(e) {
     e.preventDefault();
     // When a post request is sent to the login-user url, we'll authenticate this user.
+    console.log("making login request");
     const guest = { ...form };
-    const response = await fetch("http://localhost:5000/record/login-user", {
+    // const response = await fetch("http://localhost:5000/record/login-user", {
+      const response = await fetch(`${url}/record/login-user`, {
       method: "POST",
       //mode: 'no-cors',
       mode: 'cors',
@@ -101,7 +107,7 @@ export default function Login({setCookie, setUsername})  {
     console.log(process.env.NODE_ENV);
    if (myCookie) {
      console.log("I'm navigating to success, now home")
-     navigate("/");
+     navigate("/success");
    }
    else {
      console.log("I'm navigating to home. No userId.")

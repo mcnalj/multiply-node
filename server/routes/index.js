@@ -4,10 +4,10 @@ const fs = require('fs');
 const path = require('path');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  console.log("We got to index.js /")
-  res.render('index', { title: 'Express' });
-});
+// router.get('/', function(req, res, next) {
+//   console.log("We got to index.js /")
+//   res.render('index', { title: 'Express' });
+// });
 
 router.get('/markdownService', function(req, res, next) {
   console.log("Requesting markdown file from server");

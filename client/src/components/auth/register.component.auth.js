@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import './styles.component.auth.scss';
+import { config} from '../constants';
+var url = config.url.API_URL;
+
 export default function SignUp({setCookie, setUsername})  {
     const [form, setForm] = useState({
       firstName: "",
@@ -23,7 +26,7 @@ export default function SignUp({setCookie, setUsername})  {
 
       // When a post request is sent to the create url, we'll add a new record to the database.
       const newUser = { ...form };
-      const result = await fetch("http://localhost:5000/record/new-user", {
+      const result = await fetch(`${url}/record/new-user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
