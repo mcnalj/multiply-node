@@ -38,7 +38,6 @@ export default function SignUp({setCookie, setUsername})  {
         return;
       });
       const answer = await result.json()
-      console.log(answer);
       setCookie('username', answer.passportData.username);
       setUsername(answer.passportData.username);
   
@@ -46,7 +45,7 @@ export default function SignUp({setCookie, setUsername})  {
         setForm({ firstName: "", lastName: "", email: "", username: "", password: ""});
         navigate("/success"); // this looks for a route on the client
       } else {
-        console.log("Staying here. There was an issue.");
+        
       }
     }
     return (

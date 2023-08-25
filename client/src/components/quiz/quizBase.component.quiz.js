@@ -23,7 +23,6 @@ export default function GetQuestions() {
     const [alreadyClicked, setAlreadyClicked] = useState('false')
 
     const category = useParams()
-    console.log(category.categoryId);
     const categoryId = category.categoryId;
 
     function sortArray(array, randomizedAnswers) {
@@ -33,7 +32,6 @@ export default function GetQuestions() {
             randomizedAnswers.push(array[pick]);
             array.splice(pick, 1);
         }
-        console.log(randomizedAnswers);
         return randomizedAnswers;
     }
 
@@ -43,8 +41,6 @@ export default function GetQuestions() {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log("This is result");
-                    console.log(result);
                     return result
                     // this is where we will fail if the route is protected
                   })
@@ -154,19 +150,12 @@ export function Answer({answer, correctAnswer, graded, alreadyClicked, setClicke
         setGrade("#E7E7E7");
     }, [graded])
     
-    console.log("This is grade:" + grade);
-    console.log("This is graded: " + graded);
-
     function checkAnswer() {
-        console.log(alreadyClicked);
         setClicked('true');
         if (alreadyClicked == 'false') {
-            console.log(correctAnswer);
             if (answer === correctAnswer) {
-                console.log("correct");
                 setGrade("green");
             } else {
-                console.log("incorrect");
                 setGrade("red");
             }
             graded = false;

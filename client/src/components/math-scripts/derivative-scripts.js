@@ -57,7 +57,6 @@ import {
       answerLatex = `${answerNum}x^${answerExponent}`;
     }
     [questionLatex, answerLatex] = maybeNegativeCoefficient(questionLatex, answerLatex, 40)
-    console.log(questionLatex);
     [questionLatex, answerLatex] = applyRegexFixes(questionLatex, answerLatex);
     return [questionLatex, answerLatex];
   }
@@ -289,7 +288,7 @@ import {
     }
     return [questionLatex, answerLatex];
   }
-  
+
   export {
     simplePowerRule,
     simplePowerRuleWithIntegerCoefficient,

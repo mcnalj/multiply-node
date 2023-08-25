@@ -36,10 +36,7 @@ addStyles();
 export default function Exponents({username}) {
 
     const parameter = useParams()
-    console.log("Getting the parameter to set topic.")
     let topic = parameter.topic;
-    console.log(topic);
-    
   
     function setFunction(typeOfExponent) {
       // typeOfExponent can be positive, negative, fractional
@@ -167,26 +164,15 @@ export default function Exponents({username}) {
         const answer = setAnswer(xValue, power, engine, xChoice);
         return [functionLatex, xValue, answer]
     }
-    console.log("Running question engine in the main body.");
     let [functionLatex, xValue, answer] = questionEngine(topic);
-    console.log("Value returned from questionEngine.");
-    console.log("functionLatex: " + functionLatex);
-    console.log("xValue: " + xValue);
-    console.log("answer " + answer);
-
 // hardcoded to eliminate errors
     const startTime = new Date();
-    console.log("resetting start time");
-    const standard = 3;
+    const standard = 7;
     
 
     function next(liftedState){
       // let [questionLatex, answerLatex] = questionEngine();
       let [functionLatex, xValue, answer] = questionEngine(topic); 
-      console.log("Setting question object in next.");
-      console.log("fucntionLatex: " + functionLatex);
-      console.log("xValue: " + xValue);
-      console.log("answer: " + answer);
       setQuestionObject(
         {
           questionEngine: questionEngine,
@@ -265,7 +251,6 @@ export default function Exponents({username}) {
         return;
       });
       const answer = await response.json();
-      console.log(answer.msg);
       setQuestionObject(
         {
           questionEngine: questionEngine,
@@ -289,13 +274,11 @@ export default function Exponents({username}) {
 
     const navigate = useNavigate()
 
-    function calculus() {
-      console.log("continue");  
+    function calculus() {  
       navigate("/calculus");
     }
 
     function sameTopic() {
-      console.log("same");
       let stateToLift = {
         questionsAttempted: 0,
         questionsCorrect: 0,
@@ -306,8 +289,6 @@ export default function Exponents({username}) {
       // navigate(`/exponents/${topic}`);
     }
     function nextTopic() {
-      console.log("This is topic: " + topic);
-      console.log("next");
       if (topic == "mixed") {
         topic = "mixed";
       } if (topic == "negativeFractional") {
@@ -329,12 +310,6 @@ export default function Exponents({username}) {
       next(stateToLift);
     }
   
-
-    console.log("At initial question Object")
-    console.log("functionLatex: " + functionLatex);
-    console.log("xValue: " + xValue);
-    console.log("answer: " + answer);
-
     const [questionObject, setQuestionObject] = useState({
         questionEngine: questionEngine,
         functionLatex: functionLatex,
@@ -350,7 +325,6 @@ export default function Exponents({username}) {
         doneWithTopic: done,
         metStandard: false,       
     })
-    console.log("This is met standards: " + questionObject.metStandard);
     if (questionObject.metStandard) {
       return (
         <div className="col-12 mt-3">
@@ -399,7 +373,6 @@ function AnswerForm({questionObj}) {
       mathFieldRef.current.focus();
     }
   }, []);
-  console.dir(questionObj);
   const [userObj, setUserAnswer] = useState({
     userAnswer: '',
     answerMessage: ''
@@ -475,7 +448,6 @@ function AnswerForm({questionObj}) {
     let answerMessage = '';
     if (userObj.userAnswer == questionObj.answer) {
         stateToLift.questionsStreak = stateToLift.questionsStreak + 1;
-        console.log(stateToLift.questionsStreak);
         if (stateToLift.questionsStreak < 4) {
           let index = getRandomIntInclusive(0, ((correctMessages.length)))
           answerMessage = correctMessages[index];
@@ -522,8 +494,6 @@ function AnswerForm({questionObj}) {
                 />
         </div>     
         <p className="col-12 text-center mt-3">{userObj.answerMessage}</p>
-      
-        {/* <button type="submit" className="btn btn-success col-6 offset-3">SUBMIT</button> */}
         <Button
             variant="primary"
             type="submit"

@@ -13,8 +13,6 @@ quizRoutes.route("/getQuestions/:category").get(checkAuthenticated, async functi
     // const reqURL = `https://opentdb.com/api.php?amount=10&category=10&difficulty=medium&type=multiple`
     // const response = await axios.get("https://opentdb.com/api.php?amount=10&category=10&difficulty=medium&type=multiple")
     const response = await axios.get(reqURL)
-    console.log("made the request");
-    console.log(response.data)
     res.json(response.data);
   } catch (e) {
     console.error(e);
@@ -34,8 +32,6 @@ quizRoutes.route("/getAPI").get(async function (req, res) {
     })
     data = await response.json()
     // res.locals.data.quoteResponse.results = data.quoteResponse.results
-    console.log(data.quoteResponse)
-
   } catch (e) {
     console.error(e);
     return e.message
@@ -56,7 +52,6 @@ quizRoutes.route("/getAPIAxios").get(async function (req, res) {
     // data = await response.json()
     // res.locals.data.quoteResponse.results = data.quoteResponse.results
     // console.log(data.quoteResponse)
-    console.log(response.data)
     res.json(response.data.quoteResponse);
   } catch (e) {
     console.error(e);
@@ -65,16 +60,13 @@ quizRoutes.route("/getAPIAxios").get(async function (req, res) {
 });
 
 quizRoutes.route("/fetch").get(async function (req, response) {
-  console.log("got to the quiz route");
   // let db_connect = dbo.getDb();
   let db_connect = await dbo.client.db("calculus")
   let myQuery = {unitName: "derivatives"};
-  console.log(myQuery);
   let projection = { _id: false, unitTopics: true}
   db_connect.collection("units")
     .findOne(myQuery, projection, function (err, res) {
       if (err) throw err;
-      console.log(res);
       response.json(res);
   });
 });

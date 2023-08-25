@@ -9,14 +9,12 @@ export default function QuizCategoriesButtons() {
     const navigate = useNavigate();
 
     const handleClick = (categoryObj) => {
-        console.log(categoryObj)
         setClicked(true);
         setCategoryObj(categoryObj)
 
     }
 
     const chooseCategory = (category) => {
-        console.log(category);
         navigate(`/getQuestions/${category}`, {
             categoryId: category
         });

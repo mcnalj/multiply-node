@@ -73,7 +73,6 @@ export default function Login({setCookie, setUsername})  {
   async function onSubmit(e) {
     e.preventDefault();
     // When a post request is sent to the login-user url, we'll authenticate this user.
-    console.log("making login request");
     const guest = { ...form };
     // const response = await fetch("http://localhost:5000/record/login-user", {
       const response = await fetch(`${url}/record/login-user`, {
@@ -92,25 +91,18 @@ export default function Login({setCookie, setUsername})  {
       return;
     });
     const answer = await response.json();
-    console.log("Here is the response json: ");
-    console.log(answer);
     // If login doesn't work we get an error here because username is undefined.
     setCookie('username', answer.username);
     setUsername(answer.username);
 
     const allCookies = new Cookies();
     myCookie = allCookies.get('username');
-    console.log("This is my cookie: " + myCookie);
 
     setForm({ username: "", password: ""});
-    console.log("Successfully logged in.")
-    console.log(process.env.NODE_ENV);
    if (myCookie) {
-     console.log("I'm navigating to success, now home")
      navigate("/success");
    }
    else {
-     console.log("I'm navigating to home. No userId.")
      navigate("/");
    }
   }
@@ -142,7 +134,7 @@ export default function Login({setCookie, setUsername})  {
               placeholder="Enter password"
             />
           </div>
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <div className="custom-control custom-checkbox">
               <input
                 type="checkbox"
@@ -153,15 +145,15 @@ export default function Login({setCookie, setUsername})  {
                 Remember me
               </label>
             </div>
-          </div>
+          </div> */}
           <div className="d-grid">
             <button type="submit" className="btn btn-primary">
               Submit
             </button>
           </div>
-          <p className="forgot-password text-right">
+          {/* <p className="forgot-password text-right">
             Forgot <a href="#">password?</a>
-          </p>
+          </p> */}
           <p>
               Return to <a href="/">Splash</a>
           </p>

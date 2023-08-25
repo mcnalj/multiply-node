@@ -27,8 +27,6 @@ export default function UserProgress({username})  {
         return;
         });
         data = await result.json()
-        console.log(data.exponents);
-        console.log(data.derivatives);
         if (data.exponents) {
             for (var i=0; i < data.exponents.length; i++) {
                 let dataObject = {
@@ -84,8 +82,6 @@ export default function UserProgress({username})  {
     const navigate = useNavigate();
 
     {
-
-        console.log(userData.exponentsDataArray);
         if (userData.exponentsDataArray.length === 0 && userData.derivativesDataArray.length === 0) {
             return (
                 <div>

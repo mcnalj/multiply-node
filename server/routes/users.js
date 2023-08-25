@@ -16,9 +16,6 @@ usersRoutes.route('/').get(function(req, res, next) {
    res.send('respond with a resource');
 });
 
-
-// Separate for progress in Calculus and Progress in Exponents.
-// TODO: If there is no progress for this user, the query throws an error. It's caught,but make it more graceful.
 usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, response) {
   const username = req.session.passport.user.username;
   let query = { username: username};
@@ -49,7 +46,7 @@ usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, 
     }
     response.json({exponents: exponentsData, derivatives: derivativesData});
   } catch {
-    console.log("Error fetching");
+    console.error("Error fetching progress:", error);
     response.json({exponents: null, derivatives: null})
   }
 });

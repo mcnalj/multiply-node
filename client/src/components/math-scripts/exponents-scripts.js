@@ -144,7 +144,6 @@ import {
   }
   
   function getPrompt(hasCoefficient) {
-    console.log("called getPromp");
     let isNegativeCoefficient = false;
     let xTermInNumerator = setXTermInNumerator();
     let isNegativeExponent = true;
@@ -292,7 +291,6 @@ import {
     let coefficient = getRandomIntInclusive(minCoefficient, maxCoefficient);
     let exponent = getRandomIntInclusive(minExponent, maxExponent);
     let questionLatex = `${coefficient}x^{-${exponent}}`;
-    console.log(`This is question latex ${questionLatex}`);
     let answerLatex = `\\frac{${coefficient}}{x^${exponent}}`;
     [questionLatex, answerLatex] = maybeNegativeCoefficient(questionLatex, answerLatex, percentNegative);
     // handle case where denominator is x^1
@@ -337,11 +335,9 @@ import {
   // These four are for rewriting fractional exponents into radicals so they are easy to plug in to.
   function rewriteFractionalExponentNoCoefficient(minExponentNum = 1, maxExponentNum = 7, minExponentDenom = 2, maxExponentDenom = 5) {
     let [exponentNum, exponentDenom] = generateReducedFraction(minExponentNum, maxExponentNum, minExponentDenom, maxExponentDenom);
-    console.log(exponentNum, exponentDenom)
     let questionLatex = `x^{\\frac{${exponentNum}}{${exponentDenom}}}`;
     let answerLatex = `\\sqrt[${exponentDenom}]{x^${exponentNum}}`;
     answerLatex = answerLatex.replace(/x\^1/, 'x');
-    console.log(questionLatex);
     return [questionLatex, answerLatex];
   }
   
@@ -370,13 +366,10 @@ import {
     let answerLatex = "";
     let choice = getRandomIntInclusive(1, 3);
     if (choice == 1) {
-      console.log("choice is 1");
       [questionLatex, answerLatex] = rewriteFractionalExponentNoCoefficient(minExponentNum, maxExponentNum, minExponentDenom, maxExponentDenom);
     } else if (choice == 2) {
-      console.log("choice is 2");
       [questionLatex, answerLatex] = rewriteFractionalExponentWithIntegerCoefficient(minCoefficientNum, maxCoefficientNum, minCoefficientDenom, maxCoefficientDenom, minExponentNum, maxExponentNum, minExponentDenom, maxExponentDenom, percentNegative);
     } else {
-      console.log("choice is 3");
       [questionLatex, answerLatex] = rewriteFractionalExponentWithFractionalCoefficient(minCoefficientNum, maxCoefficientNum, minCoefficientDenom, maxCoefficientDenom, minExponentNum, maxExponentNum, minExponentDenom, maxExponentDenom, percentNegative);
     }
     return [questionLatex, answerLatex]

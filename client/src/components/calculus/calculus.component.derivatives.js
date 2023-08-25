@@ -138,7 +138,6 @@ function setQuestionEngine(topicId) {
 export default function TopDerivatives({username}) {
 
   const parameter = useParams()
-  console.log("Getting the parameter to set topic.")
   var initialTopic = parseInt(parameter.topic);
   
 
@@ -157,7 +156,7 @@ export default function TopDerivatives({username}) {
 
 export function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
   let unit = "derivatives";
-  let standard = 3;
+  let standard = 7;
   
   const [topics, setTopics] = useState(
     {
@@ -241,8 +240,6 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     return;
   }, [currentTopic]);
 
-  console.log("Here's a render . . .");
-
   function next(liftedState){
       let questionEngine = setQuestionEngine(currentTopic);
       
@@ -318,7 +315,6 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       return;
     });
     const answer = await response.json();
-    console.log(answer.msg);
     // we need to go somewhere from here.
   };
 
@@ -351,8 +347,6 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
   const changeEngine = function (e) {
     let topicId = e.currentTarget.dataset.key;
     let questionTopic = questionTopics[unit].find((topic) => topic.topicId == topicId);
-    console.dir(questionTopic);
-    console.dir(topics);
     let questionEngine = questionTopic.questionEngine;
     let topicArrayIndex = topics.topicsArray.findIndex((topic)=>topic.topicId==topicId);
     let standard = (topics.topicsArray[topicArrayIndex].topicData.standard);

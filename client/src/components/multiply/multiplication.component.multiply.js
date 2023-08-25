@@ -105,7 +105,7 @@ export default function Multiplication(){
     if (checkAnswer(multiplicand, multiplier, questionTime, userAnswer)) {
       // numCorrect = numCorrect + 1;
       setNumCorrect(numCorrect + 1);
-      console.log("apply correct answer styles");
+      // apply correct answer styles
       setIsCorrect("√")
 
       setTimeout(function() {
@@ -114,10 +114,10 @@ export default function Multiplication(){
         // We've reached the end of this array of questions
         // if (tempQuestionNumber >= questionsArray.length) {
           if (tempQuestionNumber >= 3) {
-          console.log("At the end of the array.");
+          // At the end of the array.
           // there are missed questions
           if (missedList.length>0) {
-            console.log("Presenting missed quesions");
+            // Presenting missed quesions
             // questionsArray = missedList;
             questionsArrayX = missedList
             setQuestionsArray(questionsArrayX);
@@ -126,9 +126,9 @@ export default function Multiplication(){
             setQuestionNumber(0);
           // there are no more missed questions
           } else {
-            console.log("At the end of the array, no missed questions.")
+            // At the end of the array, no missed questions
             if (sequential) {
-              console.log("Finished a number in sequence. Setting sequential to false.")
+              //Finished a number in sequence. Setting sequential to false.
               // switchToRandomMode(sequential);
               setSequential(false);
               setQuestionNumber(0);
@@ -137,8 +137,8 @@ export default function Multiplication(){
               setQuestionsArray(questionsArrayX);
               questionsArrayChanged = true;
             } else {
-              console.log("Finished sequential and random, now moving to next table");
-              console.log("Excellent, let's move to the next times table.")
+              // Finished sequential and random, now moving to next table
+              
               // TODO we will have to deal with when we're at 9 later
               if (timesTable > 1) {
                 timesTableX++
@@ -150,7 +150,7 @@ export default function Multiplication(){
               if (timesTableX >= 11 || (tableArraySet >= tableArray.length && timesTable <=1)) {
                 // review questions they've missed this session
                 if (sessionMissedList > 0) {
-                  console.log("Great work. Let's go over the ones you missed.");
+                  // Let's go over the ones you missed
                   questionsArrayX = sessionMissedList;
                   setQuestionsArray(questionsArrayX);
                   questionsArrayChanged = true;
@@ -162,7 +162,7 @@ export default function Multiplication(){
                     tableArray = populateTableArray(tableArray, timesTableX);
                     tableArraySet = 0
                   }
-                  console.log("Congratulations! You know this! Here's more if you want to keep practicing.");
+                  // Congratulations! You know this! Here's more if you want to keep practicing.
                   // wantsSequential = false;
                   setWantsSequential(false);
                   // sequential = false;
@@ -174,7 +174,7 @@ export default function Multiplication(){
                 }
               // this is if they are not done with all the tables
               } else {
-                console.log("Got to Not done with all tables.")
+                // Got to Not done with all tables
                 setQuestionNumber(0);
                 if (wantsSequential) {
                   // sequential = true;
@@ -195,17 +195,17 @@ export default function Multiplication(){
         }
         setMultiplicand(multiplicandX);
         setMultiplier(multiplierX);
-        console.log("resetAnswerStyles");
+        // resetAnswerStyles
         setIsCorrect("");
       }, 1000);
     } else {
-      console.log("applyIncorrectAnswerStyles");
+      // applyIncorrectAnswerStyles
       setIsCorrect("X");
       // I should add a check to see if it's already in the missedList
       missedList = addQuestionToMissedList(questionsArray[questionNumber], missedList);
       sessionMissedList = addQuestionToSessionMissedList(questionsArray[questionNumber], sessionMissedList);
       const wrongTimeout = setTimeout(function(){
-        console.log("resetAnswerStyles");
+        // resetAnswerStyles
         setIsCorrect("")
         startTime = setStartTime();
       }, 1600);
@@ -235,7 +235,6 @@ export default function Multiplication(){
     if (questionAnswer == userAnswer) {
       isCorrect = true;
     }
-    recordAnswer(isCorrect, questionTime);
     return isCorrect;
   }
 
@@ -256,9 +255,6 @@ export default function Multiplication(){
     questionTime = endTime - startTime;
     return questionTime;
   }
-  function recordAnswer(isCorrect, questionTime) {
-    console.log(questionTime);
-  }
 
   function addQuestionToMissedList(questionTuple, missedList) {
     if (!missedList.some(item => item[0] === questionTuple[0] && item[1] === questionTuple[1])) {
@@ -275,12 +271,11 @@ export default function Multiplication(){
   }
 
   function switchToRandomMode(sequential) {
-    console.log("Excellent! Let's mix it up and test your knowledge of the " + timesTable + "'s table.")
+    // Excellent! Let's mix it up and test your knowledge of the " + timesTable + "'s table.
     // sequential = false;
     // return sequential;
     setSequential(false);
   }
-
 
   // // need to fix this to use the new missed list
   // function showSummaryMessage() {
@@ -328,7 +323,7 @@ export default function Multiplication(){
       questionsArrayX = tableArray[tableArraySet];
     } else if (timesTable > 1) {
       questionsArrayX = getQuestionsForSingleMultiplicand(timesTable, sequential, questionsArray);
-      console.log("This is quesionsArrayX inside loadQuestionsArray: " + questionsArrayX);
+      // This is quesionsArrayX inside loadQuestionsArray: " + questionsArrayX
     }
     return questionsArrayX;
   }
@@ -396,9 +391,7 @@ export default function Multiplication(){
   function getQuestionsForSingleMultiplicand(timesTable, sequential, questionsArray) {
     questionsArray = [];
     let multipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    console.log("In getQuestionsForSingleMultiplicand");
     if (!sequential) {
-      console.log("sufflingMultipliers");
       multipliers = shuffleMultipliers(multipliers);
     }
     for (let i = 0; i < 10; i++) {
@@ -667,7 +660,6 @@ export function SVGComponent({color, multiplier, multiplicand}) {
       x = 50;
       y = y + 80;
     }
-    // console.log(circles)
     return circles;
   }
   let circleList2 = populateCircleList(circles, multiplicand, multiplier); 
