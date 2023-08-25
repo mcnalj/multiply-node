@@ -92,6 +92,11 @@ function getSimplifiedFraction(minNum, maxNum, minDenom, maxDenom) {
     }
     return gcf;
   }
+
+  // functionSubtractOneFromAFraction(numerator, denominator) {
+  //   let newNumerator = numerator - denominator;
+  //   return [newNumerator, denominator]
+  // }
   
   export {
     getSimplifiedFraction,
