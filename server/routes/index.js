@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
+const readFile = util.promisify(fs.readFile);
 
 // This is how we would server index from the server side if we weren't serving the React build folder.
 /* GET home page. */
@@ -10,17 +12,20 @@ const path = require('path');
 //   res.render('index', { title: 'Express' });
 // });
 
-router.get('/markdownService', function(req, res, next) {
-
-  const markdownFilePath = path.join(__dirname, '../public/markdown/newtonsLaw.md');
-
-  fs.readFile(markdownFilePath, 'utf8', (err, data) => {
-    if (err) {
-      return res.status(500).send('Error reading markdown file.')
-    }
+router.get('/markdownService', async function(req, res, next) {
+  try {
+    const markdownFilePath = path.join(__dirname, '../public/markdown/newtonsLaw.md');
+    const data = await readFile(markdownFilePath, 'utf8')
+    res.setHeader('Content-Type', 'text/markdown');
     res.send(data);
-  })
-});
-
+  } catch (error) {
+    console.error('Error reading markdown file:', error);
+    if (error.code === 'ENOENT') {
+      res.status(404).send('Markdown file not found.')  
+    } else {
+      res.status(500).send('An error occurred while reading the markdown file.')
+    }
+  }
+})
 
 module.exports = router;

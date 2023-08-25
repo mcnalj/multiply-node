@@ -616,25 +616,6 @@ recordRoutes.route("/topic/:unitName").get(async function (req, response) {
   response.json(results);
 });
 
-
-recordRoutes.route("/markdownRoute").get(async function(req, res, next) {
-  console.log("Requesting markdown file from server");
-  req.session.dude = "McKenroe";
-  console.log("Here is the request session variable: ");
-  console.log(req.session);
-  const passportUser = req.session.passport.user.username;
-  console.log(passportUser);
-
-  const markdownFilePath = path.join(__dirname, '../public/markdown/newtonsLaw.md');
-
-  fs.readFile(markdownFilePath, 'utf8', (err, data) => {
-    if (err) {
-      return res.status(500).send('Error reading markdown file.')
-    }
-    res.send(data);
-  })
-});
-
 module.exports = recordRoutes;
 
 
