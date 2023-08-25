@@ -1,5 +1,7 @@
 import React from "react";
 import { NavLink } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+
 export default function Calculus() {
     return (
         <div>
@@ -8,13 +10,13 @@ export default function Calculus() {
             </div>
             <div>
                 <NavLink to="/exponentsTopics">
-                    <button type="button" className="btn btn-lg btn-success">Exponents</button><br /><br />
+                    <Button type="button" variant="primary" size="lg">Exponents</Button><br /><br />
                 </NavLink>
                 <NavLink to="/derivativesTopics">
-                    <button type="button" className="btn btn-lg btn-success">Derivatives</button>
+                    <Button type="button" variant="primary" size="lg">Derivatives</Button><br /><br />
                 </NavLink>
                 <NavLink to="/markdown">
-                    <button type="button" className="btn btn-lg btn-success">Markdown</button>
+                    <Button type="button" variant="primary" size="lg">Markdown</Button>
                 </NavLink>
             </div>
         </div>

@@ -3,6 +3,7 @@ var router = express.Router();
 const fs = require('fs');
 const path = require('path');
 
+// This is how we would server index from the server side if we weren't serving the React build folder.
 /* GET home page. */
 // router.get('/', function(req, res, next) {
 //   console.log("We got to index.js /")
@@ -10,7 +11,7 @@ const path = require('path');
 // });
 
 router.get('/markdownService', function(req, res, next) {
-  console.log("Requesting markdown file from server");
+
   const markdownFilePath = path.join(__dirname, '../public/markdown/newtonsLaw.md');
 
   fs.readFile(markdownFilePath, 'utf8', (err, data) => {
@@ -20,5 +21,6 @@ router.get('/markdownService', function(req, res, next) {
     res.send(data);
   })
 });
+
 
 module.exports = router;

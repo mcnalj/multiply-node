@@ -40,7 +40,7 @@ import './styles.component.navbar.scss';
 
 export default function Navigation({username, loggedIn}) {
     return (
-        <Navbar bg="dark" expand="sm">
+        <Navbar bg="dark" expand="sm" className="custom-navbar">
         <Container>
           <Navbar.Brand className="nav-text" href="/">STEM Circus</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />

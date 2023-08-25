@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
@@ -217,6 +217,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       setTopics({topicId: unitTopics[0].topicId, topicsArray: unitTopics});
       let questionEngine = setQuestionEngine(currentTopic);
       let [questionLatex, answerLatex] = questionEngine();
+      questionLatex = 'f(x) = '+ questionLatex;
       setQuestionState(
         {
           questionEngine: questionEngine,
@@ -246,6 +247,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       let questionEngine = setQuestionEngine(currentTopic);
       
       let [questionLatex, answerLatex] = questionEngine();
+      questionLatex = 'f(x) = ' + questionLatex;
       setQuestionState({
         questionEngine: questionEngine,
         questionLatex: questionLatex,
@@ -355,6 +357,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     let topicArrayIndex = topics.topicsArray.findIndex((topic)=>topic.topicId==topicId);
     let standard = (topics.topicsArray[topicArrayIndex].topicData.standard);
     let [questionLatex, answerLatex] = questionEngine();
+    questionLatex = 'f(x) = ' + questionLatex;
     setCurrentTopic(topicId);
     setQuestionState({
       questionEngine: questionEngine,
@@ -384,21 +387,22 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
   }
 
   return (
-    <div className="row">
-      <h2 className="text-center mt-4">{questionState.questionTopic}</h2>
-              <p id="instructions" className="col-sm-12">{questionState.questionPrompt}</p>
-      <div className="row">
-        <p id="prompt" className="col-sm-8 offset-2 text-center mt-2">
-          <StaticMathField>{ questionState.questionLatex }</StaticMathField>
-        </p>
-      </div>
-        <AnswerForm
-            questionState={questionState}
-        />
+    <div className="col-12">
+      <p id="prompt" className="col-sm-8 offset-2 text-center mt-4 fs-4">
+        <StaticMathField>{ questionState.questionLatex }</StaticMathField>
+      </p>
+      <p id="prompt" className="col-sm-8 offset-2 text-center mt-1 fs-4">
+        <StaticMathField>f'(x) = </StaticMathField>
+      </p>
+      <AnswerForm
+          questionState={questionState}
+      />
       <div className="progressBar mt-4 mb-4 col-8 offset-2">
         <ProgressBar now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
       </div>
       <div>
+        <h2 className="text-center mt-4">{questionState.questionTopic}</h2>
+        <p id="instructions" className="col-sm-12">{questionState.questionPrompt}</p>
         <Link to="/derivativesTopics">
           <button type="button" className="btn btn-lg btn-success">Back to Topics</button><br /><br />
         </Link>
@@ -408,6 +412,14 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
 }
 
 function AnswerForm(props) {
+  const mathFieldRef = useRef(null);
+  
+  useEffect(() => {
+    if (mathFieldRef.current) {
+      mathFieldRef.current.focus();
+    }
+  }, []);
+
   const [userObj, setUserAnswer] = useState({
     userAnswer: '\\3x^2',
     correctAnswer: '',
@@ -418,6 +430,13 @@ function AnswerForm(props) {
     return setUserAnswer((prev) => {
       return {...prev, ...value}
     });
+  }
+
+  const handleKeyDown = event => {
+    if (event.key == 'Enter') {
+      event.preventDefault();
+      handleSubmit(event);
+    }
   }
 
   function handleSubmit(event) {
@@ -445,14 +464,24 @@ function AnswerForm(props) {
       `That's it. Keep it up!`,
     ];
 
+    // let incorrectMessages = [
+    //   `Sorry, it's ${props.questionState.answerLatex}.`,
+    //   `${props.questionState.answerLatex} is the answer I was looking for.`,
+    //   `Not exactly. ${props.questionState.answerLatex} is a correct answer.`,
+    //   `You got this! ${props.questionState.answerLatex} is what I was looking for.`,
+    //   `This one was ${props.questionState.answerLatex}. You'll get the next one.`,
+    //   `I was thinking, ${props.questionState.answerLatex}, but no sweat. You'll get it.`,
+    //   `It's ${props.questionState.answerLatex}, but no worries, your moment is coming!`,
+    // ];
+
     let incorrectMessages = [
-      `Sorry, it's ${props.questionState.answerLatex}.`,
-      `${props.questionState.answerLatex} is the answer I was looking for.`,
-      `Not exactly. ${props.questionState.answerLatex} is a correct answer.`,
-      `You got this! ${props.questionState.answerLatex} is what I was looking for.`,
-      `This one was ${props.questionState.answerLatex}. You'll get the next one.`,
-      `I was thinking, ${props.questionState.answerLatex}, but no sweat. You'll get it.`,
-      `It's ${props.questionState.answerLatex}, but no worries, your moment is coming!`,
+      `Sorry, that's not the answer.`,
+      `That's not the answer we were looking for.`,
+      `Not exactly.`,
+      `That's not right, but you got this!`,
+      `You'll get the next one.`,
+      `Not exactly, but no sweat. You'll get it.`,
+      `Sorry, that's not it. But no worries, your moment is coming!`,
     ];
 
     let streakMessages = [
@@ -495,29 +524,27 @@ function AnswerForm(props) {
 
   return (
     <form id="questionArea" onSubmit={handleSubmit} method="post" action="#" role="form" className="col-sm-10 offset-1 mt-4">
-      <div className="row input-group">
-        <div className="col-sm-8 offset-2">
-            <EditableMathField
-              id="answerInput"
-              className="form-control col-sm-6 text-center"
-              aria-describedby="answer input"
-              latex={userObj.userAnswer}
-              value={userObj.userAnswer} // does nothing?
-              placeholder={userObj.userAnwer} //does nothing?
-              onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
-            />
-        </div>
-      </div>
-      <div className="row">
-        <p id="answerFeedback" className="col-sm-12 text-center mt-3">{userObj.answerMessage}</p>
-      </div>
-      <div className="row">
-        <p className="col-3 text-right">It was</p>
-        <StaticMathField id="correctAnswer" className="col-3 text-left">{userObj.correctAnswer}</StaticMathField>
-      </div>
-      <div className="row">
-        <button id="submitButton" type="submit" className="btn btn-success col-4 offset-4">SUBMIT</button>
-      </div>
+      <div className="col-8 offset-2">
+          <EditableMathField
+            id="answerInput"
+            className="form-control text-center fs-3"
+            aria-describedby="answer input"
+            latex={userObj.userAnswer}
+            // value={userObj.userAnswer} // does nothing?
+            // placeholder={userObj.userAnwer} //does nothing?
+            onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
+            mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
+            onKeyDown={handleKeyDown}
+          />
+      </div>      
+      <p id="answerFeedback" className="col-12 text-center">{userObj.answerMessage}</p>
+      <Button
+        variant="primary"
+        type="submit"
+        size="lg" 
+      >
+        SUBMIT
+      </Button>
     </form>
   )
 }

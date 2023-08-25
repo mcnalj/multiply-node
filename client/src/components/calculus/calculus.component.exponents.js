@@ -8,7 +8,7 @@
 // Deploy
 // Fix the look
 // Put a timer on the screen or give some kind of time option to exceed.
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router-dom";
 import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
@@ -353,47 +353,52 @@ export default function Exponents({username}) {
     console.log("This is met standards: " + questionObject.metStandard);
     if (questionObject.metStandard) {
       return (
-        <div className="col-sm-12 mt-3">
+        <div className="col-12 mt-3">
             <div className="row">
                 <h1>Exponents</h1>
             </div>
             <div className="row">
-                <h2 className="text-center mt-4">Excellent!</h2>
-                <p className="col-sm-12">You met the standard for!</p>
+                <p className="col-sm-12 fs-5">Excellent! You met the standard!</p>
             </div>
             <div className="row">
-              <button onClick={nextTopic} className="btn btn-success col-4 offset-4">NEXT TOPIC</button>
-              <button onClick={sameTopic} className="btn btn-success col-4 offset-4">MORE OF THE SAME</button>
-              <button onClick={calculus} className="btn btn-success col-4 offset-4">BACK TO CALCULUS</button>
+              <Button variant="primary" onClick={nextTopic} className="col-8 offset-2 mt-2" size="lg">NEXT TOPIC</Button>
+              <Button variant="primary" onClick={sameTopic} className="col-8 offset-2 mt-2" size="lg">MORE OF THE SAME</Button>
+              <Button variant="primary" onClick={calculus} className="col-8 offset-2 mt-2" size="lg">BACK TO CALCULUS</Button>
             </div>
         </div>
       )
     }
     return (
-      <div className="col-sm-12 mt-3">
+      <div className="col-12 mt-3">
         <div className="row">
-            <h1>Exponents</h1>
-        </div>
-        <div className="row">
-            <h2 className="text-center mt-4">Simple Powers</h2>
-                <p className="col-sm-12">Evaluate each exponential term for the given value.</p>
-        </div>
-        <div className="row">
-            <p className="col-sm-8 offset-2 text-center mt-2">
+            <p className="col-12 text-center fs-2 mt-2">
             <StaticMathField>{questionObject.functionLatex}</StaticMathField>
             </p>
         </div>
         <AnswerForm
             questionObj={questionObject}
         />
-        <div className="progressBar mt-4 mb-4 col-8 offset-2">
+        <div className="progressBar mt-4 mb-4 col-10 offset-1">
             <ProgressBar now={questionObject.progressBar} label={`${questionObject.progressBar}%`} max='100'/>
+        </div>
+        <div className="row">
+            <h4>EXPONENTS</h4>
+        </div>
+        <div className="row">
+            <p className="col-12 text-center">Evaluate each exponential term for the x-value provided.</p>
         </div>
       </div>
     )
 };
 
 function AnswerForm({questionObj}) {
+  const mathFieldRef = useRef(null);
+  
+  useEffect(() => {
+    if (mathFieldRef.current) {
+      mathFieldRef.current.focus();
+    }
+  }, []);
   console.dir(questionObj);
   const [userObj, setUserAnswer] = useState({
     userAnswer: '',
@@ -404,6 +409,13 @@ function AnswerForm({questionObj}) {
     return setUserAnswer((prev) => {
       return {...prev, ...value}
     });
+  }
+
+  const handleKeyDown = event => {
+    if (event.key == 'Enter') {
+      event.preventDefault();
+      handleSubmit(event);
+    }
   }
 
   function handleSubmit(event) {
@@ -417,28 +429,37 @@ function AnswerForm({questionObj}) {
     }
 
     let correctMessages = [
-      `Yes, ${questionObj.answer} is correct!`,
-      `Great, ${questionObj.answer} is a correct answer.`,
+      `Yes, that is correct!`,
+      `Great answer!`,
       `Exactly!`,
       `Yup, that's right . . .`,
-      `You got it! ${questionObj.answer} is right.`,
+      `You got it!`,
       `Boom!!`,
       `Ka-ching. that's right!`,
       `Exacto!`,
-      `Superb! ${questionObj.answer} is a correct answer`,
-      `Right on! ${questionObj.answer} is a correct answer`,
-      `Uh, huh, You got it. ${questionObj.answer} works.`,
-      `That's it. ${questionObj.answer} is right. Keep it up!`,
+      `Superb! That is a correct answer`,
+      `Right on! Correct answer!`,
+      `Uh, huh, You got it.`,
+      `That's it. Keep it up!`,
     ];
 
+    // let incorrectMessages = [
+    //   `Sorry, it's ${questionObj.answer}.`,
+    //   `${questionObj.answer} is the answer I was looking for.`,
+    //   `Not exactly. ${questionObj.answer} is a correct answer.`,
+    //   `You got this! ${questionObj.answer} is what I was looking for.`,
+    //   `This one was ${questionObj.answer}. You'll get the next one.`,
+    //   `I was thinking, ${questionObj.answer}, but no sweat. You'll get it.`,
+    //   `It's ${questionObj.answer}, but no worries, your moment is coming!`,
+    // ];
     let incorrectMessages = [
-      `Sorry, it's ${questionObj.answer}.`,
-      `${questionObj.answer} is the answer I was looking for.`,
-      `Not exactly. ${questionObj.answer} is a correct answer.`,
-      `You got this! ${questionObj.answer} is what I was looking for.`,
-      `This one was ${questionObj.answer}. You'll get the next one.`,
-      `I was thinking, ${questionObj.answer}, but no sweat. You'll get it.`,
-      `It's ${questionObj.answer}, but no worries, your moment is coming!`,
+      `Sorry, that's not the answer.`,
+      `That's not the answer we were looking for.`,
+      `Not exactly.`,
+      `That's not right, but you got this!`,
+      `You'll get the next one.`,
+      `Not exactly, but no sweat. You'll get it.`,
+      `Sorry, that's not it. But no worries, your moment is coming!`,
     ];
 
     let streakMessages = [
@@ -486,30 +507,33 @@ function AnswerForm({questionObj}) {
 
 
   return (
-    <div className="row col-sm-12">
     <form onSubmit={handleSubmit} method="post" action="#" role="form">
-      <div className="row col-sm-6 offset-4">    
-        <div className="col-sm-2">
+        <p className="col-12 text-center fs-2">
             <StaticMathField>{'f(' + questionObj.xValue + ') ='}</StaticMathField>
-        </div>
-        <div className="col-sm-4">
+        </p>
+        <div className="col-8 offset-2">
                 <EditableMathField
-                    className="form-control text-center"
+                    className="form-control text-center fs-3"
                     aria-describedby="answer input"
                     latex={userObj.userAnswer}
                     onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
+                    mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
+                    onKeyDown={handleKeyDown}
                 />
-        </div>
-            
-      </div>
-      <div className="row">
-        <p className="col-sm-12 text-center mt-3">{userObj.answerMessage}</p>
-      </div>
-      <div className="row">
-        <button type="submit" className="btn btn-success col-4 offset-4">SUBMIT</button>
-      </div>
+        </div>     
+        <p className="col-12 text-center mt-3">{userObj.answerMessage}</p>
+      
+        {/* <button type="submit" className="btn btn-success col-6 offset-3">SUBMIT</button> */}
+        <Button
+            variant="primary"
+            type="submit"
+            id="submitBtn"
+            size="lg"
+            className="col-6 offset-3" 
+          >
+            SUBMIT
+          </Button>
     </form>
-    </div>
   )
 }
 
