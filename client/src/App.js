@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState } from "react";
-import { Cookies, useCookies } from 'react-cookie';
+import { useCookies } from 'react-cookie';
 import './App.scss';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Protected from './components/Protected';
 import Navigation from "./components/navbar/navbar.component.navbar";
 import Splash from './components/splash.component.js';
@@ -34,6 +34,14 @@ import DerivativesTopics from './components/calculus/calculus.component.derivati
 import Markdown from './components/calculus/calculus.component.markdown';
 
 import UserProgress from './components/userInfo/userInfo.component.progress';
+import ClassProgress from './components/userInfo/userInfo.component.classProgress';
+
+import ManageClasses from './components/auth/manageClasses.component.auth';
+import CreateClass from './components/auth/createClass.component.auth';
+import ListClasses from './components/auth/listClasses.component.auth';
+import CreateTargets from './components/class/createTargets.component.class';
+import ViewClass from './components/class/viewClass.component.class';
+
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -46,7 +54,7 @@ function App() {
   const [cookies, setCookie, removeCookie] = useCookies(['cookies'])
   const [username, setUsername] = useState(cookies.username);
   var loggedIn = false;
-  if (username) {
+  if (username && username != 'undefined') {
     loggedIn = true;
   }
   console.log(cookies);
@@ -108,7 +116,7 @@ function App() {
           <Route path="/calculus"
                 element={
                   <Protected isSignedIn={loggedIn}>
-                    <Calculus />
+                    <Calculus username={username}/>
                   </Protected>
                 }
           />
@@ -154,7 +162,49 @@ function App() {
                   </Protected>
                 }
           />
-        </Routes>
+          <Route path="/classProgress"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ClassProgress username={username}/>
+                  </Protected>
+                }
+          />
+        <Route path="/manageClasses"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ManageClasses username={username}/>
+                  </Protected>
+                }
+          />                    
+          <Route path="/createClass"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <CreateClass username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/listClasses"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ListClasses username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/viewClass/:classCode"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ViewClass username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/createTargets"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <CreateTargets username={username}/>
+                  </Protected>
+                }
+          />                                                                                                              
+        </Routes>                  
       </div>
     </div>
   );

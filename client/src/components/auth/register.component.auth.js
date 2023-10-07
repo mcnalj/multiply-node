@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
 import './styles.component.auth.scss';
 import { config} from '../constants';
 var url = config.url.API_URL;
@@ -11,9 +10,10 @@ export default function SignUp({setCookie, setUsername})  {
       email: "",
       username: "",
       password: "",
+      role: "student",
+      classCode: "",
     });
-
-    const navigate = useNavigate();
+    const [responseMsg, setResponseMsg] = useState("");
 
     function updateForm(value) {
       return setForm((prev) => {
@@ -23,7 +23,7 @@ export default function SignUp({setCookie, setUsername})  {
 
     async function onSubmit(e) {
       e.preventDefault();
-
+      setResponseMsg("");
       // When a post request is sent to the create url, we'll add a new record to the database.
       const newUser = { ...form };
       const result = await fetch(`${url}/record/new-user`, {
@@ -38,14 +38,15 @@ export default function SignUp({setCookie, setUsername})  {
         return;
       });
       const answer = await result.json()
-      setCookie('username', answer.passportData.username);
-      setUsername(answer.passportData.username);
-  
-      if (answer.passportData.username) {
-        setForm({ firstName: "", lastName: "", email: "", username: "", password: ""});
-        navigate("/success"); // this looks for a route on the client
+      // console.log(answer.msg);
+      if (answer.success) {
+        // console.log(answer.passportData.username);
+        setCookie('username', answer.passportData.username);
+        setUsername(answer.passportData.username);
+        setForm({ firstName: "", lastName: "", email: "", username: "", password: "", classCode: ""});
+        //navigate("/success"); // this looks for a route on the client
       } else {
-        
+        setResponseMsg(answer.msg);
       }
     }
     return (
@@ -107,16 +108,28 @@ export default function SignUp({setCookie, setUsername})  {
               placeholder="Enter password"
             />
           </div>
+          <div className="mb-3">
+            <label htmlFor="classCode">Class Code</label>
+            <input
+              type="text"
+              className="form-control"
+              id="classCode"
+              value={form.classCode}
+              onChange={(e) => updateForm({classCode: e.target.value})}
+              placeholder="Enter class code"
+            />
+          </div>          
           <div className="d-grid">
             <button type="submit" className="btn btn-primary">
               Sign Up
             </button>
+            <p>{responseMsg}</p>
           </div>
           <p className="forgot-password text-right">
             Already registered <a href="/sign-in">sign in?</a>
           </p>
           <p>
-              Return to <a href="/">Splash</a>
+              Return to <a href="/">Home</a>
           </p>
         </form>
       </div>

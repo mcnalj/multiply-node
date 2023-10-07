@@ -156,7 +156,7 @@ export default function TopDerivatives({username}) {
 
 export function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
   let unit = "derivatives";
-  let standard = 7;
+  let standard = 8;
   
   const [topics, setTopics] = useState(
     {
@@ -181,7 +181,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
         "displayName": "The Power Rule (with Negative Exponents)",
         "description": "Practice taking the derivative of power functions.",
         "prompt": "Take the derivative of each power function.",
-        "standard": 7,
+        "standard": 8,
     }
   }
 
@@ -227,7 +227,8 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
           questionsCorrect: 0,
           questionsIncorrect: 0,
           questionsStreak: 0,
-          questionsToMeet: unitTopics[0].topicData.standard,
+          // questionsToMeet: unitTopics[0].topicData.standard,
+          questionsToMeet: 8,
           progressBar: 0,
           doneWithTopic: done,
           questionTopic: unitTopics[0].topicData.displayName,
@@ -255,13 +256,13 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
         questionsIncorrect: liftedState.questionsIncorrect,
         questionsStreak: liftedState.questionsStreak,
         questionsToMeet: questionState.questionsToMeet,
-        progressBar: Math.round((liftedState.questionsCorrect/questionState.questionsToMeet)*100),
+        // progressBar: Math.round((liftedState.questionsCorrect/questionState.questionsToMeet)*100),
+        progressBar: liftedState.progressValue,
         doneWithTopic: done,
         questionTopic: questionState.questionTopic,
         questionPrompt: questionState.questionPrompt,
       });
   }
-  // This is untested.
   async function done(liftedState){
     let topicName = '';
     const endTime = new Date()
@@ -273,9 +274,6 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       topicName = "errantName";
     }
     let sessionObj = {
-      // "username": username,
-      // "topicId": topicObj.topicId,
-      // "topicName": topicName,
       "metStandard": true,
       "questionsAttempted": liftedState.questionsAttempted,
       "questionsCorrect": liftedState.questionsCorrect,
@@ -349,7 +347,8 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     let questionTopic = questionTopics[unit].find((topic) => topic.topicId == topicId);
     let questionEngine = questionTopic.questionEngine;
     let topicArrayIndex = topics.topicsArray.findIndex((topic)=>topic.topicId==topicId);
-    let standard = (topics.topicsArray[topicArrayIndex].topicData.standard);
+    // let standard = (topics.topicsArray[topicArrayIndex].topicData.standard);
+    let standard = 8;
     let [questionLatex, answerLatex] = questionEngine();
     questionLatex = 'f(x) = ' + questionLatex;
     setCurrentTopic(topicId);
@@ -419,6 +418,7 @@ function AnswerForm(props) {
     correctAnswer: '',
     answerMessage: ''
   });
+  const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
 
   function updateSituation(value) {
     return setUserAnswer((prev) => {
@@ -441,6 +441,7 @@ function AnswerForm(props) {
       questionsCorrect: props.questionState.questionsCorrect,
       questionsStreak: props.questionState.questionsStreak,
       questionsIncorrect: props.questionState.questionsIncorrect,
+      progressValue: 0,
     }
 
     let correctMessages = [
@@ -469,13 +470,13 @@ function AnswerForm(props) {
     // ];
 
     let incorrectMessages = [
-      `Sorry, that's not the answer.`,
-      `That's not the answer we were looking for.`,
-      `Not exactly.`,
-      `That's not right, but you got this!`,
-      `You'll get the next one.`,
-      `Not exactly, but no sweat. You'll get it.`,
-      `Sorry, that's not it. But no worries, your moment is coming!`,
+      `Sorry, that's not the answer: `,
+      `That's not the answer we were looking for: `,
+      `Not exactly: `,
+      `That's not right, but you got this: `,
+      `You'll get the next one: `,
+      `Not exactly, but no sweat. You'll get it: `,
+      `Sorry, that's not it. But no worries, your moment is coming: `,
     ];
 
     let streakMessages = [
@@ -488,10 +489,12 @@ function AnswerForm(props) {
     ]
 
     let answerMessage = '';
-    if (userObj.userAnswer == props.questionState.answerLatex) {
+    let pause = 1500;
+    if (userObj.userAnswer === props.questionState.answerLatex) {
+        setBoxStyle({backgroundColor: "green", color:"white", borderWidth: "0px", borderColor: "gray"})
         stateToLift.questionsStreak = stateToLift.questionsStreak + 1;
         if (stateToLift.questionsStreak < 4) {
-          let index = getRandomIntInclusive(0, ((correctMessages.length)))
+          let index = getRandomIntInclusive(0, ((correctMessages.length)-1))
           answerMessage = correctMessages[index];
         } else {
           let index = stateToLift.questionsStreak - 4;
@@ -499,29 +502,51 @@ function AnswerForm(props) {
           if (index >= streakMessages.length) {
             stateToLift.questionsStreak = 0;
           }
-        }
+        }        
         stateToLift.questionsCorrect = stateToLift.questionsCorrect + 1;
-
-    } else {
-      let index = getRandomIntInclusive(0, ((incorrectMessages.length)))
+        if (stateToLift.questionsCorrect >= props.questionState.questionsToMeet) {
+          answerMessage = "Success! You met the standard. Go to the Next Topic . . ."
+          pause = 3000;
+        }
+        updateSituation({answerMessage: answerMessage, correctAnswer: ''})
+    } else {  // this is for an incorrect Message
+      pause = 4500;
+      setBoxStyle({backgroundColor:"white", color: "red", borderWidth: "2px", borderColor: "red"})
+      let index = getRandomIntInclusive(0, ((incorrectMessages.length)-1))
       answerMessage = incorrectMessages[index];
-
+      updateSituation({answerMessage: answerMessage, correctAnswer: props.questionState.answerLatex})
       stateToLift.questionsInorrect = stateToLift.questionsIncorrect + 1;
       stateToLift.questionsStreak = 0
     }
-    updateSituation({answerMessage: answerMessage, userAnswer: '', correctAnswer: props.questionState.answerLatex})
-    props.questionState.getNextQuestion(stateToLift);
-    if (stateToLift.questionsCorrect >= props.questionState.questionsToMeet) {
-      props.questionState.doneWithTopic(stateToLift);
-    }
+    stateToLift.progressValue = Math.round((stateToLift.questionsCorrect/props.questionState.questionsToMeet)*100)
+
+    setTimeout(function() {
+      setBoxStyle({backgroundColor:"white", color: "black", borderWidth: "0px", borderColor: "gray"})        
+      if (stateToLift.questionsCorrect >= props.questionState.questionsToMeet) {
+        props.questionState.doneWithTopic(stateToLift);
+        stateToLift.questionsAttempted = 0;
+        stateToLift.questionsCorrect = 0;
+        stateToLift.questionsIncorrect = 0;
+        stateToLift.questionsStreak = 0;
+        stateToLift.progressValue = 100;
+      }
+      updateSituation({answerMessage: '', userAnswer: '', correctAnswer: ''})
+      props.questionState.getNextQuestion(stateToLift);
+    }, pause)
   } // end of handleSubmit
+  // const answerBox = {
+  //   backGroundColor:"white",
+  //   color: "black"
+  // }
 
   return (
-    <form id="questionArea" onSubmit={handleSubmit} method="post" action="#" role="form" className="col-sm-10 offset-1 mt-4">
+    <form id="questionArea" onSubmit={handleSubmit} method="post" action="#" className="col-sm-10 offset-1 mt-4">
       <div className="col-8 offset-2">
           <EditableMathField
+            type="input"
             id="answerInput"
             className="form-control text-center fs-3"
+            style={boxStyle}
             aria-describedby="answer input"
             latex={userObj.userAnswer}
             // value={userObj.userAnswer} // does nothing?
@@ -530,8 +555,8 @@ function AnswerForm(props) {
             mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
             onKeyDown={handleKeyDown}
           />
-      </div>      
-      <p id="answerFeedback" className="col-12 text-center">{userObj.answerMessage}</p>
+      </div>
+      <p id="answerFeedback" className="col-12 text-center mt-2">{userObj.answerMessage}<StaticMathField>{userObj.correctAnswer}</StaticMathField></p>   
       <Button
         variant="primary"
         type="submit"

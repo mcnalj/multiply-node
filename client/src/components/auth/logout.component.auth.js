@@ -22,7 +22,6 @@ export default function LogOut({setUsername, removeCookie })  {
             const responseData = await response.json();
             setUsername("");
             removeCookie('username');
-            console.log(responseData.msg);
             navigate("/")
         } catch(error) {
             setError('logout failed.');

@@ -1,9 +1,7 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import './styles.component.navbar.scss';
 
 // export default function Navbar1() {
@@ -52,7 +50,7 @@ export default function Navigation({username, loggedIn}) {
               
             </Nav>
             <Nav>
-              <Nav.Link className="nav-text" href="/">{username}</Nav.Link>
+              <Nav.Link className="nav-text" href="/manageClasses">{username}</Nav.Link>
               <Nav.Link className="nav-text" href="/userProgress">{loggedIn ? "Progress" : ""}</Nav.Link>
               <Nav.Link className="nav-text" href={loggedIn ? "/logout" : "/login"}>{loggedIn ? "Logout" : "Login" }</Nav.Link>
             </Nav>

@@ -1,10 +1,36 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 // import './styles.component.auth.scss';
 import { config} from '../constants';
+import Table from 'react-bootstrap/Table';
 var url = config.url.API_URL;
 
-export default function UserProgress({username})  {
+export default function ClassProgress({username})  {
+    const exponentsSkills = [
+        {skillId: 10, skillName: "Simple Exponents"},
+        {skillId: 20, skillName: "Negative Exponents"},
+        {skillId: 30, skillName: "Fractional Exponents"},
+        {skillId: 40, skillName: "Negative Fractional Exponents"},
+        {skillId: 50, skillName: "Exponents Mix"},
+    ]
+    const derivativesSkills = [
+        {skillId: 100, skillName: "Power Rule"},
+        {skillId: 103, skillName: "Integer Coef"},
+        {skillId: 105, skillName: "Fractional Coef"},
+        {skillId: 110, skillName: "Negative Exponents"},
+        {skillId: 113, skillName: "Neg Exp + Int Coef"},
+        {skillId: 115, skillName: "Neg Exp + Frac Coef"},
+        {skillId: 120, skillName: "Fractional Exponents"},
+        {skillId: 123, skillName: "Frac Exp +  Int Coef"},
+        {skillId: 125, skillName: "Frac Exp + Frac Coef"},
+        {skillId: 130, skillName: "Neg Frac Exp"},
+        {skillId: 133, skillName: "Neg Frac Exp + Int Coef"},
+        {skillId: 135, skillName: "Neg Frac Exp + Frac Coef"},
+        {skillId: 140, skillName: "Power Rule Mix"},
+    ]
     const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: []});
+    const [questionList, setQuestionList] = useState([]);
+    const [usersData, setUsersData] = useState([]);
     useEffect(()=> {    
         fetchUserData();
     }, []);
@@ -13,7 +39,7 @@ export default function UserProgress({username})  {
         let data = {};
         let exponentsDataArray = [];
         let derivativesDataArray = [];
-        const result = await fetch(`${url}/users/userProgress`, {
+        const result = await fetch(`${url}/users/classProgress`, {
             method: "GET",
             mode: 'cors',
             credentials: 'include',
@@ -22,8 +48,8 @@ export default function UserProgress({username})  {
             }
         })
         .catch(error => {
-        console.error(error);
-        return;
+            console.error(error);
+            return;
         });
         data = await result.json()
         if (data.exponents) {
@@ -53,8 +79,15 @@ export default function UserProgress({username})  {
                 }
                 derivativesDataArray.push(dataObject);
             }
-        }        
+        }
+        const questionTopics = data.questionTopics;
         setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray});
+        let questionList = []
+        for (let i = 0; i < questionTopics.derivatives.length; i++) {
+            questionList.push(questionTopics.derivatives[i].topicName);
+        }         
+        setQuestionList([questionList]);
+        setUsersData(data.usersData);
         return
     }
 
@@ -78,8 +111,10 @@ export default function UserProgress({username})  {
         return dayMonth;
     }
 
+    const navigate = useNavigate();
+
     {
-        if (userData.exponentsDataArray.length === 0 && userData.derivativesDataArray.length === 0) {
+        if (userData.length === 0) {
             return (
                 <div>
                     <p className="m-5">Sorry, there is no progress data for user: <strong>{username}</strong>.</p>
@@ -90,81 +125,41 @@ export default function UserProgress({username})  {
                 <div>
                   <style type="text/css">
                       {`
-                          #tableHeading {
+                          th {
                               font-size: 0.6rem;
                               font-weight: bold;
                           }
-                          .tableData {
+                          tr {
                               font-size: 0.6rem;
                           }
                       `}
                   </style>
-                  <p>Progress for {username}:</p>
-                  <div>
-                    <p>Exponents</p>
-                      <div id="tableHeading" className="row tableHeading">
-                          <p className="col-4">SKILL</p>
-                          <p className="col-2">CORRECT</p>
-                          <p className="col-2">ATTEMPTED</p>
-                          <p className="col-2">STREAK</p>
-                          <p className="col-1">TIME</p>
-                          <p className="col-1">DATE</p>
-                      </div>           
-                      {userData.exponentsDataArray.map((datum) => (
-                          <div className="row tableData" key={datum.keyId}>
-                              <p className="col-4">
-                                  {datum.skill}
-                              </p>
-                              <p className="col-2">
-                                  {datum.correct}
-                              </p>
-                              <p className="col-2">
-                                  {datum.attempted}
-                              </p>
-                              <p className="col-2">
-                                  {datum.streak}
-                              </p>   
-                              <p className="col-1">
-                                  {datum.time}
-                              </p>
-                              <p className="col-1">
-                                  {datum.date}
-                              </p>
-                          </div>
-                      ))}
-                    <p>Derivatives</p>
-                      <div id="tableHeading" className="row tableHeading">
-                          <p className="col-4">SKILL</p>
-                          <p className="col-2">CORRECT</p>
-                          <p className="col-2">ATTEMPTED</p>
-                          <p className="col-2">STREAK</p>
-                          <p className="col-1">TIME</p>
-                          <p className="col-1">DATE</p>
-                      </div>           
-                      {userData.derivativesDataArray.map((datum) => (
-                          <div className="row tableData" key={datum.keyId}>
-                              <p className="col-4">
-                                  {datum.skill}
-                              </p>
-                              <p className="col-2">
-                                  {datum.correct}
-                              </p>
-                              <p className="col-2">
-                                  {datum.attempted}
-                              </p>
-                              <p className="col-2">
-                                  {datum.streak}
-                              </p>   
-                              <p className="col-1">
-                                  {datum.time}
-                              </p>
-                              <p className="col-1">
-                                  {datum.date}
-                              </p>
-                          </div>
-                      ))}
-
-                  </div>
+                  <p>Progress for Class:</p>
+                  <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                        <th>USER</th>
+                        <th>Logins</th>
+                        <th>Questions</th>
+                        {derivativesSkills.map((skill) => (
+                                <th key={skill.skillId}>{skill.skillName}</th>
+                            ))
+                        }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {usersData.map((user) => (
+                            <tr key={user.username}>
+                                <td>{user.username}</td>
+                                <td>{user.logins}</td>
+                                <td>{user.totalQuestions}</td>
+                                {user.userSuccessArray.map((success) =>(
+                                    <td>{success}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                  </Table>
                 </div>
               );
         }

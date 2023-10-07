@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from "react";
-
-import { Cookies, useCookies } from 'react-cookie';
-
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import './styles.component.auth.scss';
 
@@ -11,14 +8,15 @@ var url = config.url.API_URL;
 export default function Login({setCookie, setUsername})  {
   const [form, setForm] = useState({
     username: "",
-    password: ""
+    password: "",
+    classCode: "",
   });
 
   // const [cookies, setCookie] = useCookies(['username'])
   // const [cookies, setCookie] = useState({
   //   username: ""
   // })
-  var myCookie = "";
+
   const navigate = useNavigate();
 
   function updateForm(value) {
@@ -91,20 +89,27 @@ export default function Login({setCookie, setUsername})  {
       return;
     });
     const answer = await response.json();
-    // If login doesn't work we get an error here because username is undefined.
-    setCookie('username', answer.username);
-    setUsername(answer.username);
-
-    const allCookies = new Cookies();
-    myCookie = allCookies.get('username');
-
     setForm({ username: "", password: ""});
-   if (myCookie) {
-     navigate("/success");
-   }
-   else {
-     navigate("/");
-   }
+    if (answer.success) {
+      setCookie('username', answer.username);
+      setUsername(answer.username);
+      navigate("/success");
+    } else {
+      navigate("/");
+    }
+    // setCookie('username', answer.username);
+    // setUsername(answer.username);
+
+    // const allCookies = new Cookies();
+    // myCookie = allCookies.get('username');
+
+  //   setForm({ username: "", password: ""});
+  //  if (myCookie) {
+  //    navigate("/success");
+  //  }
+  //  else {
+  //    navigate("/");
+  //  }
   }
 
 // the remember me checkbox is not wired up

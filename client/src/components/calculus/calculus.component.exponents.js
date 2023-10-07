@@ -43,7 +43,7 @@ export default function Exponents({username}) {
       let min = 1;
       typeOfExponent == "positive" ? min = 0 : min = 1;
 
-      const rando = getRandomIntInclusive(min,19)
+      const rando = getRandomIntInclusive(min,19);
       let power = 2;
       let functionLatex = 'f(x) = x^0';
       if (rando < 11) {
@@ -102,13 +102,15 @@ export default function Exponents({username}) {
         let xChoice = 2;
         if (typeOfExponent == "positive" || typeOfExponent == "negative") {
           if (power == 2) {
-              xValue = getRandomIntInclusive(2, 9);
+            xValue = getRandomIntInclusive(2, 9);
           } else if (power == 3) {
-              xValue = getRandomIntInclusive(2, 5);
+            xValue = getRandomIntInclusive(2, 5);
           }  else if (power == 4) {
-              xValue = getRandomIntInclusive(2, 3);
+            xValue = getRandomIntInclusive(2, 3);
           } else if (power == 5) {
-              xValue = 2;
+            xValue = 2;
+          } else if (power == 0) {
+            xValue = getRandomIntInclusive(2, 9);
           }
         } else if (typeOfExponent == "fractional" || typeOfExponent == "negativeFractional"){
           if (power == 2) {
