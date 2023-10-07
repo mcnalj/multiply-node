@@ -110,7 +110,9 @@ app.use(express.static('../client/build'));
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const routesRecord = require('./routes/record');
+const classRouter = require('./routes/class');
 const quizRouter = require('./routes/quiz');
+
 // const { ExtractJwt } = require('passport-jwt');
 
 
@@ -118,6 +120,7 @@ const quizRouter = require('./routes/quiz');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/record', routesRecord);
+app.use('/class', classRouter);
 app.use('/quiz', quizRouter);
 
 app.get('/*', function(req, res) {

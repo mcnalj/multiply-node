@@ -131,7 +131,7 @@ recordRoutes.route("/login-user").get(function(req, res) {
   // console.log("This is the login-user get. We get here from failureRedirect");
   // console.log("This is req.user: " + req.user);
   // console.dir(req.user);
-  res.json({msg: "Not logged in."});
+  res.json({msg: "Not logged in.", success: false});
 });
 
 recordRoutes.route("/login-user").post(passport.authenticate('local', {
@@ -237,14 +237,20 @@ passport.use(new LocalStrategy(async function verify(username, password, cb) {
 // });
   
   recordRoutes.route("/new-user").post(async function (req, res) {
-    const { firstName, lastName, email, username, password} = req.body;
+    const { firstName, lastName, email, username, password, classCode, role} = req.body;
     const existingUser = await dbo.client.db("employees")
            .collection("users")
            .findOne({username: username});
     if (existingUser) {
-      return res.json({msg: 'Username already exists'});
+      return res.json({msg: 'Username already exists', success:false});
     }
     try {
+      const classInfo = await dbo.client.db("employees")
+      .collection("classes")
+      .findOne({classCode: classCode});
+      if (!classInfo) {
+        return res.json({msg: 'Sorry, I could not find that class code.', success:false});
+      }
       const hashedPassword = await bcrypt.hash(password, 8)
       const userRecord = await dbo.client.db("employees")
             .collection("users").insertOne(
@@ -254,6 +260,9 @@ passport.use(new LocalStrategy(async function verify(username, password, cb) {
                 email: email,
                 username: username,
                 password: hashedPassword,
+                role: "student",
+                classMemberships: [classCode],
+                classOwnerships: []
               });        
       const passportId = userRecord.insertedId.toString()
       // const passportUser = {
@@ -264,6 +273,7 @@ passport.use(new LocalStrategy(async function verify(username, password, cb) {
       let userDataObj = {
         username: username,
         joinedDate: new Date(),
+        classMemberships: [classCode],
         loginCount: 0,
         lastLogin: 0,
         currentLoginTime: 0,
@@ -273,23 +283,28 @@ passport.use(new LocalStrategy(async function verify(username, password, cb) {
       let userSession = await dbo.client.db("employees")
       .collection("userData")
       .insertOne(userDataObj);
+      // check for errors inserting userSession
+      let addToClass = await dbo.client.db("employees")
+      .collection("classes")
+      .updateOne({ classCode: classCode }, { $addToSet:{classMembers: username} })
       req.login({_id:passportId, username:username},async function(err) {
         if (err) {
           console.error(err);
-          res.redirect("login-user");
+          res.redirect("login-user"); //returns the msg "Not logged in." from login-user
         } else {
           const passportData = req.session.passport.user;
           let updateSuccess = await dbo.client.db("employees")
           .collection("userData")
           .updateOne({username: username}, {$set:{currentLoginTime: new Date(), loginCount: 1}});
     
-          res.json({passportData});
+          res.json({passportData, success: true});
           //res.redirect("success"); // this looks for a route on the server
         }
       })  
     } catch {
       // console.log("There was an error on hashing or insertion.");
-      res.redirect("login-user");
+      //res.redirect("login-user");
+      res.json({msg: "Sorry, error creating user", success:false})
     }
   })
 
@@ -357,6 +372,32 @@ recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, 
   res.send({msg:msg, success: success});
 });
 
+// we should make the classTeacher always have to be the logged in user
+recordRoutes.route("/create-class").post(checkAuthenticated, async function (req, res) {
+  const { className, classDescription, classTeacher, classCode} = req.body;
+  const creatingTeacher = await dbo.client.db("employees")
+         .collection("users")
+         .findOne({username: classTeacher});
+  if (!creatingTeacher) {
+    return res.json({msg: 'Sorry, the class teacher you submitted does not exist.', success: false});
+  }
+  try {
+    const userRecord = await dbo.client.db("employees")
+          .collection("classes").insertOne(
+            {
+              className: className,
+              classDescription: classDescription,
+              classTeacher: classTeacher,
+              classCode: classCode,
+              classMembers: []
+            });
+    return res.json({msg: 'Success! Your class was created.', success: true})      
+  } catch(error) {
+    console.error('Error creating instructional class:', error);
+    return res.json({msg: 'Sorry, there was an error creating that class', success: false})
+  }
+})
+
 // derivative routes
 recordRoutes.route("/topic/:unitName").get(async function (req, response) {
   let projection = { _id: false, unitTopics: true}
@@ -369,6 +410,35 @@ recordRoutes.route("/topic/:unitName").get(async function (req, response) {
   });
   response.json(results);
 });
+
+recordRoutes.route("/listClasses").post(async function (req, response) {
+  const user = req.session.passport.user.username;
+  // let query = { classMembers: user};
+  // try {
+  //   let usersData = [];
+  //   let results = dbo.client.db("employees")
+  //     .collection("classes")
+  //     .find(query)    
+  //   for await (const result of results) {
+  //     usersData.push(result);
+  //   }
+  //   console.log(usersData);
+  //   response.json({usersData: usersData});
+  let query = { username: user};
+  try {
+    let usersData = [];
+    let results = await dbo.client.db("employees")
+      .collection("users")
+      .findOne(query)
+    usersData = results.classMemberships;      
+    response.json({usersData: usersData});
+
+  } catch(error) {
+    console.error("Error fetching progress:", error);
+    response.json({usersData: null})
+  }
+});
+
 
 module.exports = recordRoutes;
 
