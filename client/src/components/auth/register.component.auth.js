@@ -24,7 +24,6 @@ export default function SignUp({setCookie, setUsername})  {
     async function onSubmit(e) {
       e.preventDefault();
       setResponseMsg("");
-      // When a post request is sent to the create url, we'll add a new record to the database.
       const newUser = { ...form };
       const result = await fetch(`${url}/record/new-user`, {
         method: "POST",
@@ -38,7 +37,6 @@ export default function SignUp({setCookie, setUsername})  {
         return;
       });
       const answer = await result.json()
-      // console.log(answer.msg);
       if (answer.success) {
         // console.log(answer.passportData.username);
         setCookie('username', answer.passportData.username);
@@ -50,7 +48,9 @@ export default function SignUp({setCookie, setUsername})  {
       }
     }
     return (
-      <div className="auth-inner">
+      <div className="col-12">
+      <div className="row">
+        <div className="auth-inner mt-2 p-3 p-sm-5 col-10 offset-1 col-sm-8 offset-sm-2 col-md-6 offset-md-3">
         <form onSubmit={onSubmit}>
           <h3>Sign Up</h3>
             <div className="mb-3">
@@ -121,17 +121,19 @@ export default function SignUp({setCookie, setUsername})  {
           </div>          
           <div className="d-grid">
             <button type="submit" className="btn btn-primary">
-              Sign Up
+              SIGN UP
             </button>
             <p>{responseMsg}</p>
           </div>
-          <p className="forgot-password text-right">
+          {/* <p className="forgot-password text-right">
             Already registered <a href="/sign-in">sign in?</a>
-          </p>
+          </p> */}
           <p>
-              Return to <a href="/">Home</a>
+              <a href="/">HOME</a>
           </p>
         </form>
+      </div>
+      </div>
       </div>
     );
 }

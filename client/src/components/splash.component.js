@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button'
 export default class Splash extends Component {
     render() {
         return (
-            <div>
+            <div className="col-12">
                 <h3 className="mt-3">Calculus Class</h3>
                 <div>
                     <NavLink to="/login">
@@ -17,12 +17,13 @@ export default class Splash extends Component {
                         >Login
                         </Button>
                     </NavLink>
+                    <br></br>
                     <NavLink to="/register">
                         <Button
                             variant="primary"
                             type="submit"
                             id="submitBtn"
-                            size="lg"  
+                            size="lg"
                         >Register
                         </Button>
                     </NavLink><br /><br />

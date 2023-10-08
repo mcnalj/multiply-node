@@ -6,21 +6,25 @@ var url = config.url.API_URL;
 
 export default function ManageClasses({username}) {
     return (
-        <div className="auth-inner">
-            <div>
-                <h1>Manage Classes</h1>
-            </div>
-            <ClassList
-                username={username}
-            />
+        <div className="col-12">
+            <div className="row">
+                <div className="auth-inner mt-2 p-3 p-sm-5 col-10 offset-1 col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+                    <div>
+                        <h1>Manage Classes</h1>
+                    </div>
+                    <ClassList
+                        username={username}
+                    />
 
-            <div>
-                {/* <NavLink to="/createClass">
-                    <Button type="button" variant="primary" size="lg">Create a Class</Button><br /><br />
-                </NavLink> */}
-                <NavLink to="/success">
-                    <Button className="mt-3" type="button" variant="primary" size="lg">Home</Button>
-                </NavLink>
+                    <div>
+                        {/* <NavLink to="/createClass">
+                            <Button type="button" variant="primary" size="lg">Create a Class</Button><br /><br />
+                        </NavLink> */}
+                        <NavLink to="/success">
+                            <Button className="mt-3" type="button" variant="primary" size="lg">Home</Button>
+                        </NavLink>
+                    </div>
+                </div>
             </div>
         </div>
     );

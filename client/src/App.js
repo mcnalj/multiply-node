@@ -64,12 +64,12 @@ function App() {
   // console.log(myCookie);
   // setUsername(myCookie);
   return (
-    <div className="App">
+    <div className="App text-center">
       <Navigation 
         username={username}
         loggedIn={loggedIn}
       />
-      <div className="appContent">
+      <div className="appContent container-fluid m-0 p-0">
         <Routes>
           <Route exact path="/" element={<Splash />} />
           <Route path="/success" element={<Success />} />

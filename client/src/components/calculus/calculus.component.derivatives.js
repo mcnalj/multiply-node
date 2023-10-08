@@ -181,7 +181,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
         "displayName": "The Power Rule (with Negative Exponents)",
         "description": "Practice taking the derivative of power functions.",
         "prompt": "Take the derivative of each power function.",
-        "standard": 8,
+        "standard": 7,
     }
   }
 
@@ -228,7 +228,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
           questionsIncorrect: 0,
           questionsStreak: 0,
           // questionsToMeet: unitTopics[0].topicData.standard,
-          questionsToMeet: 8,
+          questionsToMeet: 7,
           progressBar: 0,
           doneWithTopic: done,
           questionTopic: unitTopics[0].topicData.displayName,
@@ -348,7 +348,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     let questionEngine = questionTopic.questionEngine;
     let topicArrayIndex = topics.topicsArray.findIndex((topic)=>topic.topicId==topicId);
     // let standard = (topics.topicsArray[topicArrayIndex].topicData.standard);
-    let standard = 8;
+    let standard = 7;
     let [questionLatex, answerLatex] = questionEngine();
     questionLatex = 'f(x) = ' + questionLatex;
     setCurrentTopic(topicId);
@@ -380,27 +380,28 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
   }
 
   return (
-    <div className="col-12">
-      <p id="prompt" className="col-sm-8 offset-2 text-center mt-4 fs-4">
-        <StaticMathField>{ questionState.questionLatex }</StaticMathField>
-      </p>
-      <p id="prompt" className="col-sm-8 offset-2 text-center mt-1 fs-4">
-        <StaticMathField>f'(x) = </StaticMathField>
-      </p>
+    <>
+      <div className="row">
+        <div className="col-12">
+          <ProgressBar variant="primary3x^2" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-12 mt-2 fs-2">
+            <StaticMathField>{ questionState.questionLatex }</StaticMathField>
+        </div> 
+      </div>
       <AnswerForm
           questionState={questionState}
       />
-      <div className="progressBar mt-4 mb-4 col-8 offset-2">
-        <ProgressBar now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
+      <Link to="/derivativesTopics">
+        <button type="button" className="btn btn-lg btn-success mt-3">OTHER TOPICS</button><br /><br />
+      </Link>
+      <h2 className="text-center">{questionState.questionTopic}</h2>
+      <div className="row">
+        <p className="col-12">{questionState.questionPrompt}</p>
       </div>
-      <div>
-        <h2 className="text-center mt-4">{questionState.questionTopic}</h2>
-        <p id="instructions" className="col-sm-12">{questionState.questionPrompt}</p>
-        <Link to="/derivativesTopics">
-          <button type="button" className="btn btn-lg btn-success">Back to Topics</button><br /><br />
-        </Link>
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -510,7 +511,7 @@ function AnswerForm(props) {
         }
         updateSituation({answerMessage: answerMessage, correctAnswer: ''})
     } else {  // this is for an incorrect Message
-      pause = 4500;
+      pause = 4000;
       setBoxStyle({backgroundColor:"white", color: "red", borderWidth: "2px", borderColor: "red"})
       let index = getRandomIntInclusive(0, ((incorrectMessages.length)-1))
       answerMessage = incorrectMessages[index];
@@ -540,31 +541,48 @@ function AnswerForm(props) {
   // }
 
   return (
-    <form id="questionArea" onSubmit={handleSubmit} method="post" action="#" className="col-sm-10 offset-1 mt-4">
-      <div className="col-8 offset-2">
-          <EditableMathField
-            type="input"
-            id="answerInput"
-            className="form-control text-center fs-3"
-            style={boxStyle}
-            aria-describedby="answer input"
-            latex={userObj.userAnswer}
-            // value={userObj.userAnswer} // does nothing?
-            // placeholder={userObj.userAnwer} //does nothing?
-            onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
-            mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
-            onKeyDown={handleKeyDown}
-          />
+    <div className="row">
+      <div className="col-12 m-0 p-0 mt-3">
+        <div className="row">
+          <div className="col-12 text-center m-0 p-0">
+            <p id="answerFeedback">{userObj.answerMessage}<StaticMathField>{userObj.correctAnswer}</StaticMathField></p>   
+          </div>
+        </div>
+        <form id="questionArea" onSubmit={handleSubmit} method="post" action="#">
+          <div className="row">
+            <div className="col-4 fs-2 text-end m-0 p-0">
+                <StaticMathField>f'(x) = </StaticMathField>
+            </div>
+            <div className="col-5 m-0 p-0">
+                <EditableMathField
+                  type="input"
+                  id="answerInput"
+                  className="form-control text-center fs-3"
+                  style={boxStyle}
+                  aria-describedby="answer input"
+                  latex={userObj.userAnswer}
+                  // value={userObj.userAnswer} // does nothing?
+                  // placeholder={userObj.userAnwer} //does nothing?
+                  onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
+                  mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
+                  onKeyDown={handleKeyDown}
+                />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-12 mt-4">
+              <Button
+                variant="primary"
+                type="submit"
+                size="lg" 
+              >
+                SUBMIT
+              </Button>
+            </div>
+          </div>
+        </form>
       </div>
-      <p id="answerFeedback" className="col-12 text-center mt-2">{userObj.answerMessage}<StaticMathField>{userObj.correctAnswer}</StaticMathField></p>   
-      <Button
-        variant="primary"
-        type="submit"
-        size="lg" 
-      >
-        SUBMIT
-      </Button>
-    </form>
+    </div>
   )
 }
 

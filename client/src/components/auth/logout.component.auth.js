@@ -29,11 +29,15 @@ export default function LogOut({setUsername, removeCookie })  {
     }
     
     return (
-        <div className="auth-inner">
-            <div>
-                <Button variant="info" onClick={handleClick}>Logout</Button>
+        <div className="col-12">
+            <div className="row">
+                <div className="auth-inner mt-2 p-3 p-sm-5 col-10 offset-1 col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+                    <div>
+                        <Button variant="info" onClick={handleClick}>Logout</Button>
+                    </div>
+                        { error ? (<p>An error ocurred: {error}</p>) : (<p></p>)}
+                </div>
             </div>
-            { error ? (<p>An error ocurred: {error}</p>) : (<p></p>)}
         </div>
     )
 };

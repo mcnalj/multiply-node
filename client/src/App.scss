@@ -49,7 +49,8 @@ $warning: yellow;
 $info: $purpleGray; // progress and score (dark blue), maybe text, maybe html
 $light: $slateGray;  // sand tan
 // $dark: $brownThatGivesWeightToLightPurple; // nav background
-$dark: #332E33;
+// $dark: #332E33;
+$dark: Gray;
 $white: $textWhite;
 $background: #003348;
 $color: $textWhite;
@@ -70,7 +71,7 @@ $paleLimeBackground: #38AD47;
 // $white: white;
 
 .App {
-  text-align: center;
+  // text-align: center;
 }
 
 // .App-header {
@@ -92,7 +93,6 @@ $paleLimeBackground: #38AD47;
 .appContent {
   background: #A5FEAD !important;
   min-height: 100vh;
-  display: flex;
   font-weight: 400;
   font-family: 'Fira Sans', sans-serif;
 }
