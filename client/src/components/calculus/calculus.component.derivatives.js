@@ -415,7 +415,7 @@ function AnswerForm(props) {
   }, []);
 
   const [userObj, setUserAnswer] = useState({
-    userAnswer: '\\3x^2',
+    userAnswer: '3x^2',
     correctAnswer: '',
     answerMessage: ''
   });

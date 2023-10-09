@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import { useCookies } from 'react-cookie';
 import { config} from '../constants';
 var url = config.url.API_URL;
 

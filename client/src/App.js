@@ -42,6 +42,8 @@ import ListClasses from './components/auth/listClasses.component.auth';
 import CreateTargets from './components/class/createTargets.component.class';
 import ViewClass from './components/class/viewClass.component.class';
 
+import TrigonometricFunctions from './components/calculus/trigonometricFunctions.component.calculus';
+
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -203,7 +205,14 @@ function App() {
                     <CreateTargets username={username}/>
                   </Protected>
                 }
-          />                                                                                                              
+          />
+          <Route path="/trigonometricFunctions"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <TrigonometricFunctions username={username} />
+                  </Protected>
+                } 
+          />                                                                                                            
         </Routes>                  
       </div>
     </div>
