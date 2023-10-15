@@ -42,6 +42,7 @@ import ListClasses from './components/auth/listClasses.component.auth';
 import CreateTargets from './components/class/createTargets.component.class';
 import ViewClass from './components/class/viewClass.component.class';
 
+import TrigonometricTopics from './components/calculus/trigonometricTopics.component.calculus';
 import TrigonometricFunctions from './components/calculus/trigonometricFunctions.component.calculus';
 
 
@@ -206,7 +207,14 @@ function App() {
                   </Protected>
                 }
           />
-          <Route path="/trigonometricFunctions"
+          <Route path="/trigonometricTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <TrigonometricTopics username={username}/>
+                  </Protected>
+                }
+          />          
+          <Route path="/trigonometricFunctions/:topic"
                 element={
                   <Protected isSignedIn={loggedIn}>
                     <TrigonometricFunctions username={username} />

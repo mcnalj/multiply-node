@@ -25,6 +25,10 @@ export default function Calculus({username}) {
                 <NavLink to="/derivativesTopics">
                     <Button type="button" variant="primary" size="lg">Derivatives</Button>
                 </NavLink>
+                <br /><br />
+                <NavLink to="/trigonometricFunctions">
+                    <Button type="button" variant="primary" size="lg">Trigonometric Functions</Button>
+                </NavLink>
                 {/* <NavLink to="/markdown">
                     <Button type="button" variant="primary" size="lg">Markdown</Button>
                 </NavLink> */}
