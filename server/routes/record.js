@@ -470,6 +470,31 @@ recordRoutes.route("/listClasses").post(async function (req, response) {
   }
 });
 
+recordRoutes.route("/skillsCompleted").post(async function (req, response) {
+  const user = req.session.passport.user.username;
+  console.log(user);
+  let query = { username: user };
+  let options = {projection: { progress: 1 }};
+
+  try {
+    let usersData = [];
+    let results = await dbo.client.db("employees")
+      .collection("userData")
+      .findOne(query, options)
+    usersData = results.progress.calculus.derivatives.skillData;
+    completedSkillsArray = [];
+    usersData.forEach(element => {
+      if (!completedSkillsArray.includes(element.skill)) {
+        completedSkillsArray.push(element.skill);
+      }
+    })     
+    response.json({completedSkillsArray: completedSkillsArray});
+
+  } catch(error) {
+    console.error("Error fetching completed skills:", error);
+    response.json({completedSkillsArray: null})
+  }
+});
 
 module.exports = recordRoutes;
 

@@ -11,7 +11,7 @@ export default function TrigonometricTopics() {
             </div>
             <div style={{display: "block"}} className="m-2">
                 <NavLink to="/trigonometricFunctions/1000" >
-                    <Button variant="primary" className="m-3">Essential Units Circle Facts</Button>
+                    <Button variant="primary" className="m-3">Essential Unit Circle</Button>
                 </NavLink>
         
                 <NavLink to="/trigonometricFunctions/1010" >
@@ -22,7 +22,20 @@ export default function TrigonometricTopics() {
                     <Button variant="primary" className="m-2">The Full Unit Circle</Button>
                 </NavLink>
 
+                <NavLink to="/trigonometricDerivatives/400" >
+                    <Button variant="primary" className="m-2">Trig Derivatives</Button>
+                </NavLink>
+
+                <NavLink to="/trigonometricDerivatives/410" >
+                    <Button variant="primary" className="m-2">Chain Rule Trig Derivatives</Button>
+                </NavLink>
             </div>
+            <div className="row fs-6">
+                <p>Practice with the triangle helper.</p>
+                <p>Get 12 correct without the triangle helper to meet.</p>
+                <p>Type \sqrt and then a number to get the radical symbol</p>
+                <p>Make sure you move out of the radical and enter / to go to the denominator.</p>
+            </div>                      
         </div>
         </div>
     );

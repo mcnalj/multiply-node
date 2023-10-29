@@ -26,8 +26,12 @@ export default function Calculus({username}) {
                     <Button type="button" variant="primary" size="lg">Derivatives</Button>
                 </NavLink>
                 <br /><br />
-                <NavLink to="/trigonometricFunctions">
-                    <Button type="button" variant="primary" size="lg">Trigonometric Functions</Button>
+                <NavLink to="/trigonometricTopics">
+                    <Button type="button" variant="primary" size="lg">Trigonometric</Button>
+                </NavLink>
+                <br /><br />
+                <NavLink to="/naturalTopics">
+                    <Button type="button" variant="primary" size="lg">Natural Exponential/Log</Button>
                 </NavLink>
                 {/* <NavLink to="/markdown">
                     <Button type="button" variant="primary" size="lg">Markdown</Button>

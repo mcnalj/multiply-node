@@ -44,6 +44,10 @@ import ViewClass from './components/class/viewClass.component.class';
 
 import TrigonometricTopics from './components/calculus/trigonometricTopics.component.calculus';
 import TrigonometricFunctions from './components/calculus/trigonometricFunctions.component.calculus';
+import TrigonometricDerivatives from './components/calculus/trigonometricDerivatives.component.calculus';
+
+import NaturalTopics from './components/calculus/naturalTopics.component.calculus';
+import NaturalDerivatives from './components/calculus/naturalDerivatives.component.calculus';
 
 
 function App() {
@@ -221,7 +225,28 @@ function App() {
                   </Protected>
                 } 
           />                                                                                                            
-        </Routes>                  
+          <Route path="/trigonometricDerivatives/:topic"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <TrigonometricDerivatives username={username} />
+                    </Protected>
+                  } 
+          />
+          <Route path="/naturalTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <NaturalTopics username={username}/>
+                  </Protected>
+                }
+          />                    
+          <Route path="/naturalDerivatives/:topic"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <NaturalDerivatives username={username} />
+                    </Protected>
+                  } 
+          />                                                                                                            
+          </Routes>                                    
       </div>
     </div>
   );

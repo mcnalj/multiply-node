@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, NavLink } from "react-router-dom";
-import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
+import { ProgressBar, Button, Form} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill';
 import {
     getRandomIntInclusive,
@@ -56,7 +56,7 @@ const questionTopics = {
     ]
 }
 
-function UnitCircle({username, pointChoice}) {
+function UnitCircle({username, pointChoice, hideTriangle}) {
 
     const svgWidth = 400;
     const svgHeight = 400;
@@ -93,7 +93,7 @@ function UnitCircle({username, pointChoice}) {
     //   const greenLineX = (centerX + (radius * Math.cos(angle)));
     const greenLineX = blueLineX;
     const greenLineY = (centerY - ( radius * Math.sin(angle)));
-
+    if (!hideTriangle) {
   return (
         <div className="row m-0 p-0">
             <div className="col-12 m-0 p-0">
@@ -145,6 +145,42 @@ function UnitCircle({username, pointChoice}) {
             </div>
         </div>
   );
+    } else {
+        return (
+            <div className="row m-0 p-0">
+                <div className="col-12 m-0 p-0">
+                    <svg
+                        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                        width="100%"
+                        height="100%"
+                        xmlns="http://www.w3.org/2000/svg">
+                    {/* Circle */}
+                    <circle cx={centerX} cy={centerY} r={radius} fill="none" stroke="black" />
+    
+                    {/* Angle Measures */}
+                    {points.map((point, index) => (
+                        <g key={index}>
+                        <text
+                            x={centerX + radius * 1.15 * Math.cos(point.angle)}
+                            y={centerY - radius * 1.15 * Math.sin(point.angle)}
+                            textAnchor = "middle"
+                        >
+                            {point.label}
+                        </text>
+                        <circle
+                            cx={centerX + radius * Math.cos(point.angle)}
+                            cy={centerY - radius * Math.sin(point.angle)}
+                            r="3"
+                            fill="black"
+                        />
+                        </g>
+                    ))}
+                    </svg>
+                </div>
+            </div>
+      );
+
+    }
 }
 
 export default function TrigonometricFunctions({username}) {
@@ -177,7 +213,7 @@ export default function TrigonometricFunctions({username}) {
         questionsIncorrect: 0,
         progressValue: 0,
         progressPct: 0,
-        questionsToMeet: 10,
+        questionsToMeet: 12,
     }    
     const mathFieldRef = useRef(null);
     const [pointChoice, setPointChoice] = useState(0);
@@ -206,7 +242,7 @@ export default function TrigonometricFunctions({username}) {
     const mathLat2 = `sin (\\pi) = `
     const mathLat3 = `sin (\\frac{1}{2})`
     const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray", padding:0})
-
+    const [hideTriangle, setHideTriangle] = useState(false);
     function setQuestionEngine(topicId) {
         let engineArray = questionTopics["trigonometricFunctions"];
         let engine = engineArray.find((engine) => engine.topicId == topicId)
@@ -270,7 +306,7 @@ export default function TrigonometricFunctions({username}) {
             questionsIncorrect: 0,
             progressValue: 0,
             progressPct: 0,
-            questionsToMeet: 10,
+            questionsToMeet: 12,
         }
         setQuizState(quizStateObj);    
     };
@@ -308,7 +344,7 @@ export default function TrigonometricFunctions({username}) {
         let answerLatex;
         if (pickTrig >= 6) {
             answerLatex = angles[pick].sin;
-        } else if (pickTrig >=3) {
+        } else if (pickTrig >=2) {
             answerLatex = angles[pick].cos;
         } else {
             answerLatex = angles[pick].tan;
@@ -326,6 +362,19 @@ export default function TrigonometricFunctions({username}) {
             event.preventDefault();
             handleSubmit(event);
         }
+    }
+    const handleCheckChange = (e) => {
+        setHideTriangle(e.target.checked);
+        let quizStateObject = {
+            questionsAttempted: 0,
+            questionsCorrect: 0,
+            questionsStreak: 0,
+            questionsIncorrect: 0,
+            progressValue: 0,
+            progressPct: 0,
+            questionsToMeet: 12,
+        }        
+        setQuizState(quizStateObject);
     }
     
     function handleSubmit(event) {
@@ -355,8 +404,8 @@ export default function TrigonometricFunctions({username}) {
         console.dir(quizStateObj);
         setQuizState(quizStateObj);
         setTimeout(function() {
-            if (metStandard) {
-                console.dir(quizStateObj);
+            if (metStandard && hideTriangle) {
+                console.log("recording success")
                 recordSuccess(quizStateObj);
             }
             updateSituation({answerMessage: '', userAnswer: ''})
@@ -371,21 +420,21 @@ export default function TrigonometricFunctions({username}) {
                     <ProgressBar variant="primary3x^2" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={quizState.progressValue} label={`${quizState.progressPct}%`} max='100'/>
                 </div>
             </div>
-            <div className="row m-0 p-0 fs-3">
+            <div className="row m-0 p-0 fs-6">
                 <p className="m-0 p-0">{responseObj.answerMessage}</p>
             </div>
             <div className="row m-0 p-0">
-                <div className="col-4 mt-2 fs-1">
-                    <p><StaticMathField>{questionLatex}</StaticMathField> = </p>
+                <div className="col-5 mt-3 fs-6">
+                    <p><StaticMathField>{questionLatex}</StaticMathField>=</p>
                 </div>
-                <div className="col-8 mt-2">
+                <div className="col-7 mt-2">
                     <form onSubmit={handleSubmit} method="post" action="#">
                         <div className="row mt-0 p-0">
-                            <div className="col-6 m-0 p-0">
+                            <div className="col-5 m-0 p-0">
                             <EditableMathField
                                 type="input"
                                 id="answerInput"
-                                className="form-control text-center fs-3 p-2"
+                                className="form-control text-center fs-4 p-2"
                                 style={boxStyle}
                                 aria-describedby="answer input"
                                 latex={responseObj.userAnswer}
@@ -394,11 +443,11 @@ export default function TrigonometricFunctions({username}) {
                                 onKeyDown={handleKeyDown}
                             />
                             </div>
-                            <div className="col-4 m-0 p-0 mt-1">
+                            <div className="col-3 m-1 p-0">
                                 <Button
                                     variant="primary"
                                     type="submit"
-                                    size="lg"
+                                    size="sm"
                                 >
                                     SUBMIT
                                 </Button>
@@ -407,9 +456,21 @@ export default function TrigonometricFunctions({username}) {
                     </form>
                 </div>
             </div>
+            <div className="row mt-2 p-0">
+                <div className="col-8 offset-2">
+                    <Form.Check
+                        type="switch"
+                        label="hide triangle"
+                        className="fs-6"
+                        checked={hideTriangle}
+                        onChange={handleCheckChange}
+                    />
+                </div>
+            </div>            
             <UnitCircle 
                 pointChoice={pointChoice}
-            />
+                hideTriangle={hideTriangle}
+            />  
             <div className="row">
                 <NavLink to="/trigonometricTopics" >
                     <Button variant="primary" size="lg">Unit Circle Topics</Button>

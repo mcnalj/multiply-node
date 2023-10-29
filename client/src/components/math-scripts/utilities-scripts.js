@@ -92,6 +92,21 @@ function getSimplifiedFraction(minNum, maxNum, minDenom, maxDenom) {
     }
     return gcf;
   }
+ 
+  function getMixOfCoefficients(minInteger=2, maxInteger=9, minNumerator=1, maxNumerator=4, minDenominator=2, maxDenominator=9, fractionMix=20, negativeMix=30) {
+    let isFraction = getRandomIntInclusive(1, 100) <= fractionMix ? true : false;
+    let isNegative = getRandomIntInclusive(1, 100) <= negativeMix ? true : false;
+    let integer = getRandomIntInclusive(minInteger, maxInteger);
+    let numerator = 1;
+    let denominator = 1;
+    while (numerator % denominator === 0 ) {
+      numerator = getRandomIntInclusive(minNumerator, maxNumerator);
+      denominator = getRandomIntInclusive(minDenominator, maxDenominator);
+      [numerator, denominator] = getReducedFraction(numerator, denominator);
+    }
+    return [integer, numerator, denominator, isFraction, isNegative];
+  }
+  
 
   // functionSubtractOneFromAFraction(numerator, denominator) {
   //   let newNumerator = numerator - denominator;
@@ -106,6 +121,7 @@ function getSimplifiedFraction(minNum, maxNum, minDenom, maxDenom) {
     maybeNegativeCoefficientWithAlreadyNegativeCoefficient,
     applyRegexFixes,
     getReducedFraction,
-    findGreatestCommonFactor
+    findGreatestCommonFactor,
+    getMixOfCoefficients,
   }
   

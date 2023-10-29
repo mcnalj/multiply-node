@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
-import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
+import { addStyles, StaticMathField, EditableMathField, MathQuill } from 'react-mathquill'
 import '../../App.scss';
 import '../../index.scss';
 import './calculus.component.derivatives.scss';
@@ -12,19 +12,8 @@ import {
   useFractionalExponents,
 } from '../math-scripts/exponents-scripts.js'
 import {
-  simplePowerRule,
-  simplePowerRuleWithIntegerCoefficient,
-  simplePowerRuleWithFractionalCoefficient,
-  simplePowerRuleWithNegativeExponent,
-  simplePowerRuleWithNegativeExponentAndIntegerCoefficient,
-  simplePowerRuleWithNegativeExponentAndFractionalCoefficient,
-  simplePowerRuleWithFractionalExponent,
-  simplePowerRuleWithFractionalExponentAndIntegerCoefficient,
-  simplePowerRuleWithFractionalExponentAndFractionalCoefficient,
-  simplePowerRuleWithNegativeFractionalExponent,
-  simplePowerRuleWithNegativeFractionalExponentAndIntegerCoefficient,
-  simplePowerRuleWithNegativeFractionalExponentAndFractionalCoefficient,
-  powerRuleMix,
+    simpleTrigonometric,
+    simpleChainRuleTrigonometric
 } from '../math-scripts/derivative-scripts.js'
 
 import { getRandomIntInclusive } from '../math-scripts/utilities-scripts.js';
@@ -34,97 +23,24 @@ var url = config.url.API_URL;
 
 const questionTopics = {
   "derivatives": [
-    {
-      topicId: 210,
-      topicName: "simplePowerRule",
-      questionEngine: simplePowerRule,
-    },
-    {
-      topicId: 220,
-      topicName: "simplePowerRuleWithIntegerCoefficient",
-      questionEngine: simplePowerRuleWithIntegerCoefficient,
-    },
-    {
-      topicId: 230,
-      topicName: "simplePowerRuleWithFractionalCoefficient",
-      questionEngine: simplePowerRuleWithFractionalCoefficient,
-    },
-    {
-      topicId: 240,
-      topicName: "simplePowerRuleWithNegativeExponent",
-      questionEngine: simplePowerRuleWithNegativeExponent,
-    },
-    {
-      topicId: 250,
-      topicName: "simplePowerRuleWithNegativeExponentAndIntegerCoefficient", 
-      questionEngine: simplePowerRuleWithNegativeExponentAndIntegerCoefficient,
-    },
-    {
-      topicId: 260,
-      topicName: "simplePowerRuleWithNegativeExponentAndFractionalCoefficient",
-      questionEngine: simplePowerRuleWithNegativeExponentAndFractionalCoefficient,
-    },
-    {
-      topicId: 270,
-      topicName: "simplePowerRuleWithFractionalExponent",
-      questionEngine: simplePowerRuleWithFractionalExponent,
-    },
-    {
-      topicId: 280,
-      topicName: "simplePowerRuleWithFractionalExponentAndIntegerCoefficient",
-      questionEngine: simplePowerRuleWithFractionalExponentAndIntegerCoefficient,
-    },
-    {
-      topicId: 290,
-      topicName: "simplePowerRuleWithFractionalExponentAndFractionalCoefficient",
-      questionEngine: simplePowerRuleWithFractionalExponentAndFractionalCoefficient,
-    },
-    {
-      topicId: 300,
-      topicName: "simplePowerRuleWithNegativeFractionalExponent",
-      questionEngine: simplePowerRuleWithNegativeFractionalExponent,
-    },
-    {
-      topicId: 310,
-      topicName: "simplePowerRuleWithNegativeFractionalExponentAndIntegerCoefficient",
-      questionEngine: simplePowerRuleWithNegativeFractionalExponentAndIntegerCoefficient,
-    },
-    {
-      topicId: 320,
-      topicName: "simplePowerRuleWithNegativeFractionalExponentAndFractionalCoefficient",
-      questionEngine: simplePowerRuleWithNegativeFractionalExponentAndFractionalCoefficient,
-    },                           
-    {
-      topicId: 330,
-      topicName: "powerRuleMix",
-      questionEngine: powerRuleMix,
-    },                           
-],
-  "exponents": [
-    {
-      topicId: 10,
-      questionEngine: rewriteNegativeExponents,
-    },
-    {
-      topicId: 20,
-      questionEngine: rewriteFractionalExponents,
-    },
-    {
-      topicId: 30,
-      questionEngine: useNegativeExponents,
-    },
-    {
-      topicId: 40,
-      questionEngine: useFractionalExponents,
-    },
-  ],
+        {
+        topicId: 400,
+        topicName: "simpleTrigonometric",
+        questionEngine: simpleTrigonometric,
+        },
+        {
+          topicId: 410,
+          topicName: "simpleChainRuleTrigonometric",
+          questionEngine: simpleChainRuleTrigonometric,
+        },
+
+    ]
 }
 addStyles();
 
 const startTime = new Date();
 
 function setQuestionEngine(topicId) {
-
   let engineArray = questionTopics["derivatives"];
   let engine = engineArray.find((engine) => engine.topicId == topicId)
   // TODO Need proper error handling.
@@ -135,11 +51,11 @@ function setQuestionEngine(topicId) {
   }
 }
 
-export default function TopDerivatives({username}) {
+export default function TrigonometricDerivatives({username}) {
 
   const parameter = useParams()
   var initialTopic = parseInt(parameter.topic);
-  
+
 
   const [currentTopic, setCurrentTopic] = useState(initialTopic);
   return (
@@ -156,8 +72,9 @@ export default function TopDerivatives({username}) {
 
 export function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
   let unit = "derivatives";
-  let standard = 8;
+  let standard = 12;
   
+  // why do we need this?
   const [topics, setTopics] = useState(
     {
       topicId: 210,
@@ -173,24 +90,12 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       }]
     });
 
-  let topicObj =
-    {
-      "topicId": 260,
-      "topicData": {
-        "topicEngine": "simplePowerRuleWithNegativeExponentAndFractionalCoefficient",
-        "displayName": "The Power Rule (with Negative Exponents)",
-        "description": "Practice taking the derivative of power functions.",
-        "prompt": "Take the derivative of each power function.",
-        "standard": 7,
-    }
-  }
-
   let questionEngine = setQuestionEngine(currentTopic);
   const [questionState, setQuestionState] = useState({
     questionEngine: questionEngine,
     questionEngine: '',
     questionLatex: '',
-    answerLatex: '',
+    answerArrayLatex: [],
     getNextQuestion: next,
     questionsAttempted: 0,
     questionsCorrect: 0,
@@ -203,44 +108,40 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     questionPrompt: '',
   });
 
-  // const questionField = useRef(null);
-
   useEffect(() => {
     async function getTopics(unitName) {
-      const response = await fetch(`${url}/record/topic/${unitName}`)
-      if (!response.ok) {
-        const message = `An error occurred: ${response.statusText}`;
-        window.alert(message);
-        return;
-      }
-      const topics = await response.json();
-      const unitTopics = topics.unitTopics;
-      setTopics({topicId: unitTopics[0].topicId, topicsArray: unitTopics});
+    //   const response = await fetch(`${url}/record/topic/${unitName}`)
+    //   if (!response.ok) {
+    //     const message = `An error occurred: ${response.statusText}`;
+    //     window.alert(message);
+    //     return;
+    //   }
+    //   const topics = await response.json();
+    //   const unitTopics = topics.unitTopics;
+    //   setTopics({topicId: unitTopics[0].topicId, topicsArray: unitTopics});
       let questionEngine = setQuestionEngine(currentTopic);
-      let [questionLatex, answerLatex] = questionEngine();
-      console.log(questionLatex);
+      let [questionLatex, answerArrayLatex] = questionEngine();
       questionLatex = 'f(x) = '+ questionLatex;
       setQuestionState(
         {
           questionEngine: questionEngine,
           questionLatex: questionLatex,
-          answerLatex: answerLatex,
+          answerArrayLatex: answerArrayLatex,
           getNextQuestion: next,
           questionsAttempted: 0,
           questionsCorrect: 0,
           questionsIncorrect: 0,
           questionsStreak: 0,
           // questionsToMeet: unitTopics[0].topicData.standard,
-          questionsToMeet: 7,
+          questionsToMeet: 12,
           progressBar: 0,
           doneWithTopic: done,
-          questionTopic: unitTopics[0].topicData.displayName,
-          questionPrompt: unitTopics[0].topicData.prompt,
+          questionTopic: "Trigonometric Derivatives",
+          questionPrompt: "f'(x)",
         }
       )
     }
     getTopics(unit);
-    // questionField.reflow();
 
     return;
   }, [currentTopic]);
@@ -248,12 +149,12 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
   function next(liftedState){
       let questionEngine = setQuestionEngine(currentTopic);
       
-      let [questionLatex, answerLatex] = questionEngine();
+      let [questionLatex, answerArrayLatex] = questionEngine();
       questionLatex = 'f(x) = ' + questionLatex;
       setQuestionState({
         questionEngine: questionEngine,
         questionLatex: questionLatex,
-        answerLatex: answerLatex,
+        answerArrayLatex: answerArrayLatex,
         getNextQuestion: next,
         questionsAttempted: liftedState.questionsAttempted,
         questionsCorrect: liftedState.questionsCorrect,
@@ -266,7 +167,6 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
         questionTopic: questionState.questionTopic,
         questionPrompt: questionState.questionPrompt,
       });
-      // questionField.reflow();
   }
   async function done(liftedState){
     let topicName = '';
@@ -322,46 +222,19 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     // we need to go somewhere from here.
   };
 
-    // I used this to add new topics
-    // const response = await fetch("http://localhost:5000/topic/add", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(topicObj),
-    // })
-    // .catch(error => {
-    //   window.alert(error);
-    //   return; // is this right?
-    // });
-    // const stuff = await response.json()
-
-    // await fetch("http://localhost:5000/session/add", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(sessionObj),
-    // })
-    // .catch(error => {
-    //   window.alert(error);
-    //   return; // is this right?
-    // });
-
   const changeEngine = function (e) {
     let topicId = e.currentTarget.dataset.key;
     let questionTopic = questionTopics[unit].find((topic) => topic.topicId == topicId);
     let questionEngine = questionTopic.questionEngine;
     let topicArrayIndex = topics.topicsArray.findIndex((topic)=>topic.topicId==topicId);
-    // let standard = (topics.topicsArray[topicArrayIndex].topicData.standard);
-    let standard = 7;
-    let [questionLatex, answerLatex] = questionEngine();
+    let standard = 12;
+    let [questionLatex, answerArrayLatex] = questionEngine();
     questionLatex = 'f(x) = ' + questionLatex;
     setCurrentTopic(topicId);
     setQuestionState({
       questionEngine: questionEngine,
       questionLatex: questionLatex,
-      answerLatex: answerLatex,
+      answerArrayLatex: answerArrayLatex,
       getNextQuestion: next,
       questionsAttempted: 0,
       questionsCorrect: 0,
@@ -375,21 +248,14 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     });
   }
 
-  function topicsList() {
-    return topics.topicsArray.map((topic) => {
-      return (
-        <div className="row" data-key={topic.topicId} key={topic.topicId} onClick={changeEngine}>
-          <a>{topic.topicData.displayName}</a>
-        </div>
-      )
-    })
-  }
+  const latexExpression = '2cosx^7';
+  const latexDerivative = '-2sin(x^7)7x^6'
 
   return (
     <>
       <div className="row">
         <div className="col-12">
-          <ProgressBar variant="primary3x^2" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
+          <ProgressBar variant="primary" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
         </div>
       </div>
       <div className="row">
@@ -400,13 +266,21 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       <AnswerForm
           questionState={questionState}
       />
-      <Link to="/derivativesTopics">
-        <button type="button" className="btn btn-lg btn-success mt-3">OTHER TOPICS</button><br /><br />
+      <Link to="/trigonometricTopics">
+        <button type="button" className="btn btn-lg btn-success mt-3">TRIG TOPICS</button><br /><br />
       </Link>
-      <h2 className="text-center">{questionState.questionTopic}</h2>
-      <div className="row">
-        <p className="col-12">{questionState.questionPrompt}</p>
-      </div>
+      <h5 className="text-center">{questionState.questionTopic}</h5>
+      <div className="row fs-6">
+      <p>For derivatives that do not need the chain rule, type x without parentheses.</p>
+        <p>For the Chain Rule Trig Derivatives, put parentheses around the variable term.</p>
+        <p>Type the left parenthesis and the right will fill in for you.</p>
+        <p>Then arrow back to enter the variable term.</p>
+        <p>After the closing parenthesis of the variable term, type the derivative of the "inside function."</p>
+        <p>Put no space between the closing parenthesis and the derivative of the "inside function".</p>
+        <p>Below is an example of the correct format:</p>
+      </div> 
+      <StaticMathField>f(x) = {latexExpression}</StaticMathField>
+      <StaticMathField>f'(x) = {latexDerivative}</StaticMathField>
     </>
   );
 }
@@ -427,17 +301,78 @@ function AnswerForm(props) {
   });
   const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
 
-  function updateSituation(value) {
-    return setUserAnswer((prev) => {
-      return {...prev, ...value}
-    });
-  }
+//   function updateSituation(value) {
+//      return setUserAnswer((prev) => {
+//       return {...prev, ...value}
+//     });
+//   }
+// function updateSituation(value) {
+//     // change this to a regex to remove those \left and \right
+//     console.log(value);
+//     if (value.userAnswer == '\\left(\\right)') {
+//         return setUserAnswer((prev) => {
+//             return {...prev, ...{userAnswer: "()"}}
+//         })
+//     } else {
+//         return setUserAnswer((prev) => {
+//             return {...prev, ...value}
+//         })
+        
+//     }
+// }
 
+// function updateSituation(value) {
+//   // change this to a regex to remove those \left and \right
+//   console.log(value);
+//   let regex = /\\left\(\\right\)/;
+//   if (regex.test(value.userAnswer)) {
+//       return setUserAnswer((prev) => {
+//           return {...prev, ...{userAnswer: "()"}}
+//       })
+//   } else {
+//       return setUserAnswer((prev) => {
+//           return {...prev, ...value}
+//       })
+//   }
+// }
+
+function updateSituation(value) {
+  // This is a regex that removes MathQuill's default big parens \left and \right.
+  let regex = /\\left\(\\right\)/g;
+  if ( regex.test(value.userAnswer)) {
+    let beginning = regex.lastIndex - 13
+    let trimmedString = value.userAnswer.slice(0, beginning);
+    let replacedString = trimmedString + "()";
+    return setUserAnswer((prev) => {
+        return {...prev, ...{userAnswer: replacedString}}
+    })
+  } else {
+      return setUserAnswer((prev) => {
+          return {...prev, ...value}
+      })
+  }
+}
   const handleKeyDown = event => {
     if (event.key == 'Enter') {
       event.preventDefault();
       handleSubmit(event);
     }
+  }
+
+  function checkAnswer(answer) {
+    var correct = false;
+    console.log(props.questionState.answerArrayLatex);
+    props.questionState.answerArrayLatex.forEach((latex) => {
+      console.log(answer);
+      console.log(latex)
+      if(answer == latex) {
+        console.log("got here")
+        correct = true;
+        console.log(correct);
+      }
+    });
+    console.log(correct);
+    return correct;
   }
 
   function handleSubmit(event) {
@@ -466,16 +401,6 @@ function AnswerForm(props) {
       `That's it. Keep it up!`,
     ];
 
-    // let incorrectMessages = [
-    //   `Sorry, it's ${props.questionState.answerLatex}.`,
-    //   `${props.questionState.answerLatex} is the answer I was looking for.`,
-    //   `Not exactly. ${props.questionState.answerLatex} is a correct answer.`,
-    //   `You got this! ${props.questionState.answerLatex} is what I was looking for.`,
-    //   `This one was ${props.questionState.answerLatex}. You'll get the next one.`,
-    //   `I was thinking, ${props.questionState.answerLatex}, but no sweat. You'll get it.`,
-    //   `It's ${props.questionState.answerLatex}, but no worries, your moment is coming!`,
-    // ];
-
     let incorrectMessages = [
       `Sorry, that's not the answer: `,
       `That's not the answer we were looking for: `,
@@ -495,9 +420,19 @@ function AnswerForm(props) {
       `OK, seems like you got this.`,
     ]
 
+
+
     let answerMessage = '';
     let pause = 1500;
-    if (userObj.userAnswer === props.questionState.answerLatex) {
+    console.log("Typed answer: ");
+    console.log(userObj.userAnswer);
+    let answer = userObj.userAnswer.replace(/\s/g, '');
+    console.log("new asnwer: " + answer);
+    let correct = checkAnswer(answer);
+    console.log("Here's the return");
+    console.log(correct);
+    // if (userObj.userAnswer === props.questionState.answerLatex) {
+    if (correct) {
         setBoxStyle({backgroundColor: "green", color:"white", borderWidth: "0px", borderColor: "gray"})
         stateToLift.questionsStreak = stateToLift.questionsStreak + 1;
         if (stateToLift.questionsStreak < 4) {
@@ -521,7 +456,7 @@ function AnswerForm(props) {
       setBoxStyle({backgroundColor:"white", color: "red", borderWidth: "2px", borderColor: "red"})
       let index = getRandomIntInclusive(0, ((incorrectMessages.length)-1))
       answerMessage = incorrectMessages[index];
-      updateSituation({answerMessage: answerMessage, correctAnswer: props.questionState.answerLatex})
+      updateSituation({answerMessage: answerMessage, correctAnswer: props.questionState.answerArrayLatex[0]})
       stateToLift.questionsIncorrect = stateToLift.questionsIncorrect + 1;
       stateToLift.questionsStreak = 0
     }
@@ -541,10 +476,6 @@ function AnswerForm(props) {
       props.questionState.getNextQuestion(stateToLift);
     }, pause)
   } // end of handleSubmit
-  // const answerBox = {
-  //   backGroundColor:"white",
-  //   color: "black"
-  // }
 
   return (
     <div className="row">
@@ -568,7 +499,7 @@ function AnswerForm(props) {
                   aria-describedby="answer input"
                   latex={userObj.userAnswer}
                   // value={userObj.userAnswer} // does nothing?
-                  // placeholder={userObj.userAnwer} //does nothing?
+                  placeholder={userObj.userAnswer} //does nothing?
                   onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
                   mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
                   onKeyDown={handleKeyDown}
@@ -591,29 +522,3 @@ function AnswerForm(props) {
     </div>
   )
 }
-
-// function Sidebar(props) {
-//   const [show, setShow] = useState(false);
-//   const handleClose = () => setShow(false);
-//   const handleShow = () => setShow(true);
-
-//   return (
-//     <>
-//       <Button variant="primary" onClick={handleShow} className="col-sm-4 offset-4" id="changeTopics">
-//         CHANGE TOPICS
-//       </Button>
-
-//       <Offcanvas show={show} onHide={handleClose} style={{backgroundColor: "#E7E7E7", color: "#003348", paddingTop: "2em", fontSize: "1.3em"}}>
-//         <Offcanvas.Header closeButton>
-//           <Offcanvas.Title style={{fontSize: "1.6em"}}>TOPICS</Offcanvas.Title>
-//         </Offcanvas.Header>
-//         <Offcanvas.Body>
-//           {props.function()}
-
-//         </Offcanvas.Body>
-//       </Offcanvas>
-//     </>
-//   );
-// }
-
-
