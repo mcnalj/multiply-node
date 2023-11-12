@@ -14,7 +14,7 @@ module.exports = {
   connectToServer: async function(callback) {
     console.log("I am getting this message.")
     var rough = await client.db("employees").collection("users").findOne({username: "mcnalj"});
-    console.log(rough)
+    // console.log(rough)
 
     // var bust = await client.db("calculus").command({ ping: 1 });
     // console.log(bust)

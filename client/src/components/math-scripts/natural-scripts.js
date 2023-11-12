@@ -114,10 +114,129 @@ function complexNaturalExponential() {
 }
 
 function simpleNaturalLog() {
-
+    let choice = getRandomIntInclusive(1, 100)
+    let questionLatex = '';
+    let answerLatexArray = [];
+    if (choice < 5) {
+        [questionLatex, answerLatexArray] = constantLog();
+    } else if (choice < 30) {
+        [questionLatex, answerLatexArray] = coefficientLog();
+    } else {
+        [questionLatex, answerLatexArray] = exponentLog();
+    } 
+    return [questionLatex, answerLatexArray];
 }
 
+function constantLog() {
+    let questionLatex = '';
+    let answerLatex = '';
+    let answerLatexArray = [];
+    let constant = getRandomIntInclusive(1, 9);
+    questionLatex = `\\ln${constant}`;
+    answerLatex = '0';
+    answerLatexArray.push(answerLatex);
+    return [questionLatex, answerLatexArray]
+}
+
+function coefficientLog() {
+    let questionLatex = '';
+    let answerLatex = '';
+    let answerLatexArray = [];
+    let [integer, numerator, denominator, isFraction, isNegative] = getMixOfCoefficients(2,9,1,7,2,9,30,0);
+    if (isFraction) {
+        questionLatex = `\\ln\\frac{${numerator}}{${denominator}}x`;
+        answerLatex = `\\frac{1}{x}`;
+        answerLatexArray.push(answerLatex);
+    } else {
+        questionLatex = `\\ln${integer}x`;
+        answerLatex = `\\frac{1}{x}`;
+        answerLatexArray.push(answerLatex);
+    }
+    return [questionLatex, answerLatexArray]
+}
+
+function exponentLog() {
+    let questionLatex = '';
+    let answerLatex = '';
+    let answerLatexArray = [];
+    let mix = getRandomIntInclusive(1,4);
+    if (mix == 1) {
+        let exponent = getRandomIntInclusive(2, 6);
+        questionLatex = `\\ln x^${exponent}`;
+        answerLatex = `\\frac{${exponent}}{x}`;
+        answerLatexArray.push(answerLatex);
+    } else {
+        let exponent = getRandomIntInclusive(2, 6);
+        let [integer, numerator, denominator, isFraction, isNegative] = getMixOfCoefficients(2,9,1,7,2,9,30,0);
+        if (isFraction) {
+            questionLatex = `\\ln\\frac{${numerator}}{${denominator}}x^${exponent}`;
+        } else {
+            questionLatex = `\\ln${integer}x^${exponent}`;
+        }
+        answerLatex = `\\frac{${exponent}}{x}`;
+        answerLatexArray.push(answerLatex);
+    }
+    return [questionLatex, answerLatexArray]
+}
+
+function binomialNaturalLog() {
+    console.log("In binomial natural log")
+    let questionLatex = "";
+    let answerLatex = "";
+    let answerLatexArray = [];
+    let exponent = getRandomIntInclusive(1, 5);
+    let secondTerm = getRandomIntInclusive(1, 9);
+    let choice = getRandomIntInclusive(1,4);
+    if (choice == 1) {
+        if (exponent == 1) {
+            questionLatex = `\\ln (x+${secondTerm})`;
+            console.log(questionLatex);
+            answerLatex = `\\frac{1}{x+${secondTerm}}`;
+        } else {
+            let newExponent = exponent -1;
+            let newCoefficient = exponent;
+            questionLatex = `\\ln (x^${exponent}+${secondTerm})`;
+            answerLatex = `\\frac{${newCoefficient}x^${newExponent}}{x^${exponent}+${secondTerm}}`;
+        }
+    } else {
+        console.log("In choice 2")
+        let [coefficient, numerator, denominator, isFraction, isNegative] = getMixOfCoefficients(2, 9, 1, 5, 2, 9, 25, 0);
+        if (exponent == 1) {
+            if (isFraction) {
+                questionLatex = `\\ln (\\frac{${numerator}}{${denominator}}x + ${secondTerm})`;
+                answerLatex = `\\frac{\\frac{${numerator}}{${denominator}}{\\frac{${numerator}}{${denominator}}x + ${secondTerm}}`;
+            } else {
+                questionLatex = `\\ln (${coefficient}x+${secondTerm})`;
+                answerLatex = `\\frac{${coefficient}}{${coefficient}x+${secondTerm}}`;
+            }
+
+        } else {
+            let newExponent = "";
+            let newCoefficient = coefficient*exponent
+            // if (isFraction) {
+            //     questionLatex = `\\ln (\\frac{${numerator}}{${denominator}}x^${exponent} + ${secondTerm})`;
+            //     answerLatex = `\\frac{${exponent}}{\\frac{${numerator}{${denominator}}x^${exponent} + ${secondTerm}}`;    
+            // } else {
+            //     questionLatex = `\\ln (${coefficient}x^${exponent} + ${secondTerm})`;
+            //     newExponent = exponent > 2 ? exponent -1 : newExponent;
+            //     answerLatex = `\\frac{${exponent}x^${newExponent}}{${coefficient}x^${exponent} + ${secondTerm}}`;    
+            // }
+                questionLatex = `\\ln (${coefficient}x^${exponent}+${secondTerm})`;
+                newExponent = exponent > 2 ? exponent -1 : newExponent;
+                answerLatex = `\\frac{${newCoefficient}x^${newExponent}}{${coefficient}x^${exponent}+${secondTerm}}`;    
+        }
+    }
+    answerLatexArray.push(answerLatex);
+    console.log(questionLatex)
+    return [questionLatex, answerLatexArray];
+}
+
+
 function complexNaturalLog() {
+    let [questionLatex, answerLatexArray] = binomialNaturalLog();
+    console.log("In complexNaturalLog");
+    console.log(questionLatex);
+    return [questionLatex, answerLatexArray];
 
 }
 

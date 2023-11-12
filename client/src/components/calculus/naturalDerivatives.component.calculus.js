@@ -80,6 +80,8 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
   useEffect(() => {
     async function getTopics(unitName) {
       let questionEngine = setQuestionEngine(currentTopic);
+      console.log(currentTopic);
+      console.log(questionEngine);
       let [questionLatex, answerArrayLatex] = questionEngine();
       questionLatex = 'f(x) = '+ questionLatex;
       console.log(questionLatex);
@@ -227,7 +229,7 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
       <AnswerForm
           questionState={questionState}
       />
-      <Link to="/derivativesTopics">
+      <Link to="/naturalTopics">
         <button type="button" className="btn btn-lg btn-success mt-3">OTHER TOPICS</button><br /><br />
       </Link>
       <h2 className="text-center">{questionState.questionTopic}</h2>

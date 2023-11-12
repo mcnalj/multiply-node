@@ -471,8 +471,11 @@ recordRoutes.route("/listClasses").post(async function (req, response) {
 });
 
 recordRoutes.route("/skillsCompleted").post(async function (req, response) {
-  const user = req.session.passport.user.username;
-  console.log(user);
+  const user = req.session?.passport?.user?.username;
+  if (!user) {
+    response.json({completedSkillsArray: null})
+    return
+  }
   let query = { username: user };
   let options = {projection: { progress: 1 }};
 

@@ -106,6 +106,10 @@ export default function DerivativesTopics() {
                     <NavLink to="/derivatives/330" >
                         <Button variant={backgroundColors.powerRuleMix} className="m-2">Power Rule Mix</Button>
                     </NavLink>
+                    <br />
+                    <NavLink to="/calculus" >
+                        <Button variant="success" className="m-2">Back to Calculus</Button>
+                    </NavLink>
                 </div>
             </div>
         </div>

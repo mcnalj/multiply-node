@@ -13,7 +13,15 @@ export default function NaturalTopics() {
                 <NavLink to="/naturalDerivatives/500" >
                     <Button variant="info" className="m-3">Natural Exponential</Button>
                 </NavLink>
-        
+                <br />
+                <NavLink to="/naturalDerivatives/520" >
+                    <Button variant="info" className="m-3">Natural Log</Button>
+                </NavLink>
+                <br />
+                <NavLink to="/naturalDerivatives/530" >
+                    <Button variant="info" className="m-3">Natural Log (Complex)</Button>
+                </NavLink>  
+
                 {/* <NavLink to="/naturalDerivatives/510" >
                     <Button variant="primary" className="m-2">Natural Exponential (Complex)</Button>
                 </NavLink>
@@ -29,7 +37,7 @@ export default function NaturalTopics() {
                 <NavLink to="/naturalDerivatives/540" >
                     <Button variant="primary" className="m-2">Natural Exponential and Log Mix</Button>
                 </NavLink> */}
-                <br /><br />
+                <br />
                 <NavLink to="/calculus" >
                     <Button variant="primary" className="m-2">Back to Caculus</Button>
                 </NavLink>
