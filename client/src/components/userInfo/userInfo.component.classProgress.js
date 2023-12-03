@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 // import './styles.component.auth.scss';
 import { config} from '../constants';
 import Table from 'react-bootstrap/Table';
@@ -28,7 +29,25 @@ export default function ClassProgress({username})  {
         {skillId: 135, skillName: "Neg Frac Exp + Frac Coef"},
         {skillId: 140, skillName: "Power Rule Mix"},
     ]
-    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: []});
+
+    const trigonometricFunctionsSkills = [
+        {skillId: 1000, skillName: "Trig Evaluation" },
+        {skillId: 1010, skillName: "Half Unit Circle" },
+        {skillId: 1020, skillName: "Full Circle" },
+        {skillId: 1030, skillName: "Trig Derivatives" },  
+        {skillId: 1040, skillName: "Trig Deriv Evaluation" },
+        {skillId: 1050, skillName: "Half Circle Deriv" },
+        {skillId: 1060, skillName: "Full Circle Deriv" },
+    ]
+
+    const naturalExponentialLogSkills = [
+        {skillId: 500, skillName: "Derivative: Natural Exponential" },
+        {skillId: 520, skillName: "Derivative: Natural Log" },
+        {skillId: 530, skillName: "Deriv: Complex Log" },
+        {skillId: 550, skillName: "Deriv: Exponential (base a)" },  
+        {skillId: 560, skillName: "Deriv: Log (base a)" },
+    ]
+    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: []});
     const [questionList, setQuestionList] = useState([]);
     const [usersData, setUsersData] = useState([]);
     useEffect(()=> {    
@@ -39,7 +58,9 @@ export default function ClassProgress({username})  {
         let data = {};
         let exponentsDataArray = [];
         let derivativesDataArray = [];
-        const result = await fetch(`${url}/users/classProgress`, {
+        let trigonometricFunctionsDataArray = [];
+        let naturalExponentialLogDataArray = [];
+        const result = await fetch(`${url}/users/singleClassProgress`, {
             method: "GET",
             mode: 'cors',
             credentials: 'include',
@@ -80,8 +101,36 @@ export default function ClassProgress({username})  {
                 derivativesDataArray.push(dataObject);
             }
         }
+        if (data.trigonometricFunctions) {
+            for (let i=0; i < data.trigonometricFunctions.length; i++) {
+                let dataObject = {
+                    skill: data.trigonometricFunctions[i].skill,
+                    time: changeTimeToMinutesAndSeconds(data.trigonometricFunctions[i].sessionsData.totalTime),
+                    date: changeDateStringToDate(data.trigonometricFunctions[i].sessionsData.datetimeStarted),
+                    correct: data.trigonometricFunctions[i].sessionsData.questionsCorrect,
+                    attempted: data.trigonometricFunctions[i].sessionsData.questionsAttempted,
+                    streak: data.trigonometricFunctions[i].sessionsData.questionsStreak,
+                    keyId: i,
+                }
+                trigonometricFunctionsDataArray.push(dataObject);
+            }
+        }
+        if (data.naturalExponentialLog) {
+            for (let i=0; i < data.naturalExponentialLog.length; i++) {
+                let dataObject = {
+                    skill: data.naturalExponentialLog[i].skill,
+                    time: changeTimeToMinutesAndSeconds(data.naturalExponentialLog[i].sessionsData.totalTime),
+                    date: changeDateStringToDate(data.naturalExponentialLog[i].sessionsData.datetimeStarted),
+                    correct: data.naturalExponentialLog[i].sessionsData.questionsCorrect,
+                    attempted: data.naturalExponentialLog[i].sessionsData.questionsAttempted,
+                    streak: data.naturalExponentialLog[i].sessionsData.questionsStreak,
+                    keyId: i,
+                }
+                naturalExponentialLogDataArray.push(dataObject);
+            }
+        }        
         const questionTopics = data.questionTopics;
-        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray});
+        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray});
         let questionList = []
         for (let i = 0; i < questionTopics.derivatives.length; i++) {
             questionList.push(questionTopics.derivatives[i].topicName);
@@ -132,6 +181,9 @@ export default function ClassProgress({username})  {
                           tr {
                               font-size: 0.6rem;
                           }
+                          .userLink {
+                            color: darkGreen;
+                          }
                       `}
                   </style>
                   <p>Progress for Class:</p>
@@ -150,10 +202,62 @@ export default function ClassProgress({username})  {
                     <tbody>
                         {usersData.map((user) => (
                             <tr key={user.username}>
-                                <td>{user.username}</td>
+                                <td><Link className="userLink" to={`/singleUsersProgress/${user.username}`}>{user.username}</Link></td>
                                 <td>{user.logins}</td>
                                 <td>{user.totalQuestions}</td>
-                                {user.userSuccessArray.map((success) =>(
+                                {user.derivativesSuccessArray.map((success) =>(
+                                    <td>{success}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                  </Table>
+                  <p>Trigonometric Functions Progress</p>
+                  <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                        <th>USER</th>
+                        <th>Logins</th>
+                        <th>Questions</th>
+                        {trigonometricFunctionsSkills.map((skill) => (
+                                <th key={skill.skillId}>{skill.skillName}</th>
+                            ))
+                        }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {usersData.map((user) => (
+                            <tr key={user.username}>
+                                <td><Link className="userLink" to={`/singleUsersProgress/${user.username}`}>{user.username}</Link></td>
+                                <td>{user.logins}</td>
+                                <td>{user.totalQuestions}</td>
+                                {user.trigonometricFunctionsSuccessArray.map((success) =>(
+                                    <td>{success}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                  </Table>
+                  <p>Natural Exponential and Natural Log Progress</p>
+                  <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                        <th>USER</th>
+                        <th>Logins</th>
+                        <th>Questions</th>
+                        {naturalExponentialLogSkills.map((skill) => (
+                                <th key={skill.skillId}>{skill.skillName}</th>
+                            ))
+                        }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {usersData.map((user) => (
+                            <tr key={user.username}>
+                                <td><Link className="userLink" to={`/singleUsersProgress/${user.username}`}>{user.username}</Link></td>
+                                <td>{user.logins}</td>
+                                <td>{user.totalQuestions}</td>
+                                {user.naturalExponentialLogSuccessArray.map((success) =>(
                                     <td>{success}</td>
                                 ))}
                             </tr>

@@ -22,14 +22,14 @@ import { config} from '../constants.js';
 var url = config.url.API_URL;
 
 const questionTopics = {
-  "derivatives": [
+  "trigonometricFunctions": [
         {
-        topicId: 400,
+        topicId: 1100,
         topicName: "simpleTrigonometric",
         questionEngine: simpleTrigonometric,
         },
         {
-          topicId: 410,
+          topicId: 1110,
           topicName: "simpleChainRuleTrigonometric",
           questionEngine: simpleChainRuleTrigonometric,
         },
@@ -41,7 +41,7 @@ addStyles();
 const startTime = new Date();
 
 function setQuestionEngine(topicId) {
-  let engineArray = questionTopics["derivatives"];
+  let engineArray = questionTopics["trigonometricFunctions"];
   let engine = engineArray.find((engine) => engine.topicId == topicId)
   // TODO Need proper error handling.
   if (engine) {
@@ -195,7 +195,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       },
       progress: {
         calculus: {
-            derivatives: {
+            trigonometricFunctions: {
                 skillData: {
                   skill: topicName,
                   sessionsData: sessionObj
@@ -205,7 +205,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       }
     }
     // TODO - This is not saving any incorrect answers and might not have the total right.
-    const response = await fetch(`${url}/record/metStandard/derivatives`, {
+    const response = await fetch(`${url}/record/metStandard/trigonometricFunctions`, {
       method: "POST",
       mode: 'cors',
       credentials: 'include',

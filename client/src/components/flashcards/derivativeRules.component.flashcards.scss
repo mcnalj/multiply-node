@@ -1,0 +1,98 @@
+@use '../../App.scss' as *;
+
+.container {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
+
+.flip-card {
+    width: 100%;
+    height: 65vh;
+    transition: 600ms;
+    background-color: #fff;
+    position: relative;
+    margin-top: 5%;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    transform-style: preserve-3d;
+    transform: perspective(1000px) translateY(var(--translate-y, 0));
+  }
+
+  .card:hover {
+    --translate-y: -2px;
+    box-shadow: 0 0 5px 2px rgba(0,0,0,0.5);
+    opacity: 1;  
+  }
+
+  .flip-card.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+
+  .front,
+  .back {
+    width: 100%;
+    height:100%;
+    position: absolute;
+    backface-visibility: hidden;
+  }
+
+  .front {
+    background-color: #fff;
+  }
+
+  .back {
+    background-color: #f0f0f0;
+    // it will figure it out without this if it's a card and it's called .front and .back
+    transform: rotateY(180deg);
+  }
+
+  .card-content {
+    padding: 20px;
+    text-align: center;
+  }
+
+
+  // .hidden {
+  //   display: none;
+  // }
+   
+  // .front {
+  //   margin: 0;
+  //   padding: 0;
+  //   width: 100%;
+  //   height: 80vh;
+  //   background-color: #fff;
+  //   position: absolute;
+  //   left: 0;
+  //   top:0;
+  //   border-radius: 0.5rem;
+  //   backface-visibility: hidden;
+  // }
+  
+  // .back {
+  //   margin: 0;
+  //   padding: 0;
+  //   width: 100%;
+  //   height: 80vh;
+  //   background-color: #f0f0f0;
+  //   position: absolute;
+  //   transform: rotateY(180deg);
+  //   top: 0;
+  //   left: 0;
+  //   border-radius: 0.5rem;
+  //   backface-visibility: hidden;
+  // }
+  
+  
+  // This actually worked, but how will we know the #
+  // span[mathquill-command-id="10"] {
+  //   font-weight: normal !important;
+  // }
+

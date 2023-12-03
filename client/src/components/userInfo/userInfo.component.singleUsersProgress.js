@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 // import './styles.component.auth.scss';
 import { config} from '../constants';
 var url = config.url.API_URL;
 
-export default function UserProgress({username})  {
+export default function SingleUsersProgress({username})  {
+
+    const parameter = useParams()
+    const usersUsername = parameter.username;
+    console.log(usersUsername)
+  
     const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: []});
     useEffect(()=> {    
         fetchUserData();
@@ -15,13 +21,14 @@ export default function UserProgress({username})  {
         let derivativesDataArray = [];
         let trigonometricFunctionsDataArray = [];
         let naturalExponentialLogDataArray = [];
-        const result = await fetch(`${url}/users/userProgress`, {
-            method: "GET",
+        const result = await fetch(`${url}/users/singleUsersProgress`, {
+            method: "POST",
             mode: 'cors',
             credentials: 'include',
             headers: {
               "Content-Type": "application/json",
-            }
+            },
+            body: JSON.stringify({username: usersUsername})
         })
         .catch(error => {
         console.error(error);
@@ -112,10 +119,11 @@ export default function UserProgress({username})  {
     }
 
     {
-        if (userData.exponentsDataArray.length === 0 && userData.derivativesDataArray.length === 0 && userData.trigonometricFunctionsDataArray.length === 0) {
+        if (userData.exponentsDataArray.length === 0 && userData.derivativesDataArray.length === 0 && userData.trigonometricFunctionsDataArray.length === 0 && userData.naturalExponentialLogDataArray.length === 0) {
             return (
                 <div>
-                    <p className="m-5">Sorry, there is no progress data for user: <strong>{username}</strong>.</p>
+                    <p className="m-5">Sorry, there is no progress data for user: <strong>{usersUsername}</strong>.</p>
+                    <Link to = "/classProgress">Back to Class Progress</Link>
                 </div>
             )
         } else {
@@ -132,7 +140,8 @@ export default function UserProgress({username})  {
                           }
                       `}
                   </style>
-                  <p>Progress for {username}:</p>
+                  <p>Progress for {usersUsername}:</p>
+                  <Link to = "/classProgress">Back to Class Progress</Link>
                   <div>
                     <p>Exponents</p>
                       <div id="tableHeading" className="row tableHeading">
@@ -145,7 +154,7 @@ export default function UserProgress({username})  {
                       </div>           
                       {userData.exponentsDataArray.map((datum) => (
                           <div className="row tableData" key={datum.keyId}>
-                              <p className="col-4">
+                              <p style={{ overflowWrap: 'break-word'}} className="col-4">
                                   {datum.skill}
                               </p>
                               <p className="col-2">
@@ -176,7 +185,7 @@ export default function UserProgress({username})  {
                       </div>           
                       {userData.derivativesDataArray.map((datum) => (
                           <div className="row tableData" key={datum.keyId}>
-                              <p className="col-4">
+                              <p style={{ overflowWrap: 'break-word'}} className="col-4">
                                   {datum.skill}
                               </p>
                               <p className="col-2">
@@ -258,7 +267,6 @@ export default function UserProgress({username})  {
                               </p>
                           </div>
                       ))}                      
-
                   </div>
                 </div>
               );

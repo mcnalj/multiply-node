@@ -57,7 +57,6 @@ function naturalExponential() {
     let answerCoefficientInteger, answerCoefficientNumerator, answerCoefficientDenominator;
     let answerLatex = "";
     if ( termCoefficient && coefficient ) {
-        console.log("got to both terms have coefficients");
         if (termIsFraction && coefficientIsFraction) {
             [answerCoefficientNumerator, answerCoefficientDenominator] = getReducedFraction(termNumerator*coefficientNumerator, termDenominator*coefficientDenominator)
             if (answerCoefficientDenominator > 1) {
@@ -244,10 +243,73 @@ function mixNaturalExponentialAndLog() {
 
 }
 
+function exponentialFunctionsBaseA() {
+    // Should I add questions where there's an coefficient and and exponent on the x?
+    let questionLatex = "";
+    let answerLatexArray = [];
+    let type = getRandomIntInclusive(1, 5);
+    if (type < 4) {
+        [questionLatex, answerLatexArray] = exponentialFunctionsBaseASimpleX();
+    } else if (type < 5) {
+        [questionLatex, answerLatexArray] = exponentialFunctionsBaseACoefficientX();
+    } else {
+        [questionLatex, answerLatexArray] = exponentialFunctionsBaseAExponentX();
+    }
+    return [questionLatex, answerLatexArray];
+}
+
+function exponentialFunctionsBaseASimpleX() {
+    let answerLatexArray = [];
+    let base = getRandomIntInclusive(2, 9)
+    let questionLatex = `${base}^x`;
+    let answerLatex = `(\\ln${base})${questionLatex}`;
+    answerLatexArray.push(answerLatex);
+    return [questionLatex, answerLatexArray];
+}
+
+function exponentialFunctionsBaseACoefficientX() {
+    let answerLatexArray = [];
+    let base = getRandomIntInclusive(2, 9);
+    let coefficient = getRandomIntInclusive(2, 9);
+    let questionLatex = `${base}^{${coefficient}x}`;
+    let answerLatex = `(${coefficient}\\ln${base})${questionLatex}`;
+    answerLatexArray.push(answerLatex);
+    return [questionLatex, answerLatexArray];
+}
+
+function exponentialFunctionsBaseAExponentX() {
+    let answerLatexArray = [];
+    let base = getRandomIntInclusive(2, 9);
+    let exponent = getRandomIntInclusive(2, 4);
+    let questionLatex = `${base}^{x^${exponent}}`;
+    let answerLatex = "";
+    if (exponent == 2) {
+        answerLatex = `(${exponent}\\ln${base})x${questionLatex}`;
+    } else {
+        let newExponent = exponent - 1;
+        answerLatex = `(${exponent}\\ln${base})x^${newExponent}${questionLatex}`;
+    }
+    answerLatexArray.push(answerLatex);
+    return [questionLatex, answerLatexArray];
+}
+
+function logFunctionsBaseA() {
+    let answerLatexArray = [];
+    let exponent = getRandomIntInclusive(2, 9)
+    let questionLatex = `\\log_${exponent}x`;
+    let answerLatex = `\\frac{1}{(\\ln${exponent})x}`;
+    answerLatexArray.push(answerLatex);
+    return [questionLatex, answerLatexArray];
+}
+
+
+
 export {
     naturalExponential,
     complexNaturalExponential,
     simpleNaturalLog,
     complexNaturalLog,
-    mixNaturalExponentialAndLog
+    mixNaturalExponentialAndLog,
+    exponentialFunctionsBaseA,
+    logFunctionsBaseA,
 }

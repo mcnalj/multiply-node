@@ -389,7 +389,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     <>
       <div className="row">
         <div className="col-12">
-          <ProgressBar variant="primary3x^2" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
+          <ProgressBar variant="primary" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
         </div>
       </div>
       <div className="row">

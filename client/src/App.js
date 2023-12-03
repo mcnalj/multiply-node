@@ -33,8 +33,14 @@ import Derivatives from './components/calculus/calculus.component.derivatives';
 import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
 import Markdown from './components/calculus/calculus.component.markdown';
 
+import DerivativeRules from './components/flashcards/derivativeRules.component.flashcards';
+import FlippableCard from './components/flashcards/gptFlashcard.component.flashcards';
+import GFGFlippableCard from './components/flashcards/gfgFlashcard.component.flashcards';
+
 import UserProgress from './components/userInfo/userInfo.component.progress';
 import ClassProgress from './components/userInfo/userInfo.component.classProgress';
+import ProgressChoices from './components/userInfo/userInfo.component.progressChoices';
+import SingleUsersProgress from './components/userInfo/userInfo.component.singleUsersProgress';
 
 import ManageClasses from './components/auth/manageClasses.component.auth';
 import CreateClass from './components/auth/createClass.component.auth';
@@ -162,6 +168,20 @@ function App() {
                   </Protected>
                 }
           />
+          <Route path="/progressChoices"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ProgressChoices username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/singleUsersProgress/:username"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <SingleUsersProgress username={username}/>
+                  </Protected>
+                }
+          />                    
           <Route path="/userProgress"
                 element={
                   <Protected isSignedIn={loggedIn}>
@@ -245,7 +265,29 @@ function App() {
                       <NaturalDerivatives username={username} />
                     </Protected>
                   } 
-          />                                                                                                            
+          />
+          <Route path="/derivativeRules"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <DerivativeRules username={username} />
+                    </Protected>
+                  } 
+          />
+          <Route path="/gptFlashcard"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <FlippableCard username={username} />
+                    </Protected>
+                  } 
+          />
+          <Route path="/gfgFlashcard"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <GFGFlippableCard username={username} />
+                    </Protected>
+                  } 
+          />                                                                                                                      
+                                                                                                            
           </Routes>                                    
       </div>
     </div>

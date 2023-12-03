@@ -22,10 +22,14 @@ export default function DerivativesTopics() {
     }            
     const [backgroundColors, setBackgroundColors] = useState(backgroundColorObject);
     useEffect(() => {
-        fetchSkillsArray()
+        // Why doesn't this work if a I delete setBackgroundColors
+       // seems like this is a promise and its working once it's resolved?
+        let returnObj = fetchSkillsArray(backgroundColorObject);
+        console.log(returnObj);
+        setBackgroundColors(returnObj);
     }, []);
 
-    async function fetchSkillsArray() {
+    async function fetchSkillsArray(backgroundColorObject) {
         const result = await fetch(`${url}/record/skillsCompleted`, {
             method: "POST",
             mode: 'cors',
@@ -42,10 +46,15 @@ export default function DerivativesTopics() {
         console.log(resultData)
         if (resultData) {
             resultData.completedSkillsArray.forEach((skill) => {
-                backgroundColorObject[skill] = "primary";
+                if (backgroundColorObject[skill] == "info") {
+                    backgroundColorObject[skill] = "primary";
+                }
             })
+            // Why isn't this enough to set the colors and why do I need it if I'm doing it after the return.
             setBackgroundColors(backgroundColorObject)
         }
+        return backgroundColorObject;
+        // this works if I just return nothing. I think?
     }
     return (
         <div className="row">

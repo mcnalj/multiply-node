@@ -40,15 +40,23 @@ export default function AnswerForm(props) {
     const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
 
     function updateSituation(value) {
+        // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
+        let pattern = `\\frac{1}{\\left\(\\right\)}`;
         // This is a regex that removes MathQuill's default big parens \left and \right.
         let regex = /\\left\(\\right\)/g;
+        if ( pattern == value.userAnswer) {
+          let replacedString = `\\frac{1}{()}`;
+          return setUserAnswer((prev) => {
+              return {...prev, ...{userAnswer: replacedString}}
+          })          
+        }
         if ( regex.test(value.userAnswer)) {
-        let beginning = regex.lastIndex - 13
-        let trimmedString = value.userAnswer.slice(0, beginning);
-        let replacedString = trimmedString + "()";
-        return setUserAnswer((prev) => {
-            return {...prev, ...{userAnswer: replacedString}}
-        })
+          let beginning = regex.lastIndex - 13
+          let trimmedString = value.userAnswer.slice(0, beginning);
+          let replacedString = trimmedString + "()";
+          return setUserAnswer((prev) => {
+              return {...prev, ...{userAnswer: replacedString}}
+          })
         } else {
             return setUserAnswer((prev) => {
                 return {...prev, ...value}

@@ -22,11 +22,11 @@ export default function TrigonometricTopics() {
                     <Button variant="primary" className="m-2">The Full Unit Circle</Button>
                 </NavLink>
 
-                <NavLink to="/trigonometricDerivatives/400" >
+                <NavLink to="/trigonometricDerivatives/1100" >
                     <Button variant="primary" className="m-2">Trig Derivatives</Button>
                 </NavLink>
 
-                <NavLink to="/trigonometricDerivatives/410" >
+                <NavLink to="/trigonometricDerivatives/1110" >
                     <Button variant="primary" className="m-2">Chain Rule Trig Derivatives</Button>
                 </NavLink>
             </div>
