@@ -371,6 +371,40 @@ recordRoutes.route('/metStandard/trigonometricFunctions').post(checkAuthenticate
   }
   res.send({msg:msg, success: success});
 });
+
+recordRoutes.route('/metStandard/naturalExponentialLog').post(checkAuthenticated, async function(req, res) {
+  const sessionData = req.body;
+  let msg = '';
+  let success = false;
+  try {
+    let updateSuccess = await dbo.client.db("employees")
+    .collection("userData")
+    .updateOne(
+      {username: sessionData.userData.username},
+      {
+        $inc:{
+          totalQuestionsAttempted: sessionData.userData.questionsAttempted,
+          totalQuestionsCorrect: sessionData.userData.questionsCorrect
+        },
+        $addToSet: { "progress.calculus.naturalExponentialLog.skillData":
+                      sessionData.progress.calculus.naturalExponentialLog.skillData
+                    } 
+      },
+      {upsert: true}
+    );
+    if (updateSuccess.modifiedCount == 1) {
+      msg ='Data was added to the progress array.';
+    } else {
+      msg = 'No data was added to the progress array';
+    }
+    success = true;
+  } catch {
+    msg = 'Error on attempt to updateOne';
+  }
+  res.send({msg:msg, success: success});
+});
+
+
 recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, res) {
   const sessionData = req.body;
   let msg = '';

@@ -33,6 +33,8 @@ usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, 
   try {
     let exponentsData = [];
     let derivativesData = [];
+    let trigonometricFunctionsData = [];
+    let naturalExponentialLogData = [];
     let results =  await dbo.client.db("employees")
       .collection("userData")
       .findOne(query, projection)
@@ -43,11 +45,61 @@ usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, 
       if (results.progress.calculus.derivatives) {
         derivativesData = results.progress.calculus.derivatives.skillData;
       }
+      if (results.progress.calculus.trigonometricFunctions) {
+        trigonometricFunctionsData = results.progress.calculus.trigonometricFunctions.skillData;
+      }
+      if (results.progress.calculus.naturalExponentialLog) {
+        naturalExponentialLogData = results.progress.calculus.naturalExponentialLog.skillData;
+      }
     }
-    response.json({exponents: exponentsData, derivatives: derivativesData});
+    response.json({exponents: exponentsData, derivatives: derivativesData, trigonometricFunctions: trigonometricFunctionsData, naturalExponentialLog: naturalExponentialLogData});
   } catch(error) {
     console.error("Error fetching progress:", error);
-    response.json({exponents: null, derivatives: null})
+    response.json({exponents: null, derivatives: null, trigonometricFunctions: null, naturalExponentialLog: null})
+  }
+});
+
+usersRoutes.route("/singleUsersProgress").post(checkAuthenticated, async function (req, response) {
+  const username = req.body.username;
+  console.log(username);
+  let query = { username: username};
+  let projection = { 
+      _id: false,
+      username: true,
+      progress: {
+        $cond: {
+          if: { $ifNull: ['$progress', false]},
+          then: '$progress',
+          else: '$$REMOVE'
+        }
+      },
+      }
+  try {
+    let exponentsData = [];
+    let derivativesData = [];
+    let trigonometricFunctionsData = [];
+    let naturalExponentialLogData = [];
+    let results =  await dbo.client.db("employees")
+      .collection("userData")
+      .findOne(query, projection)
+    if (results.progress) {
+      if (results.progress.calculus.exponents) {
+        exponentsData = results.progress.calculus.exponents.skillData;
+      }
+      if (results.progress.calculus.derivatives) {
+        derivativesData = results.progress.calculus.derivatives.skillData;
+      }
+      if (results.progress.calculus.trigonometricFunctions) {
+        trigonometricFunctionsData = results.progress.calculus.trigonometricFunctions.skillData;
+      }
+      if (results.progress.calculus.naturalExponentialLog) {
+        naturalExponentialLogData = results.progress.calculus.naturalExponentialLog.skillData;
+      }      
+    }
+    response.json({exponents: exponentsData, derivatives: derivativesData, trigonometricFunctions: trigonometricFunctionsData, naturalExponentialLog: naturalExponentialLogData});
+  } catch(error) {
+    console.error("Error fetching progress:", error);
+    response.json({exponents: null, derivatives: null, trigonometricFunctions: null, naturalExponentialLog: null})
   }
 });
 
@@ -126,6 +178,45 @@ usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req,
         topicName: "useFractionalExponents",
       },
     ],
+    "trigonometricFunctions": [
+      {
+        topicId: 1000,
+        topicName: "basicEvaluation" 
+      },
+      {
+        topicId: 1010,
+        topicName: "halfCircleEvaluation" 
+      },
+      {
+        topicId: 1020,
+        topicName: "fullCircleEvaluation" 
+      },
+      // {
+      //   topicId: 1030,
+      //   topicName: "symbolicDerivatives" 
+      // },
+      // {
+      //   topicId: 1040,
+      //   topicName: "basicDerivativesEvaluation" 
+      // },
+      // {
+      //   topicId: 1050,
+      //   topicName: "halfDerivativesEvaluation" 
+      // },
+      // {
+      //   topicId: 1060,
+      //   topicName: "fullDerivativesEvaluation" 
+      // },
+      {
+        topicId: 1100,
+        topicName: "simpleTrigonometric" 
+      },
+      {
+        topicId: 1110,
+        topicName: "simpleChainRuleTrigonometric" 
+      },
+
+    ]
   }
   let query = { username: user};
   let projection = { 
@@ -159,7 +250,9 @@ usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req,
     // }
     let userData = {};
     let user = "";
+    
     let userSuccessArray = [];
+    
     for await (const result of results) {
       derivativesData = [];
       // below is inside users loop
@@ -172,6 +265,7 @@ usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req,
       }
       userData = {};
       userSuccessArray = [];
+      
       user = '';
       successCount = 0;
       for (let i = 0; i < questionTopics.derivatives.length; i++) {
@@ -181,8 +275,7 @@ usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req,
             successCount = successCount + 1;
           }
         }
-        userSuccessArray.push(successCount);
-        
+        userSuccessArray.push(successCount);  
       }
 
       // for (let i = 0; i < questionTopics.derivatives.length; i++) {
@@ -201,6 +294,263 @@ usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req,
   } catch(error) {
     console.error("Error fetching progress:", error);
     response.json({questionTopics: null, usersData: null, exponents: null, derivatives: null})
+  }
+});
+
+usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function (req, response) {
+  const user = req.session.passport.user.username;
+  // check for the class code
+  // put this in an import
+  const questionTopics = {
+    "derivatives": [
+      {
+        topicId: 210,
+        topicName: "simplePowerRule",
+      },
+      {
+        topicId: 220,
+        topicName: "simplePowerRuleWithIntegerCoefficient",
+      },
+      {
+        topicId: 230,
+        topicName: "simplePowerRuleWithFractionalCoefficient",
+      },
+      {
+        topicId: 240,
+        topicName: "simplePowerRuleWithNegativeExponent",
+      },
+      {
+        topicId: 250,
+        topicName: "simplePowerRuleWithNegativeExponentAndIntegerCoefficient", 
+      },
+      {
+        topicId: 260,
+        topicName: "simplePowerRuleWithNegativeExponentAndFractionalCoefficient",
+      },
+      {
+        topicId: 270,
+        topicName: "simplePowerRuleWithFractionalExponent",
+      },
+      {
+        topicId: 280,
+        topicName: "simplePowerRuleWithFractionalExponentAndIntegerCoefficient",
+      },
+      {
+        topicId: 290,
+        topicName: "simplePowerRuleWithFractionalExponentAndFractionalCoefficient",
+      },
+      {
+        topicId: 300,
+        topicName: "simplePowerRuleWithNegativeFractionalExponent",
+      },
+      {
+        topicId: 310,
+        topicName: "simplePowerRuleWithNegativeFractionalExponentAndIntegerCoefficient",
+      },
+      {
+        topicId: 320,
+        topicName: "simplePowerRuleWithNegativeFractionalExponentAndFractionalCoefficient",
+      },                           
+      {
+        topicId: 330,
+        topicName: "powerRuleMix",
+      },                           
+  ],
+    "exponents": [
+      {
+        topicId: 10,
+        topicName: "rewriteNegativeExponents",
+      },
+      {
+        topicId: 20,
+        topicName: "rewriteFractionalExponents",
+      },
+      {
+        topicId: 30,
+        topicName: "useNegativeExponents",
+      },
+      {
+        topicId: 40,
+        topicName: "useFractionalExponents",
+      },
+    ],
+    "trigonometricFunctions": [
+      {
+        topicId: 1000,
+        topicName: "basicEvaluation" 
+      },
+      {
+        topicId: 1010,
+        topicName: "halfCircleEvaluation" 
+      },
+      {
+        topicId: 1020,
+        topicName: "fullCircleEvaluation" 
+      },
+      // {
+      //   topicId: 1030,
+      //   topicName: "symbolicDerivatives" 
+      // },
+      // {
+      //   topicId: 1040,
+      //   topicName: "basicDerivativesEvaluation" 
+      // },
+      // {
+      //   topicId: 1050,
+      //   topicName: "halfDerivativesEvaluation" 
+      // },
+      // {
+      //   topicId: 1060,
+      //   topicName: "fullDerivativesEvaluation" 
+      // },
+      {
+        topicId: 1100,
+        topicName: "simpleTrigonometric" 
+      },
+      {
+        topicId: 1110,
+        topicName: "simpleChainRuleTrigonometric" 
+      },
+    ],
+    "naturalExponentialLog": [
+      {
+        topicId: 500,
+        topicName: "naturalExponential" 
+      },
+      {
+        topicId: 520,
+        topicName: "simpleNaturalLog" 
+      },
+      {
+        topicId: 530,
+        topicName: "complexNaturalLog" 
+      },
+      {
+        topicId: 550,
+        topicName: "exponentialFunctionsBaseA" 
+      },
+      {
+        topicId: 560,
+        topicName: "logFunctionsBaseA" 
+      },
+    ]
+  }
+  // currently the class code is hardcoded!
+  const classUsers = await dbo.client.db("employees")
+  .collection("users")
+  .find({'classMemberships': 'CALC23'})
+  .project({'username':1, '_id': 0})
+  .toArray();
+  
+  const classUsersArray = classUsers.map(user=>user.username);
+
+  let query = { username: user};
+  let projection = { 
+      _id: false,
+      username: true,
+      progress: {
+        $cond: {
+          if: { $ifNull: ['$progress', false]},
+          then: '$progress',
+          else: '$$REMOVE'
+        }
+      },
+      }
+  try {
+    let exponentsData = [];
+    let derivativesData = [];
+    let trigonometricFunctionsData = [];
+    let naturalExponentialLogData = [];
+    let usersData = [];
+    let results =  dbo.client.db("employees")
+      .collection("userData")
+      .find({'username': {$in: classUsersArray}}, projection)    
+    let userData = {};
+    let user = "";
+    let exponentsSuccessArray = [];
+    let derivativesSuccessArray = [];
+    let trigonometricFunctionsSuccessArray = [];
+    let naturalExponentialLogSuccessArray = [];
+    for await (const result of results) {
+      exponentsData = [];
+      derivativesData = [];
+      trigonometricFunctionsData = [];
+      naturalExponentialLogData = [];
+      // below is inside users loop
+      if (result.progress) {
+        if (result.progress.calculus) {
+          if (result.progress.calculus.exponents) {
+            exponentsData = result.progress.calculus.exponents.skillData;
+          }
+          if (result.progress.calculus.derivatives) {
+            derivativesData = result.progress.calculus.derivatives.skillData;
+          }
+          if (result.progress.calculus.trigonometricFunctions) {
+            trigonometricFunctionsData = result.progress.calculus.trigonometricFunctions.skillData;
+          }
+          if (result.progress.calculus.naturalExponentialLog) {
+            naturalExponentialLogData = result.progress.calculus.naturalExponentialLog.skillData;
+          }              
+        }
+      }
+      userData = {};
+      exponentsSuccessArray = [];
+      derivativesSuccessArray = [];
+      trigonometricFunctionsSuccessArray = [];
+      naturalExponentialLogSuccessArray = [];
+      user = '';
+      let successCount = 0;
+      if (exponentsData) {
+        for (let i = 0; i < questionTopics.exponents.length; i++) {
+          successCount = 0
+          for (let j = 0; j < exponentsData.length; j++) {
+            if (questionTopics.exponents[i].topicName == exponentsData[j].skill) {
+              successCount = successCount + 1;
+            }
+          }
+          exponentsSuccessArray.push(successCount);    
+        }
+      }
+      if (derivativesData) {
+      for (let i = 0; i < questionTopics.derivatives.length; i++) {
+        successCount = 0
+        for (let j = 0; j < derivativesData.length; j++) {
+          if (questionTopics.derivatives[i].topicName == derivativesData[j].skill) {
+            successCount = successCount + 1;
+          }
+        }
+        derivativesSuccessArray.push(successCount);    
+      }
+      }
+      if (trigonometricFunctionsData) {
+      for (let i = 0; i < questionTopics.trigonometricFunctions.length; i++) {
+        successCount = 0
+        for (let j = 0; j < trigonometricFunctionsData.length; j++) {
+          if (questionTopics.trigonometricFunctions[i].topicName == trigonometricFunctionsData[j].skill) {
+            successCount = successCount + 1;
+          }
+        }
+        trigonometricFunctionsSuccessArray.push(successCount);    
+      }
+      }
+      if (naturalExponentialLogData) {
+        for (let i = 0; i < questionTopics.naturalExponentialLog.length; i++) {
+          successCount = 0
+          for (let j = 0; j < naturalExponentialLogData.length; j++) {
+            if (questionTopics.naturalExponentialLog[i].topicName == naturalExponentialLogData[j].skill) {
+              successCount = successCount + 1;
+            }
+          }
+          naturalExponentialLogSuccessArray.push(successCount);    
+        }
+      }     
+      userData = {username:result.username, logins: result.loginCount, totalQuestions: result.totalQuestionsAttempted, exponentsSuccessArray: exponentsSuccessArray, derivativesSuccessArray: derivativesSuccessArray, trigonometricFunctionsSuccessArray: trigonometricFunctionsSuccessArray, naturalExponentialLogSuccessArray: naturalExponentialLogSuccessArray}
+      usersData.push(userData);
+    }
+    response.json({questionTopics: questionTopics, usersData: usersData, exponents: exponentsData, derivatives: derivativesData, naturalExponentialLog: naturalExponentialLogData});
+  } catch(error) {
+    console.error("Error fetching progress:", error);
+    response.json({questionTopics: null, usersData: null, exponents: null, derivatives: null, naturalExponentialLog: null})
   }
 });
 
