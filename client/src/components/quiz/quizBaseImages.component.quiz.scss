@@ -1,0 +1,38 @@
+@use '../../App.scss' as *;
+
+#quizContent {
+    background-color: $purpleBase;
+    color: $textWhite;  
+    box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+    border-radius: 3%;
+}
+
+.answerA { 
+    padding: 1%;
+    &:hover {
+        background-color: darkviolet;
+    }
+}
+.answerB { 
+    padding: 1%;
+    &:hover {
+        background-color: darkviolet;
+    }
+}
+.answerC { 
+    padding: 1%;
+    &:hover {
+        background-color: darkviolet;
+    }
+}
+.answerD { 
+    padding: 1%;
+    &:hover {
+        background-color: darkviolet;
+    }
+}
+
+// #aArea {
+//   text-align:left;
+//   padding-left:15%;
+// }

@@ -33,6 +33,10 @@ export default function Calculus({username}) {
                 <NavLink to="/naturalTopics">
                     <Button type="button" variant="primary" size="lg">Natural Exponential/Log</Button>
                 </NavLink>
+                <br /><br />
+                <NavLink to="/tutorialTopics">
+                    <Button type="button" variant="primary" size="lg">Tutorials and Quizzes</Button>
+                </NavLink>
                 {/* <NavLink to="/markdown">
                     <Button type="button" variant="primary" size="lg">Markdown</Button>
                 </NavLink> */}

@@ -7,6 +7,9 @@ import '../../App.scss';
 import '../../index.scss';
 import './calculus.component.derivatives.scss';
 
+import NaturalExponential from '../explanations/naturalExponentialLog.component.explanations.js'
+import { NaturalLog, NaturalLogBinomials, ExponentialBaseA, LogBaseA  } from '../explanations/naturalExponentialLog.component.explanations.js'
+
 import AnswerForm from './answerForm.component.calculus.js';
 import {
   naturalExponential,
@@ -255,116 +258,65 @@ function ModalComponent ({currentTopic}) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  return(
-    <>
-      <Button className="m-2" variant="info" onClick={handleShow}>
-        Explain!
-      </Button>
-      <ModalField
-        currentTopic={currentTopic}
-        show={show}
-        handleClose={handleClose} 
-      />          
-    </>
-  )
-}
-function ModalField({currentTopic, show, handleClose}) {
   if (currentTopic == 500) {
-    return (
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Derivative of the Natural Exponential</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>The natural exponential function is its own derivative: </p>
-          <div className="row">
-            <StaticMathField className="col-4 offset-4 text-center">{`\\frac{d}{dx} e^x = e^x`}</StaticMathField>
-          </div>
-          <p>When the x term is multiplied by a coefficient, we apply the chain rule to find the derivative. </p>
-          <div className="row">
-            <StaticMathField className="col-4 offset-4 text-center">{`\\frac{d}{dx} e^u = e^u u'`}</StaticMathField><br />
-          </div>
-          <div className="row mt-2">
-            <div className="col-4">
-              <StaticMathField className="text-end">{`\\frac{d}{dx} e^{4x} = e^{4x} \\cdot 4`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} e^{4x} = 4e^{4x}`}</StaticMathField>
-            </div>
-            <div className="col-4">
-              <StaticMathField className="text-end">{`\\frac{d}{dx} 3e^{5x} = 3e^{5x} \\cdot 5`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} 3e^{5x} = 15e^{5x}`}</StaticMathField>
-            </div>            
-            <div className="col-4">
-              <StaticMathField className="text-end">{`\\frac{d}{dx} 2e^{-\\frac{1}{3}x} = 2e^{-\\frac{1}{3}x} \\cdot -\\frac{1}{3}`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} 2e^{-\\frac{1}{3}x} = -\\frac{2}{3}e^{-\\frac{1}{3}x}`}</StaticMathField>
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <NaturalExponential 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
     )
-  } else {
-    return (
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Derivative of the Natural Log</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>The term inside the logarithm (the argument) gets pushed to the denominator. The derivative of the argument stays in the numerator.</p>
-          <div className="row">
-            <div className="col-4 offset-1 text-center">
-              <StaticMathField>{`\\frac{d}{dx} lnx = \\frac{1}{x}`}</StaticMathField>
-            </div>
-            <div className="col-4 offset-1 text-center">
-            <StaticMathField>{`\\frac{d}{dx} lnu = \\frac{u'}{u}`}</StaticMathField><br />
-            </div>            
-          </div>        
-          <div className="row mt-3">
-            <div className="col-4">
-              <p>Example 1</p>
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln 3x = \\frac{3}{3x}`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln 3x = \\frac{1}{x}`}</StaticMathField>
-            </div>
-            <div className="col-4">
-              <p>Example 2</p>
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln 17x = \\frac{17}{17x}`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln 17x = \\frac{1}{x}`}</StaticMathField>
-            </div>          
-            <div className="col-4">
-              <p>Example 3</p>  
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln \\frac{2}{3}x = \\frac{\\frac{2}{3}}{\\frac{2}{3}x}`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln \\frac{2}{3}x = {\\frac{1}{x}}`}</StaticMathField>
-            </div>
-          </div>
-          <p>The examples above show that the derivative of <StaticMathField>{`ln cx`}</StaticMathField> will simplify to <StaticMathField>{`\\frac{1}{x}`}</StaticMathField>.</p>
-          <div className="row mt-3">
-            <div className="col-4">
-              <p>Example 4</p>
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln x^4 = \\frac{4x^3}{x^4}`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln x^4 = \\frac{4}{x}`}</StaticMathField>
-            </div>
-            <div className="col-4">
-              <p>Example 5</p>
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln x^7 = \\frac{7x^6}{x^7}`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln x^7 = \\frac{7}{x}`}</StaticMathField>
-            </div>          
-            <div className="col-4">
-              <p>Example 6</p>  
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln 3x^2 = \\frac{6x}{3x^2}`}</StaticMathField><br />
-              <StaticMathField className="text-end">{`\\frac{d}{dx} ln 3x^2 = \\frac{2}{x}`}</StaticMathField>
-            </div>
-          </div>
-          <p>Notice that the derivative of <StaticMathField>{`ln x^a`}</StaticMathField> is always <StaticMathField>{`\\frac{a}{x}`}</StaticMathField>.</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+  } else if (currentTopic == 520) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <NaturalLog
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 530) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <NaturalLogBinomials
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 550) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <ExponentialBaseA
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 560) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <LogBaseA
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
     )
   }
 }

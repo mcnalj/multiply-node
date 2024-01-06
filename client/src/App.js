@@ -11,9 +11,12 @@ import Login from './components/auth/login.component.auth';
 import Register from './components/auth/register.component.auth';
 import LogOut from './components/auth/logout.component.auth';
 
+import TutorialTopics from './components/calculus/calculus.component.tutorialTopics.js';
 import QuizCategories from './components/quiz/quizCategories.component.quiz';
 import QuizCategoriesButtons from './components/quiz/quizCategoriesButtons.component.quiz';
 import GetQuestions from './components/quiz/quizBase.component.quiz';
+import QuizBaseImages from './components/quiz/quizBaseImages.component.quiz';
+import QuizTutorial from './components/quiz/quizTutorial.component.quiz';
 
 import MyComponent from './components/sandbox/fetch.component';
 import Dropdown from './components/sandbox/dropdown';
@@ -36,6 +39,8 @@ import Markdown from './components/calculus/calculus.component.markdown';
 import DerivativeRules from './components/flashcards/derivativeRules.component.flashcards';
 import FlippableCard from './components/flashcards/gptFlashcard.component.flashcards';
 import GFGFlippableCard from './components/flashcards/gfgFlashcard.component.flashcards';
+import CardStack from './components/flashcards/cardStack.component.flashcard';
+import CardSlide from './components/flashcards/cardSlide.component.flashcard';
 
 import UserProgress from './components/userInfo/userInfo.component.progress';
 import ClassProgress from './components/userInfo/userInfo.component.classProgress';
@@ -108,6 +113,8 @@ function App() {
           />
           <Route path="/categoriesButtons" element={<QuizCategoriesButtons /> } />
           <Route path="/getQuestions/:categoryId" element={<GetQuestions /> } />
+          <Route path="/quizBaseImages" element={<QuizBaseImages /> } />
+          {/* <Route path="/quizTutorial" element={<QuizTutorial /> } /> */}
           
           <Route path="/fetch" element={<MyComponent />} />
           <Route path="/dropdown" element={<Dropdown /> } />
@@ -286,7 +293,38 @@ function App() {
                       <GFGFlippableCard username={username} />
                     </Protected>
                   } 
-          />                                                                                                                      
+          /> 
+          <Route path="/cardStack"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <CardStack username={username} />
+                    </Protected>
+                  } 
+          /> 
+          <Route path="/cardSlide"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <CardSlide username={username} />
+                    </Protected>
+                  } 
+          /> 
+          <Route path="/quizTutorial"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                        <QuizTutorial username={username} />
+                    </Protected>
+                  }
+          />
+          <Route path="/tutorialTopics"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                        <TutorialTopics username={username} />
+                    </Protected>
+                  }
+          />                              
+                                                                                                                               
+                                                                                                                               
+
                                                                                                             
           </Routes>                                    
       </div>

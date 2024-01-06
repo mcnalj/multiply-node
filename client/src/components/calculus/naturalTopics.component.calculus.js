@@ -71,7 +71,7 @@ export default function NaturalTopics() {
                     </NavLink>
                     <br />
                     <NavLink to="/naturalDerivatives/560" >
-                        <Button variant={backgroundColors.logFunctionsBaseA} className="m-3">General Log Functions (Complex)</Button>
+                        <Button variant={backgroundColors.logFunctionsBaseA} className="m-3">General Log Functions</Button>
                     </NavLink>
                     <br />
                     <NavLink to="/calculus" >

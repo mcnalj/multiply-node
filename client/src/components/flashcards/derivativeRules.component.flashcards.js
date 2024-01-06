@@ -12,6 +12,41 @@ addStyles()
 
 export default function DerivativeRules({username}) {
     const [isFlipped, setIsFlipped] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const cardObjectsArray = [
+        {
+            title: "CONSTANT-MULTIPLE RULE",
+            front: {
+                preText: "",
+                latex: "\\frac{d}{dx}[C \\quad (f(x))]",
+                postText: "",
+                exampleProblem: "\\frac{d}{dx}[7x^2]"
+            },
+            back: {
+                preText: "",
+                latex: "C \\quad (f'(x))",
+                postText: "",
+                exampleSolutions: "=7 \\cdot 2x \\quad = 14x"
+
+            }
+        },
+        {
+            title: "POWER RULE",
+            front: {
+                preText: "",
+                mathLatex: "\\frac{d}{dx}[x^n]",
+                postText: "",
+                exampleProblem: "\\frac{d}{dx}[x^7]"
+            },
+            back: {
+                preText: "",
+                mathLatex: "n \cdot x^{n-1}",
+                postText: "",
+                exampleProblem: "=7x^{7-1} \\quad = 7x^6"
+            }
+        },
+    ]
     
     const handleFlip = () => {
         console.log(isFlipped);
@@ -26,20 +61,20 @@ export default function DerivativeRules({username}) {
                             <div className="front" onClick={handleFlip}>
                                 <div className="card-content">
                                 <div className="row">
-                                    <p className="title-section">CONSTANT MULTIPLE RULE</p>
+                                    <p className="title-section">{cardObjectsArray[currentIndex].title}</p>
                                 </div>
                                 <div className="row">
-                                    <p className="content-section"><StaticMathField>{"\\frac{d}{dx}[C \\quad (f(x))]"}</StaticMathField></p>
+                                    <p className="content-section"><StaticMathField>{cardObjectsArray[currentIndex].front.latex}</StaticMathField></p>
                                 </div>
                                 </div>
                             </div>
                             <div className="back" onClick={handleFlip}>
                                 <div className="card-content">
                                 <div className="row">
-                                    <p className="title-section">CONSTANT MULTIPLE RULE</p>
+                                    <p className="title-section">{cardObjectsArray[currentIndex].title}</p>
                                 </div>
                                 <div className="row">
-                                    <p className="content-section"><StaticMathField>{"C \\quad (f'(x))"}</StaticMathField></p>
+                                    <p className="content-section"><StaticMathField>{cardObjectsArray[currentIndex].back.latex}</StaticMathField></p>
                                 </div>
                                 </div>
                             </div>

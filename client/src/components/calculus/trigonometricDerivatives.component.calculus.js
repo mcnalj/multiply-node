@@ -24,9 +24,9 @@ var url = config.url.API_URL;
 const questionTopics = {
   "trigonometricFunctions": [
         {
-        topicId: 1100,
-        topicName: "simpleTrigonometric",
-        questionEngine: simpleTrigonometric,
+          topicId: 1100,
+          topicName: "simpleTrigonometric",
+          questionEngine: simpleTrigonometric,
         },
         {
           topicId: 1110,
@@ -63,7 +63,7 @@ export default function TrigonometricDerivatives({username}) {
       <Derivatives 
         currentTopic={currentTopic}
         setCurrentTopic={setCurrentTopic}
-        questionTopics={questionTopics.derivatives}
+        questionTopics={questionTopics.trigonometricFunctions}
         username={username}
       />
     </>
@@ -71,8 +71,9 @@ export default function TrigonometricDerivatives({username}) {
 }
 
 export function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
+  // TODO: shouldn't these be trigonometricFunctions
   let unit = "derivatives";
-  let standard = 12;
+  let standard = 3;
   
   // why do we need this?
   const [topics, setTopics] = useState(
@@ -133,7 +134,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
           questionsIncorrect: 0,
           questionsStreak: 0,
           // questionsToMeet: unitTopics[0].topicData.standard,
-          questionsToMeet: 12,
+          questionsToMeet: 3,
           progressBar: 0,
           doneWithTopic: done,
           questionTopic: "Trigonometric Derivatives",
@@ -172,6 +173,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     let topicName = '';
     const endTime = new Date()
     const totalTime = endTime - startTime;
+    // I'm getting to done, but this is why it's not saving. QuestionTopics is undefined
     const currentTopicName = questionTopics.find((name) => name.topicId == currentTopic)
     if (currentTopicName) {
       topicName = currentTopicName.topicName;
@@ -204,6 +206,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
         }        
       }
     }
+    console.dir(sessionData);
     // TODO - This is not saving any incorrect answers and might not have the total right.
     const response = await fetch(`${url}/record/metStandard/trigonometricFunctions`, {
       method: "POST",
@@ -227,7 +230,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     let questionTopic = questionTopics[unit].find((topic) => topic.topicId == topicId);
     let questionEngine = questionTopic.questionEngine;
     let topicArrayIndex = topics.topicsArray.findIndex((topic)=>topic.topicId==topicId);
-    let standard = 12;
+    let standard = 3;
     let [questionLatex, answerArrayLatex] = questionEngine();
     questionLatex = 'f(x) = ' + questionLatex;
     setCurrentTopic(topicId);
@@ -361,17 +364,11 @@ function updateSituation(value) {
 
   function checkAnswer(answer) {
     var correct = false;
-    console.log(props.questionState.answerArrayLatex);
     props.questionState.answerArrayLatex.forEach((latex) => {
-      console.log(answer);
-      console.log(latex)
       if(answer == latex) {
-        console.log("got here")
         correct = true;
-        console.log(correct);
       }
     });
-    console.log(correct);
     return correct;
   }
 
@@ -424,15 +421,11 @@ function updateSituation(value) {
 
     let answerMessage = '';
     let pause = 1500;
-    console.log("Typed answer: ");
-    console.log(userObj.userAnswer);
     let answer = userObj.userAnswer.replace(/\s/g, '');
-    console.log("new asnwer: " + answer);
     let correct = checkAnswer(answer);
-    console.log("Here's the return");
-    console.log(correct);
     // if (userObj.userAnswer === props.questionState.answerLatex) {
     if (correct) {
+
         setBoxStyle({backgroundColor: "green", color:"white", borderWidth: "0px", borderColor: "gray"})
         stateToLift.questionsStreak = stateToLift.questionsStreak + 1;
         if (stateToLift.questionsStreak < 4) {
@@ -446,7 +439,10 @@ function updateSituation(value) {
           }
         }        
         stateToLift.questionsCorrect = stateToLift.questionsCorrect + 1;
+        console.log(props.questionState.questionsToMeet);
+        console.log(stateToLift.questionsCorrect);
         if (stateToLift.questionsCorrect >= props.questionState.questionsToMeet) {
+          console.log("got here");
           answerMessage = "Success! You met the standard. Go to the Next Topic . . ."
           pause = 3000;
         }
@@ -465,6 +461,7 @@ function updateSituation(value) {
     setTimeout(function() {
       setBoxStyle({backgroundColor:"white", color: "black", borderWidth: "0px", borderColor: "gray"})        
       if (stateToLift.questionsCorrect >= props.questionState.questionsToMeet) {
+        console.log("done");
         props.questionState.doneWithTopic(stateToLift);
         stateToLift.questionsAttempted = 0;
         stateToLift.questionsCorrect = 0;

@@ -29,7 +29,20 @@ import {
 
 import { getRandomIntInclusive } from '../math-scripts/utilities-scripts.js';
 
-import { config} from '../constants.js';
+import PowerRule from '../explanations/powerRule.component.explanations.js'
+import {  PowerRuleCoefficients,
+          PowerRuleFractionalCoefficients,
+          PowerRuleNegativeExponents,
+          PowerRuleFractionalExponents,
+          PowerRuleFractionalExponentsIntegerCoefficients,
+          PowerRuleFractionalExponentsFractionalCoefficients,
+          PowerRuleNegativeFractionalExponents,
+          PowerRuleNegativeFractionalExponentsIntegerCoefficients,
+          PowerRuleNegativeFractionalExponentsFractionalCoefficients,
+
+       } from '../explanations/powerRule.component.explanations.js'
+
+import { config } from '../constants.js';
 var url = config.url.API_URL;
 
 const questionTopics = {
@@ -393,9 +406,17 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
         </div>
       </div>
       <div className="row">
-        <div className="col-12 mt-2 fs-2">
+        <div className="col-2">
+
+        </div>
+        <div className="col-8 mt-2 fs-2">
             <StaticMathField>{ questionState.questionLatex }</StaticMathField>
         </div> 
+        <div className="col-2">
+          <ModalComponent
+            currentTopic={currentTopic}
+          />
+        </div>
       </div>
       <AnswerForm
           questionState={questionState}
@@ -591,6 +612,135 @@ function AnswerForm(props) {
     </div>
   )
 }
+
+function ModalComponent ({currentTopic}) {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  if (currentTopic == 210) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRule 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 220) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleCoefficients 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 230) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleFractionalCoefficients 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 240) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleNegativeExponents 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 270) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleFractionalExponents 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 280) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleFractionalExponentsIntegerCoefficients 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 290) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleFractionalExponentsFractionalCoefficients 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 300) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleNegativeFractionalExponents 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 310) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleNegativeFractionalExponentsIntegerCoefficients 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 320) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleNegativeFractionalExponentsFractionalCoefficients 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  }
+}
+
 
 // function Sidebar(props) {
 //   const [show, setShow] = useState(false);

@@ -342,6 +342,8 @@ recordRoutes.route('/metStandard/derivatives').post(checkAuthenticated, async fu
 
 recordRoutes.route('/metStandard/trigonometricFunctions').post(checkAuthenticated, async function(req, res) {
   const sessionData = req.body;
+  console.log("Here's the session data");
+  console.dir(sessionData);
   let msg = '';
   let success = false;
   try {
@@ -361,6 +363,7 @@ recordRoutes.route('/metStandard/trigonometricFunctions').post(checkAuthenticate
       {upsert: true}
     );
     if (updateSuccess.modifiedCount == 1) {
+      console.log("Success adding data")
       msg ='Data was added to the progress array.';
     } else {
       msg = 'No data was added to the progress array';
@@ -477,7 +480,8 @@ recordRoutes.route("/topic/:unitName").get(async function (req, response) {
 });
 
 recordRoutes.route("/listClasses").post(async function (req, response) {
-  const user = req.session.passport.user.username;
+  // this attempt to set const user is what is breaking it. Why is this being called?
+  // const user = req.session.passport.user.username;
   // let query = { classMembers: user};
   // try {
   //   let usersData = [];
@@ -489,8 +493,10 @@ recordRoutes.route("/listClasses").post(async function (req, response) {
   //   }
   //   console.log(usersData);
   //   response.json({usersData: usersData});
-  let query = { username: user};
+  // let query = { username: user};
   try {
+    const user = req.session.passport.user.username;
+    let query = { username: user};
     let usersData = [];
     let results = await dbo.client.db("employees")
       .collection("users")
@@ -532,6 +538,37 @@ recordRoutes.route("/skillsCompleted").post(async function (req, response) {
     response.json({completedSkillsArray: null})
   }
 });
+
+recordRoutes.route('/finishedTutorial').post(checkAuthenticated, async function(req, res) {
+  const progressData = req.body;
+  let msg = '';
+  let success = false;
+  try {
+    let updateSuccess = await dbo.client.db("employees")
+    .collection("userData")
+    .updateOne(
+      {username: progressData.userData.username},
+      {
+        $addToSet: { "progress.calculus.tutorials.tutorialData":
+                       progressData.progress.calculus.tutorials.tutorialData
+                   } 
+      },
+      {upsert: true}
+    );
+    if (updateSuccess.modifiedCount == 1) {
+      msg ='Data was added to the progress array.';
+    } else {
+      msg = 'No data was added to the progress array';
+    }
+    success = true;
+  } catch {
+    msg = 'Error on attempt to updateOne';
+  }
+  res.send({msg:msg, success: success});
+});
+
+
+
 
 module.exports = recordRoutes;
 

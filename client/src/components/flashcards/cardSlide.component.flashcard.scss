@@ -1,0 +1,79 @@
+@use '../../App.scss' as *;
+
+.card-stack {
+    perspective: 1000px;
+    width: 300px;
+    height: 200px;
+    margin: 0 auto;
+  }
+  
+  .card {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+  }
+  
+  @keyframes myAnimation {
+    0% {
+        transform: translateZ(0);
+    }
+    15% {
+        transform: rotateY(-50deg);
+    } 
+    40% {
+        transform: rotateY(-20deg) translateX(250px) translateZ(-100px);
+        z-index: 1;
+    }
+    50% {
+        z-index: 0;
+        transform: rotateY(-10deg) translateX(200px) translateZ(-150px);
+    }
+    60% {
+        z-index: 0;
+        transform: translateX(150px) translateZ(-150px);
+    } 
+    80% {
+        z-index: 0;
+        transform: translateX(0) translateZ(-150px);
+    }       
+    100% {
+        z-index: 0;
+        transform: translateX(0px) translateZ(-150px);
+    }            
+  }
+
+  .card.active {
+    z-index: 1;
+    animation: myAnimation 2.5s;
+  }
+  
+  .card:not(.active) {
+    z-index: 0;
+  }
+  
+  .card-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .card-content.back {
+    transform: rotateX(180deg) translateZ(50px); /* Adjust the depth of the stack */
+  }
+  
+  .question,
+  .answer {
+    font-size: 18px;
+  }
+  
+  /* Add more styles as needed */
+//   .card.active {
+//     z-index: 1;
+//     // transform: translateZ(0) rotateY(-50deg) translateX(200px) translateZ(-50px);
+//     animation: myAnimation 8s;
+//   }
