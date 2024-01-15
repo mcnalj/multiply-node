@@ -14,15 +14,15 @@ export default function TutorialTopics({username}) {
     return (
         <div className="col-12">
             <div className="mt-3">
-                <h1>Differentiation</h1>
+                <h1>Differentiation Tutorials and Quizzes</h1>
             </div>
             <div className="mt-3">
                 <NavLink to="/quizTutorial">
-                    <Button type="button" variant="primary" size="lg">Derivatives Tutorials</Button>
+                    <Button type="button" variant="primary" size="lg">Curve Sketching Tutorial</Button>
                 </NavLink>
                 <br /><br />
                 <NavLink to="/quizBaseImages">
-                    <Button type="button" variant="primary" size="lg">Derivatives Quizzes</Button>
+                    <Button type="button" variant="primary" size="lg">Curve Sketching Quiz</Button>
                 </NavLink>
                 <br /><br />
                 <NavLink to="/calculus">

@@ -35,6 +35,7 @@ usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, 
     let derivativesData = [];
     let trigonometricFunctionsData = [];
     let naturalExponentialLogData = [];
+    let tutorialsData = [];
     let results =  await dbo.client.db("employees")
       .collection("userData")
       .findOne(query, projection)
@@ -51,17 +52,19 @@ usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, 
       if (results.progress.calculus.naturalExponentialLog) {
         naturalExponentialLogData = results.progress.calculus.naturalExponentialLog.skillData;
       }
+      if (results.progress.calculus.tutorials) {
+        tutorialsData = results.progress.calculus.tutorials.tutorialData;
+      }      
     }
-    response.json({exponents: exponentsData, derivatives: derivativesData, trigonometricFunctions: trigonometricFunctionsData, naturalExponentialLog: naturalExponentialLogData});
+    response.json({exponents: exponentsData, derivatives: derivativesData, trigonometricFunctions: trigonometricFunctionsData, naturalExponentialLog: naturalExponentialLogData, tutorials: tutorialsData});
   } catch(error) {
     console.error("Error fetching progress:", error);
-    response.json({exponents: null, derivatives: null, trigonometricFunctions: null, naturalExponentialLog: null})
+    response.json({exponents: null, derivatives: null, trigonometricFunctions: null, naturalExponentialLog: null, tutorials: null})
   }
 });
 
 usersRoutes.route("/singleUsersProgress").post(checkAuthenticated, async function (req, response) {
   const username = req.body.username;
-  console.log(username);
   let query = { username: username};
   let projection = { 
       _id: false,
@@ -79,6 +82,7 @@ usersRoutes.route("/singleUsersProgress").post(checkAuthenticated, async functio
     let derivativesData = [];
     let trigonometricFunctionsData = [];
     let naturalExponentialLogData = [];
+    let tutorialsData = [];
     let results =  await dbo.client.db("employees")
       .collection("userData")
       .findOne(query, projection)
@@ -95,11 +99,14 @@ usersRoutes.route("/singleUsersProgress").post(checkAuthenticated, async functio
       if (results.progress.calculus.naturalExponentialLog) {
         naturalExponentialLogData = results.progress.calculus.naturalExponentialLog.skillData;
       }      
+      if (results.progress.calculus.tutorials) {
+        tutorialsData = results.progress.calculus.tutorials.tutorialData;
+      }            
     }
-    response.json({exponents: exponentsData, derivatives: derivativesData, trigonometricFunctions: trigonometricFunctionsData, naturalExponentialLog: naturalExponentialLogData});
+    response.json({exponents: exponentsData, derivatives: derivativesData, trigonometricFunctions: trigonometricFunctionsData, naturalExponentialLog: naturalExponentialLogData, tutorials: tutorialsData});
   } catch(error) {
     console.error("Error fetching progress:", error);
-    response.json({exponents: null, derivatives: null, trigonometricFunctions: null, naturalExponentialLog: null})
+    response.json({exponents: null, derivatives: null, trigonometricFunctions: null, naturalExponentialLog: null, tutorials: null})
   }
 });
 

@@ -10,7 +10,7 @@ export default function SingleUsersProgress({username})  {
     const usersUsername = parameter.username;
     console.log(usersUsername)
   
-    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: []});
+    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: [], tutorialsDataArray: []});
     useEffect(()=> {    
         fetchUserData();
     }, []);
@@ -21,6 +21,7 @@ export default function SingleUsersProgress({username})  {
         let derivativesDataArray = [];
         let trigonometricFunctionsDataArray = [];
         let naturalExponentialLogDataArray = [];
+        let tutorialsDataArray = [];
         const result = await fetch(`${url}/users/singleUsersProgress`, {
             method: "POST",
             mode: 'cors',
@@ -65,7 +66,6 @@ export default function SingleUsersProgress({username})  {
             }
         }
         if (data.trigonometricFunctions) {
-            console.log(data.trigonometricFunctions)
             for (let i=0; i < data.trigonometricFunctions.length; i++) {
                 let dataObject = {
                     skill: data.trigonometricFunctions[i].skill,
@@ -80,7 +80,6 @@ export default function SingleUsersProgress({username})  {
             }
         }
         if (data.naturalExponentialLog) {
-            console.log(data.naturalExponentialLog)
             for (let i=0; i < data.naturalExponentialLog.length; i++) {
                 let dataObject = {
                     skill: data.naturalExponentialLog[i].skill,
@@ -93,8 +92,22 @@ export default function SingleUsersProgress({username})  {
                 }
                 naturalExponentialLogDataArray.push(dataObject);
             }
-        }                        
-        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray});
+        }
+        if (data.tutorials) {
+            for (let i=0; i < data.tutorials.length; i++) {
+                let dataObject = {
+                    skill: data.tutorials[i].skill,
+                    time: changeTimeToMinutesAndSeconds(data.tutorials[i].sessionsData.totalTime),
+                    date: changeDateStringToDate(data.tutorials[i].sessionsData.datetimeStarted),
+                    // correct: data.naturalExponentialLog[i].sessionsData.questionsCorrect,
+                    // attempted: data.naturalExponentialLog[i].sessionsData.questionsAttempted,
+                    // streak: data.naturalExponentialLog[i].sessionsData.questionsStreak,
+                    keyId: i,
+                }
+                tutorialsDataArray.push(dataObject);
+            }
+        }                                                        
+        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray, tutorialsDataArray: tutorialsDataArray});
         return
     }
 
@@ -119,7 +132,7 @@ export default function SingleUsersProgress({username})  {
     }
 
     {
-        if (userData.exponentsDataArray.length === 0 && userData.derivativesDataArray.length === 0 && userData.trigonometricFunctionsDataArray.length === 0 && userData.naturalExponentialLogDataArray.length === 0) {
+        if (userData.exponentsDataArray.length === 0 && userData.derivativesDataArray.length === 0 && userData.trigonometricFunctionsDataArray.length === 0 && userData.naturalExponentialLogDataArray.length === 0 && userData.tutorialsDataArray.length === 0) {
             return (
                 <div>
                     <p className="m-5">Sorry, there is no progress data for user: <strong>{usersUsername}</strong>.</p>
@@ -266,7 +279,38 @@ export default function SingleUsersProgress({username})  {
                                   {datum.date}
                               </p>
                           </div>
-                      ))}                      
+                      ))}
+                    <p>Tutorials</p>
+                      <div id="tableHeading" className="row tableHeading">
+                          <p className="col-4">SKILL</p>
+                          <p className="col-2"></p>
+                          <p className="col-2"></p>
+                          <p className="col-2"></p>
+                          <p className="col-1">TIME</p>
+                          <p className="col-1">DATE</p>
+                      </div>           
+                      {userData.tutorialsDataArray.map((datum) => (
+                          <div className="row tableData" key={datum.keyId}>
+                              <p className="col-4">
+                                  {datum.skill}
+                              </p>
+                              <p className="col-2">
+                                  
+                              </p>
+                              <p className="col-2">
+                                  
+                              </p>
+                              <p className="col-2">
+                                  
+                              </p>   
+                              <p className="col-1">
+                                  {datum.time}
+                              </p>
+                              <p className="col-1">
+                                  {datum.date}
+                              </p>
+                          </div>
+                      ))}                                            
                   </div>
                 </div>
               );

@@ -4,7 +4,7 @@ import { config} from '../constants';
 var url = config.url.API_URL;
 
 export default function UserProgress({username})  {
-    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: []});
+    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: [], tutorialsDataArray: []});
     useEffect(()=> {    
         fetchUserData();
     }, []);
@@ -15,6 +15,7 @@ export default function UserProgress({username})  {
         let derivativesDataArray = [];
         let trigonometricFunctionsDataArray = [];
         let naturalExponentialLogDataArray = [];
+        let tutorialsDataArray = [];
         const result = await fetch(`${url}/users/userProgress`, {
             method: "GET",
             mode: 'cors',
@@ -86,8 +87,19 @@ export default function UserProgress({username})  {
                 }
                 naturalExponentialLogDataArray.push(dataObject);
             }
-        }                        
-        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray});
+        }
+        if (data.tutorials) {
+            for (let i=0; i < data.tutorials.length; i++) {
+                let dataObject = {
+                    skill: data.tutorials[i].skill,
+                    time: changeTimeToMinutesAndSeconds(data.tutorials[i].sessionsData.totalTime),
+                    date: changeDateStringToDate(data.tutorials[i].sessionsData.datetimeStarted),
+                    keyId: i,
+                }
+                tutorialsDataArray.push(dataObject);
+            }
+        }                                                        
+        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray, tutorialsDataArray: tutorialsDataArray});
         return
     }
 
@@ -258,7 +270,37 @@ export default function UserProgress({username})  {
                               </p>
                           </div>
                       ))}                      
-
+                    <p>Tutorials</p>
+                      <div id="tableHeading" className="row tableHeading">
+                          <p className="col-4">SKILL</p>
+                          <p className="col-2"></p>
+                          <p className="col-2"></p>
+                          <p className="col-2"></p>
+                          <p className="col-1">TIME</p>
+                          <p className="col-1">DATE</p>
+                      </div>           
+                      {userData.tutorialsDataArray.map((datum) => (
+                          <div className="row tableData" key={datum.keyId}>
+                              <p className="col-4">
+                                  {datum.skill}
+                              </p>
+                              <p className="col-2">
+                                  
+                              </p>
+                              <p className="col-2">
+                                  
+                              </p>
+                              <p className="col-2">
+                                  
+                              </p>   
+                              <p className="col-1">
+                                  {datum.time}
+                              </p>
+                              <p className="col-1">
+                                  {datum.date}
+                              </p>
+                          </div>
+                      ))}                     
                   </div>
                 </div>
               );
