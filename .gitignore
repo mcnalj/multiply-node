@@ -6,7 +6,7 @@ server/config.env
 server/credentials.development.json
 server/credentials.production.json
 server/package-lock.json
-client/build
+# client/build
 client/node_modules
 client/package-lock.json
 .DS_Store
