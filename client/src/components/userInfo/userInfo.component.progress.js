@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 // import './styles.component.auth.scss';
 import { config} from '../constants';
 var url = config.url.API_URL;
 
 export default function UserProgress({username})  {
-    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: [], tutorialsDataArray: []});
+    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: [], tutorialsDataArray: [], integrationDataArray: []});
     useEffect(()=> {    
         fetchUserData();
     }, []);
@@ -16,6 +18,8 @@ export default function UserProgress({username})  {
         let trigonometricFunctionsDataArray = [];
         let naturalExponentialLogDataArray = [];
         let tutorialsDataArray = [];
+        let integrationDataArray = [];
+        console.log("fetchingData");
         const result = await fetch(`${url}/users/userProgress`, {
             method: "GET",
             mode: 'cors',
@@ -98,8 +102,23 @@ export default function UserProgress({username})  {
                 }
                 tutorialsDataArray.push(dataObject);
             }
-        }                                                        
-        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray, tutorialsDataArray: tutorialsDataArray});
+        }
+        if (data.integration) {
+            console.dir(data.integration)
+            for (let i=0; i < data.integration.length; i++) {
+                let dataObject = {
+                    skill: data.integration[i].skill,
+                    time: changeTimeToMinutesAndSeconds(data.integration[i].sessionsData.totalTime),
+                    date: changeDateStringToDate(data.integration[i].sessionsData.datetimeStarted),
+                    correct: data.integration[i].sessionsData.questionsCorrect,
+                    attempted: data.integration[i].sessionsData.questionsAttempted,
+                    streak: data.integration[i].sessionsData.questionsStreak,
+                    keyId: i,
+                }
+                integrationDataArray.push(dataObject);
+            }
+        }                                                                
+        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray, tutorialsDataArray: tutorialsDataArray, integrationDataArray: integrationDataArray});
         return
     }
 
@@ -124,11 +143,16 @@ export default function UserProgress({username})  {
     }
 
     {
-        if (userData.exponentsDataArray.length === 0 && userData.derivativesDataArray.length === 0 && userData.trigonometricFunctionsDataArray.length === 0) {
+        if (userData.exponentsDataArray.length === 0 && userData.derivativesDataArray.length === 0 && userData.trigonometricFunctionsDataArray.length === 0 && userData.naturalExponentialLogDataArray.length === 0 && userData.tutorialsDataArray.length === 0 && userData.integrationDataArray.length === 0) {
             return (
                 <div>
                     <p className="m-5">Sorry, there is no progress data for user: <strong>{username}</strong>.</p>
+                    <NavLink to="/calculus" >
+                        <Button variant="success" className="m-2">Back to Calculus</Button>
+                    </NavLink>
                 </div>
+
+                
             )
         } else {
             return (
@@ -144,6 +168,9 @@ export default function UserProgress({username})  {
                           }
                       `}
                   </style>
+                  <NavLink to="/calculus" >
+                        <Button variant="success" className="m-2">Back to Calculus</Button>
+                  </NavLink>
                   <p>Progress for {username}:</p>
                   <div>
                     <p>Exponents</p>
@@ -300,7 +327,38 @@ export default function UserProgress({username})  {
                                   {datum.date}
                               </p>
                           </div>
-                      ))}                     
+                      ))} 
+                    <p>INTEGRATION</p>
+                      <div id="tableHeading" className="row tableHeading">
+                          <p className="col-4">SKILL</p>
+                          <p className="col-2">CORRECT</p>
+                          <p className="col-2">ATTEMPTED</p>
+                          <p className="col-2">STREAK</p>
+                          <p className="col-1">TIME</p>
+                          <p className="col-1">DATE</p>
+                      </div>           
+                      {userData.integrationDataArray.map((datum) => (
+                          <div className="row tableData" key={datum.keyId}>
+                              <p className="col-4">
+                                  {datum.skill}
+                              </p>
+                              <p className="col-2">
+                                  {datum.correct}
+                              </p>
+                              <p className="col-2">
+                                  {datum.attempted}
+                              </p>
+                              <p className="col-2">
+                                  {datum.streak}
+                              </p>   
+                              <p className="col-1">
+                                  {datum.time}
+                              </p>
+                              <p className="col-1">
+                                  {datum.date}
+                              </p>
+                          </div>
+                      ))}                    
                   </div>
                 </div>
               );

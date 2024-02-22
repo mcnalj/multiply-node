@@ -45,7 +45,7 @@ export default function DerivativesTopics() {
         let resultData = await result.json()
         console.log(resultData)
         if (resultData) {
-            resultData.completedSkillsArray.forEach((skill) => {
+            resultData.completedSkillsArrayDerivatives.forEach((skill) => {
                 if (backgroundColorObject[skill] == "info") {
                     backgroundColorObject[skill] = "primary";
                 }

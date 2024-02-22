@@ -1,16 +1,8 @@
 import {
-    getSimplifiedFraction,
     getRandomIntInclusive,
-    generateReducedFraction,
-    maybeNegativeCoefficient,
-    maybeNegativeCoefficientWithAlreadyNegativeCoefficient,
-    applyRegexFixes,
     getReducedFraction,
-    findGreatestCommonFactor,
     getMixOfCoefficients,
   } from './utilities-scripts.js';
-
-
 
 function naturalExponential() {
     // works as of 10/28 - except if a fraction reduces to 1 it expects a 1 as the coefficient
@@ -79,19 +71,16 @@ function naturalExponential() {
                 answerLatex = `${answerCoefficientNumerator}`;
             }
         } else {
-            console.log("Got to have coefficients and neither is a fraction")
             answerCoefficientInteger = termInteger * coefficientInteger
             answerLatex = `${answerCoefficientInteger}`;
         }
     } else if (termCoefficient) {
-        console.log("Got to term coefficient only")
         if (termIsFraction) {
             answerLatex = `\\frac{${termNumerator}}{${termDenominator}}`;
         } else {
             answerLatex = `${termInteger}`;
         }
     } else if (coefficient) {
-        console.log("got to exponent coefficient only")
         if (coefficientIsFraction) {
             answerLatex = `\\frac{${coefficientNumerator}}{${coefficientDenominator}}`;
         } else {
@@ -159,7 +148,7 @@ function exponentLog() {
     let answerLatex = '';
     let answerLatexArray = [];
     let mix = getRandomIntInclusive(1,4);
-    if (mix == 1) {
+    if (mix === 1) {
         let exponent = getRandomIntInclusive(2, 6);
         questionLatex = `\\ln x^${exponent}`;
         answerLatex = `\\frac{${exponent}}{x}`;
@@ -179,28 +168,29 @@ function exponentLog() {
 }
 
 function binomialNaturalLog() {
-    console.log("In binomial natural log")
     let questionLatex = "";
     let answerLatex = "";
     let answerLatexArray = [];
     let exponent = getRandomIntInclusive(1, 5);
     let secondTerm = getRandomIntInclusive(1, 9);
     let choice = getRandomIntInclusive(1,4);
-    if (choice == 1) {
-        if (exponent == 1) {
+    if (choice === 1) {
+        if (exponent === 1) {
             questionLatex = `\\ln (x+${secondTerm})`;
-            console.log(questionLatex);
             answerLatex = `\\frac{1}{x+${secondTerm}}`;
         } else {
             let newExponent = exponent -1;
             let newCoefficient = exponent;
             questionLatex = `\\ln (x^${exponent}+${secondTerm})`;
-            answerLatex = `\\frac{${newCoefficient}x^${newExponent}}{x^${exponent}+${secondTerm}}`;
+            if (newExponent === 1) {
+                answerLatex = `\\frac{${newCoefficient}x}{x^${exponent}+${secondTerm}}`;    
+            } else {
+                answerLatex = `\\frac{${newCoefficient}x^${newExponent}}{x^${exponent}+${secondTerm}}`;
+            }            
         }
     } else {
-        console.log("In choice 2")
         let [coefficient, numerator, denominator, isFraction, isNegative] = getMixOfCoefficients(2, 9, 1, 5, 2, 9, 25, 0);
-        if (exponent == 1) {
+        if (exponent === 1) {
             if (isFraction) {
                 questionLatex = `\\ln (\\frac{${numerator}}{${denominator}}x + ${secondTerm})`;
                 answerLatex = `\\frac{\\frac{${numerator}}{${denominator}}{\\frac{${numerator}}{${denominator}}x + ${secondTerm}}`;
@@ -226,17 +216,13 @@ function binomialNaturalLog() {
         }
     }
     answerLatexArray.push(answerLatex);
-    console.log(questionLatex)
     return [questionLatex, answerLatexArray];
 }
 
 
 function complexNaturalLog() {
     let [questionLatex, answerLatexArray] = binomialNaturalLog();
-    console.log("In complexNaturalLog");
-    console.log(questionLatex);
     return [questionLatex, answerLatexArray];
-
 }
 
 function mixNaturalExponentialAndLog() {
@@ -283,7 +269,7 @@ function exponentialFunctionsBaseAExponentX() {
     let exponent = getRandomIntInclusive(2, 4);
     let questionLatex = `${base}^{x^${exponent}}`;
     let answerLatex = "";
-    if (exponent == 2) {
+    if (exponent === 2) {
         answerLatex = `(${exponent}\\ln${base})x${questionLatex}`;
     } else {
         let newExponent = exponent - 1;

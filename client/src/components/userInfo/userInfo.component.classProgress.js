@@ -47,7 +47,20 @@ export default function ClassProgress({username})  {
         {skillId: 550, skillName: "Deriv: Exponential (base a)" },  
         {skillId: 560, skillName: "Deriv: Log (base a)" },
     ]
-    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: []});
+
+    const integrationSkills = [
+        {skillId: 3010, skillName: "Indefinite Integrals: Single Term" },
+        {skillId: 3020, skillName: "Indefinite Integrals: Binomial Term" },
+        {skillId: 3030, skillName: "Indefinite Integrals: Polynomial" },
+        {skillId: 3040, skillName: "Indefinite Integrals: Trigonometric" },  
+        {skillId: 3050, skillName: "Indefinite Integrals: Natural Exponential" },
+        {skillId: 3060, skillName: "Indefinite Integrals: Natural Log" },
+        {skillId: 3070, skillName: "Definite Integrals" },
+    ]
+
+
+    
+    const [userData, setUserData] = useState({exponentsDataArray: [], derivativesDataArray: [], trigonometricFunctionsDataArray: [], naturalExponentialLogDataArray: [], integrationDataArray: []});
     const [questionList, setQuestionList] = useState([]);
     const [usersData, setUsersData] = useState([]);
     useEffect(()=> {    
@@ -60,6 +73,7 @@ export default function ClassProgress({username})  {
         let derivativesDataArray = [];
         let trigonometricFunctionsDataArray = [];
         let naturalExponentialLogDataArray = [];
+        let integrationDataArray = [];
         const result = await fetch(`${url}/users/singleClassProgress`, {
             method: "GET",
             mode: 'cors',
@@ -128,9 +142,23 @@ export default function ClassProgress({username})  {
                 }
                 naturalExponentialLogDataArray.push(dataObject);
             }
-        }        
+        }
+        if (data.integration) {
+            for (let i=0; i < data.integration.length; i++) {
+                let dataObject = {
+                    skill: data.integration[i].skill,
+                    time: changeTimeToMinutesAndSeconds(data.integration[i].sessionsData.totalTime),
+                    date: changeDateStringToDate(data.integration[i].sessionsData.datetimeStarted),
+                    correct: data.integration[i].sessionsData.questionsCorrect,
+                    attempted: data.integration[i].sessionsData.questionsAttempted,
+                    streak: data.integration[i].sessionsData.questionsStreak,
+                    keyId: i,
+                }
+                integrationDataArray.push(dataObject);
+            }
+        }                
         const questionTopics = data.questionTopics;
-        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray});
+        setUserData({exponentsDataArray: exponentsDataArray, derivativesDataArray: derivativesDataArray, trigonometricFunctionsDataArray: trigonometricFunctionsDataArray, naturalExponentialLogDataArray: naturalExponentialLogDataArray, integrationDataArray: integrationDataArray});
         let questionList = []
         for (let i = 0; i < questionTopics.derivatives.length; i++) {
             questionList.push(questionTopics.derivatives[i].topicName);
@@ -264,6 +292,32 @@ export default function ClassProgress({username})  {
                         ))}
                     </tbody>
                   </Table>
+                  <p>Integration Progress</p>
+                  <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                        <th>USER</th>
+                        <th>Logins</th>
+                        <th>Questions</th>
+                        {integrationSkills.map((skill) => (
+                                <th key={skill.skillId}>{skill.skillName}</th>
+                            ))
+                        }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {usersData.map((user) => (
+                            <tr key={user.username}>
+                                <td><Link className="userLink" to={`/singleUsersProgress/${user.username}`}>{user.username}</Link></td>
+                                <td>{user.logins}</td>
+                                <td>{user.totalQuestions}</td>
+                                {user.integrationSuccessArray.map((success) =>(
+                                    <td>{success}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                  </Table>                  
                 </div>
               );
         }

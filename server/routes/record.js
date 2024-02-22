@@ -342,8 +342,6 @@ recordRoutes.route('/metStandard/derivatives').post(checkAuthenticated, async fu
 
 recordRoutes.route('/metStandard/trigonometricFunctions').post(checkAuthenticated, async function(req, res) {
   const sessionData = req.body;
-  console.log("Here's the session data");
-  console.dir(sessionData);
   let msg = '';
   let success = false;
   try {
@@ -363,7 +361,6 @@ recordRoutes.route('/metStandard/trigonometricFunctions').post(checkAuthenticate
       {upsert: true}
     );
     if (updateSuccess.modifiedCount == 1) {
-      console.log("Success adding data")
       msg ='Data was added to the progress array.';
     } else {
       msg = 'No data was added to the progress array';
@@ -391,6 +388,38 @@ recordRoutes.route('/metStandard/naturalExponentialLog').post(checkAuthenticated
         },
         $addToSet: { "progress.calculus.naturalExponentialLog.skillData":
                       sessionData.progress.calculus.naturalExponentialLog.skillData
+                    } 
+      },
+      {upsert: true}
+    );
+    if (updateSuccess.modifiedCount == 1) {
+      msg ='Data was added to the progress array.';
+    } else {
+      msg = 'No data was added to the progress array';
+    }
+    success = true;
+  } catch {
+    msg = 'Error on attempt to updateOne';
+  }
+  res.send({msg:msg, success: success});
+});
+
+recordRoutes.route('/metStandard/integration').post(checkAuthenticated, async function(req, res) {
+  const sessionData = req.body;
+  let msg = '';
+  let success = false;
+  try {
+    let updateSuccess = await dbo.client.db("employees")
+    .collection("userData")
+    .updateOne(
+      {username: sessionData.userData.username},
+      {
+        $inc:{
+          totalQuestionsAttempted: sessionData.userData.questionsAttempted,
+          totalQuestionsCorrect: sessionData.userData.questionsCorrect
+        },
+        $addToSet: { "progress.calculus.integration.skillData":
+                      sessionData.progress.calculus.integration.skillData
                     } 
       },
       {upsert: true}
@@ -520,22 +549,92 @@ recordRoutes.route("/skillsCompleted").post(async function (req, response) {
   let options = {projection: { progress: 1 }};
 
   try {
-    let usersData = [];
+    let completedSkillsArrayExponents = []
+    let completedSkillsArrayDerivatives = [];
+    let completedSkillsArrayTrigonometric = [];
+    let completedSkillsArrayNatural = [];
+    let completedSkillsArrayIntegration = [];
     let results = await dbo.client.db("employees")
       .collection("userData")
       .findOne(query, options)
-    usersData = results.progress.calculus.derivatives.skillData;
-    completedSkillsArray = [];
-    usersData.forEach(element => {
-      if (!completedSkillsArray.includes(element.skill)) {
-        completedSkillsArray.push(element.skill);
+    if (results.progress.calculus) {
+      if (results.progress.calculus.exponents) {
+        if (results.progress.calculus.exponents.skillData) {
+          results.progress.calculus.exponents.skillData.forEach(element => {
+            if (!completedSkillsArrayExponents.includes(element.skill)) {
+              completedSkillsArrayExponents.push(element.skill);
+            }
+          })
+        }
       }
-    })     
-    response.json({completedSkillsArray: completedSkillsArray});
+      if (results.progress.calculus.derivatives) {
+        if (results.progress.calculus.derivatives.skillData) {
+          results.progress.calculus.derivatives.skillData.forEach(element => {
+            if (!completedSkillsArrayDerivatives.includes(element.skill)) {
+              completedSkillsArrayDerivatives.push(element.skill);
+            }
+          })
+        }
+      }
+      if (results.progress.calculus.trigonometricFunctions) {
+        if (results.progress.calculus.trigonometricFunctions.skillData) {
+          results.progress.calculus.trigonometricFunctions.skillData.forEach(element => {
+            if (!completedSkillsArrayTrigonometric.includes(element.skill)) {
+              completedSkillsArrayTrigonometric.push(element.skill);
+            }
+          })
+        }
+      }
+      if (results.progress.calculus.naturalExponentialLog) {
+        if (results.progress.calculus.naturalExponentialLog.skillData) {
+          results.progress.calculus.naturalExponentialLog.skillData.forEach(element => {
+            if (!completedSkillsArrayNatural.includes(element.skill)) {
+              completedSkillsArrayNatural.push(element.skill);
+            }
+          })
+        } 
+      }
+      if (results.progress.calculus.integration) {   
+        if (results.progress.calculus.integration.skillData) {
+          results.progress.calculus.integration.skillData.forEach(element => {
+            if (!completedSkillsArrayIntegration.includes(element.skill)) {
+              completedSkillsArrayIntegration.push(element.skill);
+            }
+          })
+        } 
+      } 
+    }  
+    // usersDataDerivatives = results.progress.calculus.derivatives.skillData;
+    // these need to account for no data exists
+    // usersDataTrigonometricFunctions = results.progress.calculus.trigonometricFunctions.skillData    
+    // usersDataNaturalExponentialLog = results.progress.calculus.naturalExponentialLog.skillData;
+    // usersDataIntegration = results.progress.calculus.integration.skillData;
+    // console.log(usersDataIntegration)
+    // completedSkillsArrayExponents = []
+    // completedSkillsArrayDerivatives = [];
+    // completedSkillsArrayTrigonometric = [];
+    // completedSkillsArrayNatural = [];
+    // completedSkillsArrayIntegration = [];
+    // usersDataDerivatives.forEach(element => {
+    //   if (!completedSkillsArrayDerivatives.includes(element.skill)) {
+    //     completedSkillsArrayDerivatives.push(element.skill);
+    //   }
+    // })
+    // usersDataNaturalExponentialLog.forEach(element => {
+    //   if (!completedSkillsArrayNatural.includes(element.skill)) {
+    //     completedSkillsArrayNatural.push(element.skill);
+    //   }
+    // })
+    // usersDataIntegration.forEach(element => {
+    //   if (!completedSkillsArrayIntegration.includes(element.skill)) {
+    //     completedSkillsArrayIntegration.push(element.skill);
+    //   }
+    // })             
+    response.json({competedSkillsArrayExponents: completedSkillsArrayExponents, completedSkillsArrayDerivatives: completedSkillsArrayDerivatives, completedSkillsArrayTrigonometric: completedSkillsArrayTrigonometric, completedSkillsArrayNatural: completedSkillsArrayNatural, completedSkillsArrayIntegration: completedSkillsArrayIntegration });
 
   } catch(error) {
     console.error("Error fetching completed skills:", error);
-    response.json({completedSkillsArray: null})
+    response.json({completedSkillsArrayExponents: null, completedSkillsArrayDerivatives: null, completedSkillsArrayTrigonometric:null, completedSkillsArrayNatural: null, completedSkillsArrayIntegration: null})
   }
 });
 

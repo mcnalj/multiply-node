@@ -33,7 +33,6 @@ const questionTopics = {
           topicName: "simpleChainRuleTrigonometric",
           questionEngine: simpleChainRuleTrigonometric,
         },
-
     ]
 }
 addStyles();
@@ -73,7 +72,7 @@ export default function TrigonometricDerivatives({username}) {
 export function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
   // TODO: shouldn't these be trigonometricFunctions
   let unit = "derivatives";
-  let standard = 3;
+  let standard = 10;
   
   // why do we need this?
   const [topics, setTopics] = useState(
@@ -134,7 +133,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
           questionsIncorrect: 0,
           questionsStreak: 0,
           // questionsToMeet: unitTopics[0].topicData.standard,
-          questionsToMeet: 3,
+          questionsToMeet: 10,
           progressBar: 0,
           doneWithTopic: done,
           questionTopic: "Trigonometric Derivatives",
@@ -230,7 +229,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
     let questionTopic = questionTopics[unit].find((topic) => topic.topicId == topicId);
     let questionEngine = questionTopic.questionEngine;
     let topicArrayIndex = topics.topicsArray.findIndex((topic)=>topic.topicId==topicId);
-    let standard = 3;
+    let standard = 10;
     let [questionLatex, answerArrayLatex] = questionEngine();
     questionLatex = 'f(x) = ' + questionLatex;
     setCurrentTopic(topicId);

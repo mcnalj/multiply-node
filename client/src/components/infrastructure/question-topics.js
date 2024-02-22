@@ -8,6 +8,17 @@ import {
     logFunctionsBaseA,
   } from '../math-scripts/natural-scripts.js';
 
+  import {
+    indefiniteIntegralsSingleTerm,
+    indefiniteIntegralsBinomial,
+    indefiniteIntegralsPolynomial,
+    indefiniteIntegralsTrigonometric,
+    indefiniteIntegralsNaturalExponential,
+    indefiniteIntegralsNaturalLog,
+    indefiniteIntegralsNaturalLogBinomial,
+    definiteIntegrals,  
+  } from '../math-scripts/integral-scripts.js';
+
 export const questionTopics = {
     "derivatives": [
         {
@@ -45,9 +56,47 @@ export const questionTopics = {
             topicName: "logFunctionsBaseA",
             questionEngine: logFunctionsBaseA,
         },
-  
-
-
-  
+    ],
+    "integrals": [
+        {
+            topicId: 3010,
+            topicName: "indefiniteIntegralsSingleTerm",
+            questionEngine: indefiniteIntegralsSingleTerm
+        },
+        {
+            topicId: 3020,
+            topicName: "indefiniteIntegralsBinomial",
+            questionEngine: indefiniteIntegralsBinomial
+        },
+        {
+            topicId: 3030,
+            topicName: "indefiniteIntegralsPolynomial",
+            questionEngine: indefiniteIntegralsPolynomial
+        },
+        {
+            topicId: 3040,
+            topicName: "indefiniteIntegralsTrigonometric",
+            questionEngine: indefiniteIntegralsTrigonometric
+        },
+        {
+            topicId: 3050,
+            topicName: "indefiniteIntegralsNaturalExponential",
+            questionEngine: indefiniteIntegralsNaturalExponential
+        },
+        {
+            topicId: 3060,
+            topicName: "indefiniteIntegralsNaturalLog",
+            questionEngine: indefiniteIntegralsNaturalLog
+        },
+        {
+            topicId: 3070,
+            topicName: "indefiniteIntegralsNaturalLogBinomial",
+            questionEngine: indefiniteIntegralsNaturalLogBinomial
+        },        
+        {
+            topicId: 3080,
+            topicName: "definiteIntegrals",
+            questionEngine: definiteIntegrals
+        },
     ]
   }

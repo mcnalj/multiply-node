@@ -1,25 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
-import Modal from 'react-bootstrap/Modal';
-import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
+import { ProgressBar, Button} from 'react-bootstrap';
+import { addStyles, StaticMathField } from 'react-mathquill'
 import '../../App.scss';
 import '../../index.scss';
 import './calculus.component.derivatives.scss';
 
-import NaturalExponential from '../explanations/naturalExponentialLog.component.explanations.js'
-import { NaturalLog, NaturalLogBinomials, ExponentialBaseA, LogBaseA  } from '../explanations/naturalExponentialLog.component.explanations.js'
+import IndefiniteIntegralSingleTerm from '../explanations/integration.component.explanations.js'
+import { 
+    IndefiniteIntegralsBinomial,
+    IndefiniteIntegralsPolynomial,
+    IndefiniteIntegralsTrigonometric,
+    IndefiniteIntegralsNaturalExponential,
+    IndefiniteIntegralsNaturalLog,
+    IndefiniteIntegralsNaturalLogBinomial,
+    DefiniteIntegrals }
+from '../explanations/integration.component.explanations.js'
 
-import { AnswerForm } from './answerForm.component.calculus.js';
-import {
-  naturalExponential,
-  complexNaturalExponential,
-  simpleNaturalLog,
-  complexNaturalLog,
-  mixNaturalExponentialAndLog,
-  exponentialFunctionsBaseA,
-  logFunctionsBaseA
-} from '../math-scripts/natural-scripts.js';
+import { IntegrationAnswerForm } from './answerForm.component.calculus.js';
 
 import {
   questionTopics
@@ -33,8 +31,8 @@ addStyles();
 const startTime = new Date();
 
 function setQuestionEngine(topicId) {
-  let engineArray = questionTopics["derivatives"];
-  let engine = engineArray.find((engine) => engine.topicId == topicId)
+  let engineArray = questionTopics["integrals"];
+  let engine = engineArray.find((engine) => engine.topicId === topicId)
   // TODO Need proper error handling.
   if (engine) {
     return(engine.questionEngine);
@@ -43,7 +41,7 @@ function setQuestionEngine(topicId) {
   }
 }
 
-export default function NaturalDerivatives({username}) {
+export default function Integration({username}) {
 
   const parameter = useParams()
   var initialTopic = parseInt(parameter.topic);
@@ -51,24 +49,29 @@ export default function NaturalDerivatives({username}) {
   const [currentTopic, setCurrentTopic] = useState(initialTopic);
   return (
     <>
-      <Derivatives 
+      <Integrals
         currentTopic={currentTopic}
         setCurrentTopic={setCurrentTopic}
-        questionTopics={questionTopics.derivatives}
+        questionTopics={questionTopics.integrals}
         username={username}
       />
     </>
   )
 }
 
-function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
-  let unit = "derivatives";
+function Integrals({username, currentTopic, setCurrentTopic, questionTopics}) {
+
+  // const [absoluteValue, setAbsoluteValue] = useState(false);
+  let unit = "integrals";
   let standard = 8;
+  let absoluteValue = false;
+  if (currentTopic === 3060 || currentTopic === 3070) {
+    absoluteValue = true;
+  }
 
   let questionEngine = setQuestionEngine(currentTopic);
   const [questionState, setQuestionState] = useState({
     questionEngine: questionEngine,
-    questionEngine: '',
     questionLatex: '',
     answerArrayLatex: [],
     getNextQuestion: next,
@@ -86,11 +89,8 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
   useEffect(() => {
     async function getTopics(unitName) {
       let questionEngine = setQuestionEngine(currentTopic);
-      console.log(currentTopic);
-      console.log(questionEngine);
       let [questionLatex, answerArrayLatex] = questionEngine();
-      questionLatex = 'f(x) = '+ questionLatex;
-      console.log(questionLatex);
+      questionLatex = "f'(x) = " + questionLatex;
       setQuestionState(
         {
           questionEngine: questionEngine,
@@ -101,17 +101,15 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
           questionsCorrect: 0,
           questionsIncorrect: 0,
           questionsStreak: 0,
-          questionsToMeet: 7,
+          questionsToMeet: 8,
           progressBar: 0,
           doneWithTopic: done,
-          questionTopic: "Natural Exponential and Log",
+          questionTopic: "Integrals",
           questionPrompt: "f'(x)",
         }
       )
     }
     getTopics(unit);
-    console.dir(questionState);
-
     return;
   }, [currentTopic]);
 
@@ -119,9 +117,7 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
       let questionEngine = setQuestionEngine(currentTopic);
       
       let [questionLatex, answerArrayLatex] = questionEngine();
-      console.log("Question: " + questionLatex);
-      console.log("Answer: " + answerArrayLatex[0]);
-      questionLatex = 'f(x) = ' + questionLatex;
+      questionLatex = "f'(x) = " + questionLatex;
       setQuestionState({
         questionEngine: questionEngine,
         questionLatex: questionLatex,
@@ -143,9 +139,12 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
     let topicName = '';
     const endTime = new Date()
     const totalTime = endTime - startTime;
-    const currentTopicName = questionTopics.find((name) => name.topicId == currentTopic)
+    const currentTopicName = questionTopics.find((name) => name.topicId === currentTopic)
     if (currentTopicName) {
       topicName = currentTopicName.topicName;
+      if (topicName === "indefiniteIntegralsNaturalLog" || topicName === "indefiniteIntegralsNaturalLogBinomial") {
+        absoluteValue = true;
+      }
     }  else {
       topicName = "errantName";
     }
@@ -166,7 +165,7 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
       },
       progress: {
         calculus: {
-            naturalExponentialLog: {
+            integration: {
                 skillData: {
                   skill: topicName,
                   sessionsData: sessionObj
@@ -176,7 +175,7 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
       }
     }
     // TODO - This is not saving any incorrect answers and might not have the total right.
-    const response = await fetch(`${url}/record/metStandard/naturalExponentialLog`, {
+    const response = await fetch(`${url}/record/metStandard/integration`, {
       method: "POST",
       mode: 'cors',
       credentials: 'include',
@@ -190,35 +189,8 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
       return;
     });
     const answer = await response.json();
-    // we need to go somewhere from here.
   };
 
-  const changeEngine = function (e) {
-    let topicId = e.currentTarget.dataset.key;
-    // make the imported question topics handle this
-    // let questionTopic = questionTopics[unit].find((topic) => topic.topicId == topicId);
-    // let questionEngine = questionTopic.questionEngine;
-    // let topicArrayIndex = topics.topicsArray.findIndex((topic)=>topic.topicId==topicId);
-    let standard = 7;
-    let [questionLatex, answerArrayLatex] = questionEngine();
-    questionLatex = 'f(x) = ' + questionLatex;
-    setCurrentTopic(topicId);
-    setQuestionState({
-      questionEngine: questionEngine,
-      questionLatex: questionLatex,
-      answerArrayLatex: answerArrayLatex,
-      getNextQuestion: next,
-      questionsAttempted: 0,
-      questionsCorrect: 0,
-      questionsIncorrect: 0,
-      questionsStreak: 0,
-      questionsToMeet: standard,
-      progressBar: 0,
-      doneWithTopic: done,
-      // questionTopic: topics.topicsArray[topicArrayIndex].topicData.displayName,
-      // questionPrompt: topics.topicsArray[topicArrayIndex].topicData.prompt,
-    });
-  }
   return (
     <>
       <div className="row">
@@ -239,18 +211,36 @@ function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) 
           />
         </div> 
       </div>
-      <AnswerForm
-          questionState={questionState}
+      <IntegrationAnswerForm
+          questionState={questionState}  
       />
-      <Link to="/naturalTopics">
+      <Link to="/integrationTopics">
         <button type="button" className="btn btn-lg btn-success mt-3">OTHER TOPICS</button><br /><br />
       </Link>
-      <h2 className="text-center">{questionState.questionTopic}</h2>
-      <div className="row">
-        <p className="col-12">{questionState.questionPrompt}</p>
-      </div>
+      <AbsoluteValueInstructions
+          absoluteValue={absoluteValue}
+      />
     </>
   );
+}
+
+function AbsoluteValueInstructions({absoluteValue}) {
+  if (absoluteValue) {
+    return (
+      <>
+        <p>The integral of <StaticMathField>{`\\frac{1}{x}`}</StaticMathField> is <StaticMathField>{`\\ln\\mid x\\mid + C`}</StaticMathField>.</p>
+        <p>To draw the absolute value lines you use the \mid command.</p>
+        <p>To enter <StaticMathField>{`\\ln\\mid x\\mid + C`}</StaticMathField> you type <strong>ln\mid x\mid+C</strong> with a space before the x.</p>
+        <p>The two \mid commands will display the absolute value symbol around x.</p>
+      </>
+    )
+
+  } else {
+    return(
+      <>
+      </>
+    )
+  }
 }
 
 function ModalComponent ({currentTopic}) {
@@ -258,65 +248,101 @@ function ModalComponent ({currentTopic}) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  if (currentTopic == 500) {
+  if (currentTopic === 3010) {
     return(
       <>
         <Button className="m-2" variant="info" onClick={handleShow}>
           Explain!
         </Button>
-        <NaturalExponential 
+        <IndefiniteIntegralSingleTerm 
           show={show}
           handleClose={handleClose}
         />
       </>
     )
-  } else if (currentTopic == 520) {
+  } else if (currentTopic === 3020) {
     return(
       <>
         <Button className="m-2" variant="info" onClick={handleShow}>
           Explain!
         </Button>
-        <NaturalLog
+        <IndefiniteIntegralsBinomial
           show={show}
           handleClose={handleClose}
         />
       </>
     )
-  } else if (currentTopic == 530) {
+  } else if (currentTopic === 3030) {
     return(
       <>
         <Button className="m-2" variant="info" onClick={handleShow}>
           Explain!
         </Button>
-        <NaturalLogBinomials
+        <IndefiniteIntegralsPolynomial
           show={show}
           handleClose={handleClose}
         />
       </>
     )
-  } else if (currentTopic == 550) {
+  } else if (currentTopic === 3040) {
     return(
       <>
         <Button className="m-2" variant="info" onClick={handleShow}>
           Explain!
         </Button>
-        <ExponentialBaseA
+        <IndefiniteIntegralsTrigonometric
           show={show}
           handleClose={handleClose}
         />
       </>
     )
-  } else if (currentTopic == 560) {
+  } else if (currentTopic === 3050) {
     return(
       <>
         <Button className="m-2" variant="info" onClick={handleShow}>
           Explain!
         </Button>
-        <LogBaseA
+        <IndefiniteIntegralsNaturalExponential
           show={show}
           handleClose={handleClose}
         />
       </>
     )
-  }
+  } else if (currentTopic === 3060) {
+  return(
+    <>
+      <Button className="m-2" variant="info" onClick={handleShow}>
+        Explain!
+      </Button>
+      <IndefiniteIntegralsNaturalLog
+        show={show}
+        handleClose={handleClose}
+      />
+    </>
+  )
+} else if (currentTopic === 3070) {
+  return(
+    <>
+      <Button className="m-2" variant="info" onClick={handleShow}>
+        Explain!
+      </Button>
+      <IndefiniteIntegralsNaturalLogBinomial
+        show={show}
+        handleClose={handleClose}
+      />
+    </>
+  )
+} else if (currentTopic === 3080) {
+  return(
+    <>
+      <Button className="m-2" variant="info" onClick={handleShow}>
+        Explain!
+      </Button>
+      <DefiniteIntegrals
+        show={show}
+        handleClose={handleClose}
+      />
+    </>
+  )
+}
 }

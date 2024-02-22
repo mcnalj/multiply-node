@@ -10,19 +10,12 @@
 // Put a timer on the screen or give some kind of time option to exceed.
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useParams } from "react-router-dom";
-import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
+import { useParams, Link } from "react-router-dom";
+import { ProgressBar, Button} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
 
 import {
-    getSimplifiedFraction,
     getRandomIntInclusive,
-    generateReducedFraction,
-    maybeNegativeCoefficient,
-    maybeNegativeCoefficientWithAlreadyNegativeCoefficient,
-    applyRegexFixes,
-    getReducedFraction,
-    findGreatestCommonFactor
   } from '../math-scripts/utilities-scripts.js';
 import '../../App.scss';
 import '../../index.scss';
@@ -41,53 +34,53 @@ export default function Exponents({username}) {
     function setFunction(typeOfExponent) {
       // typeOfExponent can be positive, negative, fractional
       let min = 1;
-      typeOfExponent == "positive" ? min = 0 : min = 1;
+      typeOfExponent === "positive" ? min = 0 : min = 1;
 
       const rando = getRandomIntInclusive(min,19);
       let power = 2;
       let functionLatex = 'f(x) = x^0';
       if (rando < 11) {
           power = 2;
-          if (typeOfExponent == "positive") {
+          if (typeOfExponent === "positive") {
             functionLatex = 'f(x) = x^2'
-          } else if (typeOfExponent == "negative") {
+          } else if (typeOfExponent === "negative") {
             functionLatex = 'f(x) = x^{-2}'
-          } else if (typeOfExponent == "fractional"){
+          } else if (typeOfExponent === "fractional"){
             functionLatex = 'f(x) = x^{\\frac{1}{2}}'
-          } else if (typeOfExponent == "negativeFractional") {
+          } else if (typeOfExponent === "negativeFractional") {
             functionLatex = 'f(x) = x^{-\\frac{1}{2}}'
           }
       } else if (rando >=11 && rando <=15) {
           power = 3;
-          if (typeOfExponent == "positive") {
+          if (typeOfExponent === "positive") {
             functionLatex = 'f(x) = x^3'
-          } else if (typeOfExponent == "negative") {
+          } else if (typeOfExponent === "negative") {
             functionLatex = 'f(x) = x^{-3}'
-          } else if (typeOfExponent == "fractional"){
+          } else if (typeOfExponent === "fractional"){
             functionLatex = 'f(x) = x^{\\frac{1}{3}}'
-          } else if (typeOfExponent == "negativeFractional") {
+          } else if (typeOfExponent === "negativeFractional") {
             functionLatex = 'f(x) = x^{-\\frac{1}{3}}'
           }
       } else if (rando >= 16 && rando <= 17) {
           power = 4;
-          if (typeOfExponent == "positive") {
+          if (typeOfExponent === "positive") {
             functionLatex = 'f(x) = x^4'
-          } else if (typeOfExponent == "negative") {
+          } else if (typeOfExponent === "negative") {
             functionLatex = 'f(x) = x^{-4}'
-          } else if (typeOfExponent == "fractional"){
+          } else if (typeOfExponent === "fractional"){
             functionLatex = 'f(x) = x^{\\frac{1}{4}}'
-          } else if (typeOfExponent == "negativeFractional") {
+          } else if (typeOfExponent === "negativeFractional") {
             functionLatex = 'f(x) = x^{-\\frac{1}{4}}'
           }
-      } else if (rando == 18) {
+      } else if (rando === 18) {
           power = 5;
-          if (typeOfExponent == "positive") {
+          if (typeOfExponent === "positive") {
             functionLatex = 'f(x) = x^5'
-          } else if (typeOfExponent == "negative") {
+          } else if (typeOfExponent === "negative") {
             functionLatex = 'f(x) = x^{-5}'
-          } else if (typeOfExponent == "fractional"){
+          } else if (typeOfExponent === "fractional"){
             functionLatex = 'f(x) = x^{\\frac{1}{5}}'
-          } else if (typeOfExponent == "negativeFractional") {
+          } else if (typeOfExponent === "negativeFractional") {
             functionLatex = 'f(x) = x^{-\\frac{1}{5}}'
           }
       } else {
@@ -100,29 +93,29 @@ export default function Exponents({username}) {
     function setXValue(power, typeOfExponent) {
         let xValue = 2;
         let xChoice = 2;
-        if (typeOfExponent == "positive" || typeOfExponent == "negative") {
-          if (power == 2) {
+        if (typeOfExponent === "positive" || typeOfExponent === "negative") {
+          if (power === 2) {
             xValue = getRandomIntInclusive(2, 9);
-          } else if (power == 3) {
+          } else if (power === 3) {
             xValue = getRandomIntInclusive(2, 5);
-          }  else if (power == 4) {
+          }  else if (power === 4) {
             xValue = getRandomIntInclusive(2, 3);
-          } else if (power == 5) {
+          } else if (power === 5) {
             xValue = 2;
-          } else if (power == 0) {
+          } else if (power === 0) {
             xValue = getRandomIntInclusive(2, 9);
           }
-        } else if (typeOfExponent == "fractional" || typeOfExponent == "negativeFractional"){
-          if (power == 2) {
+        } else if (typeOfExponent === "fractional" || typeOfExponent === "negativeFractional"){
+          if (power === 2) {
             xChoice = getRandomIntInclusive(2, 9);
             xValue = xChoice ** power;
-          } else if (power == 3) {
+          } else if (power === 3) {
               xChoice = getRandomIntInclusive(2, 5);
               xValue = xChoice ** power;
-          }  else if (power == 4) {
+          }  else if (power === 4) {
               xChoice = getRandomIntInclusive(2, 3);
               xValue = xChoice ** power
-          } else if (power == 5) {
+          } else if (power === 5) {
               xChoice = 2;
               xValue = xChoice ** power
           }
@@ -134,18 +127,18 @@ export default function Exponents({username}) {
     function setAnswer(xValue, power, typeOfExponent, xChoice) {
       xValue = parseInt(xValue);
       // It's a problem that this returns different types depending on the typeOfExponent.
-      if (typeOfExponent == "positive") {
+      if (typeOfExponent === "positive") {
         // return xValue ** power;
         let tempAnswer = xValue ** power;
         const answerLatex = tempAnswer.toString();
         return answerLatex;
-      } else if(typeOfExponent == "negative"){
+      } else if(typeOfExponent === "negative"){
         const denom = xValue ** power;
         const answerLatex = '\\frac{1}{' + denom + '}';
         return answerLatex;
-      } else if (typeOfExponent == "fractional") {
+      } else if (typeOfExponent === "fractional") {
         return xChoice;
-      } else if (typeOfExponent == "negativeFractional") {
+      } else if (typeOfExponent === "negativeFractional") {
         const answerLatex = '\\frac{1}{' + xChoice + '}';
         return answerLatex;
       }
@@ -153,7 +146,7 @@ export default function Exponents({username}) {
 
     function questionEngine(topic) {
         let engine = "positive";
-        if (topic == "mixed") {
+        if (topic === "mixed") {
           let engineArray = ["positive", "negative", "fractional", "negativeFractional"];
           let num = getRandomIntInclusive(0, 3);
           engine = engineArray[num];
@@ -291,15 +284,15 @@ export default function Exponents({username}) {
       // navigate(`/exponents/${topic}`);
     }
     function nextTopic() {
-      if (topic == "mixed") {
+      if (topic === "mixed") {
         topic = "mixed";
-      } if (topic == "negativeFractional") {
+      } if (topic === "negativeFractional") {
         topic = "mixed";
-      } if (topic == "fractional") {
+      } if (topic === "fractional") {
         topic = "negativeFractional";
-      } if (topic == "negative") {
+      } if (topic === "negative") {
         topic = "fractional"
-      } if (topic == "positive") {
+      } if (topic === "positive") {
         topic = "negative";
       }
       navigate(`/exponents/${topic}`);
@@ -357,6 +350,9 @@ export default function Exponents({username}) {
         <div className="progressBar mt-4 mb-4 col-10 offset-1">
             <ProgressBar now={questionObject.progressBar} label={`${questionObject.progressBar}%`} max='100'/>
         </div>
+        <Link to="/exponentsTopics">
+          <button type="button" className="btn btn-lg btn-success mt-3">OTHER TOPICS</button><br /><br />
+        </Link>
         <div className="row">
             <h4>EXPONENTS</h4>
         </div>
@@ -387,7 +383,7 @@ function AnswerForm({questionObj}) {
   }
 
   const handleKeyDown = event => {
-    if (event.key == 'Enter') {
+    if (event.key === 'Enter') {
       event.preventDefault();
       handleSubmit(event);
     }
@@ -448,7 +444,7 @@ function AnswerForm({questionObj}) {
 
 
     let answerMessage = '';
-    if (userObj.userAnswer == questionObj.answer) {
+    if (userObj.userAnswer === questionObj.answer) {
         stateToLift.questionsStreak = stateToLift.questionsStreak + 1;
         if (stateToLift.questionsStreak < 4) {
           let index = getRandomIntInclusive(0, ((correctMessages.length)))
@@ -481,7 +477,7 @@ function AnswerForm({questionObj}) {
 
 
   return (
-    <form onSubmit={handleSubmit} method="post" action="#" role="form">
+    <form onSubmit={handleSubmit} method="post" action="#">
         <p className="col-12 text-center fs-2">
             <StaticMathField>{'f(' + questionObj.xValue + ') ='}</StaticMathField>
         </p>

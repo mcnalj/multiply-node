@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 export default function ExponentsTopics() {
-    const topic = "simple";
     return (
         <div>
             <div>
@@ -32,7 +31,12 @@ export default function ExponentsTopics() {
                     <Link to="/exponents/mixed">
                         <button type="button" className="btn btn-lg btn-success">Mix of All Types</button><br /><br />
                     </Link>
-                </div>                
+                </div>
+                <div>
+                    <Link to="/calculus">
+                        <button type="button" className="btn btn-lg btn-success">Back to Calculus</button><br /><br />
+                    </Link>
+                </div>                                
             </div>
         </div>
     );

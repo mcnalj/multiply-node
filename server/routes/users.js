@@ -36,6 +36,7 @@ usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, 
     let trigonometricFunctionsData = [];
     let naturalExponentialLogData = [];
     let tutorialsData = [];
+    let integrationData = [];
     let results =  await dbo.client.db("employees")
       .collection("userData")
       .findOne(query, projection)
@@ -54,12 +55,15 @@ usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, 
       }
       if (results.progress.calculus.tutorials) {
         tutorialsData = results.progress.calculus.tutorials.tutorialData;
-      }      
+      }
+      if (results.progress.calculus.integration) {
+        integrationData = results.progress.calculus.integration.skillData;
+      }                  
     }
-    response.json({exponents: exponentsData, derivatives: derivativesData, trigonometricFunctions: trigonometricFunctionsData, naturalExponentialLog: naturalExponentialLogData, tutorials: tutorialsData});
+    response.json({exponents: exponentsData, derivatives: derivativesData, trigonometricFunctions: trigonometricFunctionsData, naturalExponentialLog: naturalExponentialLogData, tutorials: tutorialsData, integration: integrationData});
   } catch(error) {
     console.error("Error fetching progress:", error);
-    response.json({exponents: null, derivatives: null, trigonometricFunctions: null, naturalExponentialLog: null, tutorials: null})
+    response.json({exponents: null, derivatives: null, trigonometricFunctions: null, naturalExponentialLog: null, tutorials: null, integration: null})
   }
 });
 
@@ -440,7 +444,37 @@ usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function
         topicId: 560,
         topicName: "logFunctionsBaseA" 
       },
-    ]
+    ],
+    "integration": [
+      {
+        topicId: 3010,
+        topicName: "indefiniteIntegralsSingleTerm" 
+      },
+      {
+        topicId: 3020,
+        topicName: "indefiniteIntegralsBinomial" 
+      },
+      {
+        topicId: 3030,
+        topicName: "indefiniteIntegralsPolynomial" 
+      },
+      {
+        topicId: 3040,
+        topicName: "indefiniteIntegralsTrigonometric" 
+      },
+      {
+        topicId: 3050,
+        topicName: "indefiniteIntegralsNaturalExponential"
+      },
+      {
+        topicId: 3060,
+        topicName: "indefiniteIntegralsNaturalLog"
+      },
+      {
+        topicId: 3070,
+        topicName: "definiteIntegrals"
+      }
+    ]    
   }
   // currently the class code is hardcoded!
   const classUsers = await dbo.client.db("employees")
@@ -468,6 +502,7 @@ usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function
     let derivativesData = [];
     let trigonometricFunctionsData = [];
     let naturalExponentialLogData = [];
+    let integrationData = [];
     let usersData = [];
     let results =  dbo.client.db("employees")
       .collection("userData")
@@ -478,11 +513,13 @@ usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function
     let derivativesSuccessArray = [];
     let trigonometricFunctionsSuccessArray = [];
     let naturalExponentialLogSuccessArray = [];
+    let integrationSuccessArray = [];
     for await (const result of results) {
       exponentsData = [];
       derivativesData = [];
       trigonometricFunctionsData = [];
       naturalExponentialLogData = [];
+      integrationData = [];
       // below is inside users loop
       if (result.progress) {
         if (result.progress.calculus) {
@@ -497,7 +534,10 @@ usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function
           }
           if (result.progress.calculus.naturalExponentialLog) {
             naturalExponentialLogData = result.progress.calculus.naturalExponentialLog.skillData;
-          }              
+          }
+          if (result.progress.calculus.integration) {
+            integrationData = result.progress.calculus.integration.skillData;
+          }                        
         }
       }
       userData = {};
@@ -505,6 +545,7 @@ usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function
       derivativesSuccessArray = [];
       trigonometricFunctionsSuccessArray = [];
       naturalExponentialLogSuccessArray = [];
+      integrationSuccessArray = [];
       user = '';
       let successCount = 0;
       if (exponentsData) {
@@ -550,14 +591,25 @@ usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function
           }
           naturalExponentialLogSuccessArray.push(successCount);    
         }
-      }     
-      userData = {username:result.username, logins: result.loginCount, totalQuestions: result.totalQuestionsAttempted, exponentsSuccessArray: exponentsSuccessArray, derivativesSuccessArray: derivativesSuccessArray, trigonometricFunctionsSuccessArray: trigonometricFunctionsSuccessArray, naturalExponentialLogSuccessArray: naturalExponentialLogSuccessArray}
+      }
+      if (integrationData) {
+        for (let i = 0; i < questionTopics.integration.length; i++) {
+          successCount = 0
+          for (let j = 0; j < integrationData.length; j++) {
+            if (questionTopics.integration[i].topicName == integrationData[j].skill) {
+              successCount = successCount + 1;
+            }
+          }
+          integrationSuccessArray.push(successCount);    
+        }
+      }           
+      userData = {username:result.username, logins: result.loginCount, totalQuestions: result.totalQuestionsAttempted, exponentsSuccessArray: exponentsSuccessArray, derivativesSuccessArray: derivativesSuccessArray, trigonometricFunctionsSuccessArray: trigonometricFunctionsSuccessArray, naturalExponentialLogSuccessArray: naturalExponentialLogSuccessArray, integrationSuccessArray: integrationSuccessArray}
       usersData.push(userData);
     }
-    response.json({questionTopics: questionTopics, usersData: usersData, exponents: exponentsData, derivatives: derivativesData, naturalExponentialLog: naturalExponentialLogData});
+    response.json({questionTopics: questionTopics, usersData: usersData, exponents: exponentsData, derivatives: derivativesData, naturalExponentialLog: naturalExponentialLogData, integration: integrationData});
   } catch(error) {
     console.error("Error fetching progress:", error);
-    response.json({questionTopics: null, usersData: null, exponents: null, derivatives: null, naturalExponentialLog: null})
+    response.json({questionTopics: null, usersData: null, exponents: null, derivatives: null, naturalExponentialLog: null, integration: null})
   }
 });
 

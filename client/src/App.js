@@ -60,6 +60,9 @@ import TrigonometricDerivatives from './components/calculus/trigonometricDerivat
 import NaturalTopics from './components/calculus/naturalTopics.component.calculus';
 import NaturalDerivatives from './components/calculus/naturalDerivatives.component.calculus';
 
+import IntegrationTopics from './components/calculus/integrationTopics.component.calculus';
+import Integration from './components/calculus/integration.component.calculus';
+
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -167,7 +170,7 @@ function App() {
                     <DerivativesTopics username={username}/>
                   </Protected>
                 }
-          />          
+          />
           <Route path="/markdown"
                 element={
                   <Protected isSignedIn={loggedIn}>
@@ -273,6 +276,20 @@ function App() {
                     </Protected>
                   } 
           />
+          <Route path="/integrationTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <IntegrationTopics username={username}/>
+                  </Protected>
+                }
+          />                    
+          <Route path="/integration/:topic"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <Integration username={username}/>
+                  </Protected>
+                }
+          />                                        
           <Route path="/derivativeRules"
                   element={
                     <Protected isSignedIn={loggedIn}>

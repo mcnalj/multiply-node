@@ -34,8 +34,12 @@ export default function Calculus({username}) {
                     <Button type="button" variant="primary" size="lg">Natural Exponential/Log</Button>
                 </NavLink>
                 <br /><br />
+                <NavLink to="/integrationTopics">
+                    <Button type="button" variant="primary" size="lg">Integration</Button>
+                </NavLink>
+                <br /><br />                
                 <NavLink to="/tutorialTopics">
-                    <Button type="button" variant="primary" size="lg">Tutorials and Quizzes</Button>
+                    <Button type="button" variant="warning" size="lg">Tutorials and Quizzes (BETA)</Button>
                 </NavLink>
                 {/* <NavLink to="/markdown">
                     <Button type="button" variant="primary" size="lg">Markdown</Button>

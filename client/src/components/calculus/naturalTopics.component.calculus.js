@@ -32,9 +32,9 @@ export default function NaturalTopics() {
                 const resultData = await result.json()
                 const updatedBackgroundColors = { ...backgroundColorObject }
                 if (resultData) {   
-                    for (var i = 0; i < resultData.completedSkillsArray.length; i++) {
-                        if (backgroundColorObject[resultData.completedSkillsArray[i]] == "info") {
-                            backgroundColorObject[resultData.completedSkillsArray[i]] = "primary";
+                    for (var i = 0; i < resultData.completedSkillsArrayNatural.length; i++) {
+                        if (backgroundColorObject[resultData.completedSkillsArrayNatural[i]] == "info") {
+                            backgroundColorObject[resultData.completedSkillsArrayNatural[i]] = "primary";
                         }
                     }
                 }
