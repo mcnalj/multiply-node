@@ -666,6 +666,65 @@ recordRoutes.route('/finishedTutorial').post(checkAuthenticated, async function(
   res.send({msg:msg, success: success});
 });
 
+recordRoutes.route('/saveProgressUpdate').post(checkAuthenticated, async function(req, res) {
+  console.log("got to route");
+  const updateData = req.body;
+  let msg = '';
+  let success = false;
+  try {
+    let updateSuccess = await dbo.client.db("employees")
+    .collection("userData")
+    .updateOne(
+      {username: updateData.userData.username},
+      {
+        $set: { "progress.standards.derivatives":
+                      updateData.progress.standards.derivatives
+                    } 
+      },
+      {upsert: true}
+    );
+    if (updateSuccess.modifiedCount == 1) {
+      msg =`${updateSuccess.matchedCount} documents(s) was updated.`;
+    } else {
+      msg = 'Something is off. No data was added.';
+    }
+    success = true;
+  } catch {
+    msg = 'Error on attempt to updateOne';
+  }
+  res.send({msg:msg, success: success});
+});
+
+recordRoutes.route("/getStandardsProgress").post(async function (req, response) {
+  const user = req.session?.passport?.user?.username;
+  if (!user) {
+    response.json({progressObj: null})
+    return
+  }
+  let query = { username: user };
+  let options = {projection: { progress: 1 }};
+
+  try {
+    let results = await dbo.client.db("employees")
+      .collection("userData")
+      .findOne(query, options)
+    if (results.progress) {
+      if (results.progress.standards) {
+        if (results.progress.standards.derivatives) {
+          if (results.progress.standards.derivatives.derivativesRules) {
+            progressObj = results.progress.standards.derivatives.derivativesRules;
+          }
+        }
+      }
+    }              
+    response.json({progressObj: progressObj});
+
+  } catch(error) {
+    console.error("Error fetching standards progress:", error);
+    response.json({progressObj: null})
+  }
+});
+
 
 
 
