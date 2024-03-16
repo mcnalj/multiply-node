@@ -725,9 +725,6 @@ recordRoutes.route("/getStandardsProgress").post(async function (req, response) 
   }
 });
 
-
-
-
 module.exports = recordRoutes;
 
 
