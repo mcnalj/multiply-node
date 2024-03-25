@@ -1,0 +1,17 @@
+@use '../../App.scss' as *;
+
+.standardBox {
+    border: solid 5px black;
+    margin: 2%;
+    padding: 2%;
+}
+
+.rangeBox {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.customRange {
+    width: 100%;
+    margin: 0 auto;
+}

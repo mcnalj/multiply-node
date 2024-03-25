@@ -63,6 +63,10 @@ import NaturalDerivatives from './components/calculus/naturalDerivatives.compone
 import IntegrationTopics from './components/calculus/integrationTopics.component.calculus';
 import Integration from './components/calculus/integration.component.calculus';
 
+import DerivativeRulesStandards from './components/standards/derivativeRulesStandards.component.standards.js';
+import DerivativesStandards from './components/standards/derivativesStandards.component.standards';
+import StandardsCategories from './components/standards/standardsCategories.component.standards';
+import StandardsTopics from './components/standards/standardsTopics.component.standards';
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -339,8 +343,35 @@ function App() {
                     </Protected>
                   }
           />                              
-                                                                                                                               
-                                                                                                                               
+          {/* <Route path="/derivativesStandards"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                        <DerivativesStandards username={username} />
+                    </Protected>
+                  }
+          />                               */}
+          <Route path="/derivativeRulesStandards"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                        <DerivativeRulesStandards username={username} />
+                    </Protected>
+                  }
+          />                                        
+          <Route path="/standardsCategories"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                        <StandardsCategories username={username} />
+                    </Protected>
+                  }
+          />
+          <Route path="/standardsTopics/:category"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <StandardsTopics username={username} />
+                   </Protected>
+                  }
+          />                                                                                                                                                                       
+
 
                                                                                                             
           </Routes>                                    

@@ -1,0 +1,60 @@
+@use '../../App.scss' as *;
+
+.standardBox {
+    border: solid 5px black;
+    margin: 2%;
+    padding: 2%;
+}
+// .customSlider::-webkit-slider-runnable-track {
+//     background-color: green;
+// }
+
+// .customSlider::-moz-range-track {
+//     background-color: green;
+// }
+
+.customSlider::-webkit-slider-thumb {
+    background-color: green;
+}
+
+.customSlider::-moz-range-thumb {
+    background-color: green;
+}
+
+.customSlider {
+    width: 100%;
+    margin: 0 10px;
+    position: relative;
+}
+
+.customSlider::before,
+.customSlider::after {
+    position: absolute;
+    top: 0%;
+    transform: translateY(-80%);
+    width: 0;
+    height: 100%;
+    background-color: black;
+}
+
+.customSlider::before {
+    left: -2%;
+    content: "0";
+}
+
+.customSlider::after {
+    right: 0;
+    content: "10";
+}
+
+// <div className="progressContainer" style={{maxWidth: "60%", margin: "auto"}}>
+// <input className="customSlider"
+//   type="range"
+//   min="0"
+//   max="10"
+//   step="1"
+//   value="2"
+//   label="2"
+// />
+// <p>Confidence Level: 2</p>
+// </div>

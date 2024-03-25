@@ -23,7 +23,7 @@ import {
   questionTopics
 } from '../infrastructure/question-topics.js';
 
-import { config} from '../constants.js';
+import { config } from '../constants.js';
 var url = config.url.API_URL;
 
 addStyles();
