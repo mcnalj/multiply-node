@@ -45,6 +45,7 @@ export default function Navigation({username, loggedIn}) {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link className="nav-text" href="/calculus">Calculus</Nav.Link>
+              <Nav.Link className="nav-text" href="/summerPrepTopics">Summer Prep</Nav.Link>
               {/* <Nav.Link className="nav-text" href="/categories">Trivia</Nav.Link>
               <Nav.Link className="nav-text" href="/multiply">Multiply</Nav.Link> */}
               

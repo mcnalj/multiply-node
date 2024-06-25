@@ -37,7 +37,7 @@ export default function StandardsTopics({username}) {
                 {categoryTopicsArray.map(function(topic) {
                 return (
                         <div key={topic.id}>
-                            <NavLink to={"/standardsTracker/" +topic.id}>
+                            <NavLink to={"/standardsTracker/" + category + "/" + topic.id}>
                                 <Button  variant="primary" className="m-3">{topic.topicTitle}</Button>
                             </NavLink>
                         </div>

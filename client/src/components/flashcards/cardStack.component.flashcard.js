@@ -3,25 +3,25 @@ import './cardStack.component.flashcard.scss'; // Import your CSS file
 
 const CardStack = () => {
 
-    const cards = [
-        {
-            question: "What is the derivative?",
-            answer: "The slope"
-        },
-        {
-            question: "What is the integral?",
-            answer: "The opposite of the derivative."
-        },
-        {
-            question: "3",
-            answer: "answer3"
-        },
-        {
-            question: "4",
-            answer: "answer4"
-        }        
-    
-      ]
+  const cards = [
+      {
+          question: "What is the derivative?",
+          answer: "The slope"
+      },
+      {
+          question: "What is the integral?",
+          answer: "The opposite of the derivative."
+      },
+      {
+          question: "3",
+          answer: "answer3"
+      },
+      {
+          question: "4",
+          answer: "answer4"
+      }        
+  
+    ]
   const [currentCard, setCurrentCard] = useState(0);
 
   const handleNextCard = () => {

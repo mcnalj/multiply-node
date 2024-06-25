@@ -121,6 +121,8 @@ export default function Exponents({username}) {
           }
         }
         xValue = xValue.toString();
+        console.log("xValue: " + xValue);
+        console.log("xChoice: " + xChoice);
         return [xValue, xChoice];
     }
 
@@ -137,7 +139,11 @@ export default function Exponents({username}) {
         const answerLatex = '\\frac{1}{' + denom + '}';
         return answerLatex;
       } else if (typeOfExponent === "fractional") {
-        return xChoice;
+        let tempAnswer = Math.pow(xValue, 1/power)
+        const answerLatex = tempAnswer.toString();
+        console.log(answerLatex);
+        return answerLatex;
+
       } else if (typeOfExponent === "negativeFractional") {
         const answerLatex = '\\frac{1}{' + xChoice + '}';
         return answerLatex;

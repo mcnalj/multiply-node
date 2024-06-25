@@ -436,6 +436,38 @@ recordRoutes.route('/metStandard/integration').post(checkAuthenticated, async fu
   res.send({msg:msg, success: success});
 });
 
+recordRoutes.route('/metStandard/summerPrep').post(checkAuthenticated, async function(req, res) {
+  const sessionData = req.body;
+  let msg = '';
+  let success = false;
+  try {
+    let updateSuccess = await dbo.client.db("employees")
+    .collection("userData")
+    .updateOne(
+      {username: sessionData.userData.username},
+      {
+        $inc:{
+          totalQuestionsAttempted: sessionData.userData.questionsAttempted,
+          totalQuestionsCorrect: sessionData.userData.questionsCorrect
+        },
+        $addToSet: { "progress.summerPrep.quadratics.skillData":
+                      sessionData.progress.summerPrep.quadratics.skillData
+                    } 
+      },
+      {upsert: true}
+    );
+    if (updateSuccess.modifiedCount == 1) {
+      msg ='Data was added to the progress array.';
+    } else {
+      msg = 'No data was added to the progress array';
+    }
+    success = true;
+  } catch {
+    msg = 'Error on attempt to updateOne';
+  }
+  res.send({msg:msg, success: success});
+});
+
 
 recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, res) {
   const sessionData = req.body;
@@ -671,14 +703,16 @@ recordRoutes.route('/saveProgressUpdate').post(checkAuthenticated, async functio
   const updateData = req.body;
   let msg = '';
   let success = false;
+  let category = "differentiation"
+  let topic = "derivativesRules"
   try {
     let updateSuccess = await dbo.client.db("employees")
     .collection("userData")
     .updateOne(
       {username: updateData.userData.username},
       {
-        $set: { "progress.standards.derivatives":
-                      updateData.progress.standards.derivatives
+        $set: { [`progress.standards.${category}.${topic}`]:
+                      updateData.progress.standards[category][topic]
                     } 
       },
       {upsert: true}
@@ -710,9 +744,9 @@ recordRoutes.route("/getStandardsProgress").post(async function (req, response) 
       .findOne(query, options)
     if (results.progress) {
       if (results.progress.standards) {
-        if (results.progress.standards.derivatives) {
-          if (results.progress.standards.derivatives.derivativesRules) {
-            progressObj = results.progress.standards.derivatives.derivativesRules;
+        if (results.progress.standards.differentiation) {
+          if (results.progress.standards.differentiation.derivativesRules) {
+            progressObj = results.progress.standards.differentiation.derivativesRules;
           }
         }
       }

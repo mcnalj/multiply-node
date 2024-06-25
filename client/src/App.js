@@ -67,6 +67,16 @@ import DerivativeRulesStandards from './components/standards/derivativeRulesStan
 import DerivativesStandards from './components/standards/derivativesStandards.component.standards';
 import StandardsCategories from './components/standards/standardsCategories.component.standards';
 import StandardsTopics from './components/standards/standardsTopics.component.standards';
+import StandardsTracker from './components/standards/standardsTracker.component.standards';
+
+import SummerPrepTopics from './components/summerPrep/summerPrepTopics.component.summerPrep.js';
+import IdentifyingFunctions from './components/summerPrep/identifyingFunctions.component.summerPrep.js';
+import GraphingFunctions from './components/summerPrep/graphingFunctions.component.summerPrep.js';
+import FactoringQuadraticsTopics from './components/summerPrep/factoringQuadraticsTopics.component.summerPrep.js';
+import FactoringQuadratics from './components/summerPrep/factoringQuadratics.component.summerPrep.js';
+import ExponentsSummer from './components/summerPrep/exponentsSummer.component.summerPrep.js';
+import SVGGraphs from './components/summerPrep/svgGraphs.component.summerPrep.js';
+import ClickableCoordinates from './components/summerPrep/clickableCoordinates.component.summerPrep.js';
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -371,6 +381,70 @@ function App() {
                    </Protected>
                   }
           />                                                                                                                                                                       
+          <Route path="/standardsTracker/:categoryWord/:topic"
+                  element={
+                    <Protected isSignedIn={loggedIn}>
+                      <StandardsTracker username={username} />
+                   </Protected>
+                  }
+          />    
+          <Route path="/summerPrepTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <SummerPrepTopics username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/identifyingFunctions"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <IdentifyingFunctions username={username}/>
+                  </Protected>
+                }
+          />          
+          <Route path="/graphingFunctions"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <GraphingFunctions username={username}/>
+                  </Protected>
+                }
+          />
+          <Route path="/factoringQuadratics/:topic"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <FactoringQuadratics username={username}/>
+                  </Protected>
+                }
+          />
+         <Route path="/factoringQuadraticsTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <FactoringQuadraticsTopics username={username}/>
+                  </Protected>
+                }
+          />                                                                                                                                                                                                                                                                                                                                                     
+          <Route path="/exponentsSummer"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ExponentsSummer username={username}/>
+                  </Protected>
+                }
+          />  
+          <Route path="/svgGraphs"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <SVGGraphs username={username}/>
+                  </Protected>
+                }
+          />                                                                                                                                                                             
+          <Route path="/clickableCoordinates"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ClickableCoordinates username={username}/>
+                  </Protected>
+                }
+          />                                                                                                                                                                             
+                                                                                                                                                                   
 
 
                                                                                                             

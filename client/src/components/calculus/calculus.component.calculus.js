@@ -41,6 +41,10 @@ export default function Calculus({username}) {
                 <NavLink to="/tutorialTopics">
                     <Button type="button" variant="warning" size="lg">Tutorials and Quizzes (BETA)</Button>
                 </NavLink>
+                <br /><br />
+                <NavLink to="/standardsCategories">
+                    <Button type="button" variant="warning" size="lg">Track Progress (BETA)</Button>
+                </NavLink>
                 {/* <NavLink to="/markdown">
                     <Button type="button" variant="primary" size="lg">Markdown</Button>
                 </NavLink> */}
