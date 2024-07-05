@@ -12,8 +12,10 @@ import {
     getRandomIntInclusive,
   } from '../math-scripts/utilities-scripts.js';
 
-import { config} from '../constants.js';
-var url = config.url.API_URL;
+import {
+    setSessionData,
+    recordProgress
+} from '../infrastructure/recordProgress.js';
 
 addStyles();
 
@@ -117,68 +119,39 @@ export default function FactoringQuadratics({username}) {
         );
     }
 
-    async function done(liftedState){
-        const endTime = new Date()
-        const totalTime = endTime - startTime;
-        let sessionObj = {
-          "metStandard": true,
-          "questionsAttempted": liftedState.questionsAttempted,
-          "questionsCorrect": liftedState.questionsCorrect,
-          "questionsIncorrect": liftedState.questionsIncorrect,
-          "questionsStreak": liftedState.questionsStreak,
-          "datetimeStarted": startTime,
-          "totalTime": totalTime,
+    async function done(liftedState, startTime){
+        try {
+            const endTime = new Date();
+            const totalTime = endTime - startTime;
+            console.log("total time: " + totalTime);
+            const sessionData = setSessionData(liftedState, startTime, totalTime, "summerPrep", "quadratics", topic, username);
+            // we are going to need to pass url information if we're not in summerPrep
+            const result = await recordProgress(sessionData, "summerPrep");
+            // what should we do with this result?
+            let quadraticParameters = getQuadraticParameters();
+            let functionLatex = setFunction(quadraticParameters);
+            setQuestionObject(
+              {
+                functionLatex: functionLatex,
+                quadraticParams: quadraticParameters,
+                getNextQuestion: next,
+                questionsAttempted: 0,
+                questionsCorrect: 0,
+                questionsIncorrect: 0,
+                questionsStreak: 0,
+                questionsToMeet: questionObject.questionsToMeet,
+                progressBar: 0,
+                doneWithTopic: done,
+                questionTopic: questionObject.questionTopic,
+                questionPrompt: questionObject.questionPrompt,
+                metStandard: true,
+              }
+            );
+        } catch (error) {
+            console.error("Failed to record progress: ", error);
+            // Show a message to the user
         }
-        let sessionData = {
-          userData: {
-              username: username,
-              questionsAttempted: liftedState.questionsAttempted,
-              questionsCorrect: liftedState.questionsCorrect,
-          },
-          progress: {
-            summerPrep: {
-                quadratics: {
-                    skillData: {
-                      skill: topic,
-                      sessionsData: sessionObj
-                    }
-                }
-            }        
-          }
-        }
-        const response = await fetch(`${url}/record/metStandard/summerPrep`, {
-          method: "POST",
-          credentials: 'include',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(sessionData),
-        })
-        .catch(error => {
-          window.alert(error);
-          return;
-        });
-        const answer = await response.json();
-        let quadraticParameters = getQuadraticParameters();
-        let functionLatex = setFunction(quadraticParameters);
-        setQuestionObject(
-          {
-            functionLatex: functionLatex,
-            quadraticParams: quadraticParameters,
-            getNextQuestion: next,
-            questionsAttempted: 0,
-            questionsCorrect: 0,
-            questionsIncorrect: 0,
-            questionsStreak: 0,
-            questionsToMeet: questionObject.questionsToMeet,
-            progressBar: 0,
-            doneWithTopic: done,
-            questionTopic: questionObject.questionTopic,
-            questionPrompt: questionObject.questionPrompt,
-            metStandard: true,
-          }
-        );
-    };
+    }
 
     return (
         <div className="col-12 mt-3">
@@ -189,6 +162,7 @@ export default function FactoringQuadratics({username}) {
           </div>
           <AnswerForm
               questionObj={questionObject}
+              startTime={startTime}
           />
           <div className="progressBar mt-4 mb-4 col-10 offset-1">
               <ProgressBar now={questionObject.progressBar} label={`${questionObject.progressBar}%`} max='100'/>
@@ -200,7 +174,7 @@ export default function FactoringQuadratics({username}) {
       )
 }
 
-function AnswerForm({questionObj}) {
+function AnswerForm({questionObj, startTime}) {
     const mathFieldRef = useRef(null);
     const firstSign = questionObj.quadraticParams.firstZero > 0 ? '-': '+';
     const secondSign = questionObj.quadraticParams.secondZero > 0 ? '-': '+';
@@ -304,7 +278,7 @@ function AnswerForm({questionObj}) {
         setAnswerMessage(answerMessage);
         
         if (stateToLift.questionsCorrect >= questionObj.questionsToMeet) {
-            questionObj.doneWithTopic(stateToLift);
+            questionObj.doneWithTopic(stateToLift, startTime);
         } else {
             questionObj.getNextQuestion(stateToLift);
         }

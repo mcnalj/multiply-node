@@ -71,6 +71,8 @@ import StandardsTracker from './components/standards/standardsTracker.component.
 
 import SummerPrepTopics from './components/summerPrep/summerPrepTopics.component.summerPrep.js';
 import IdentifyingFunctions from './components/summerPrep/identifyingFunctions.component.summerPrep.js';
+import PlottingPointsTopics from './components/summerPrep/plottingPointsTopics.component.summerPrep.js';
+import PlottingPoints from './components/summerPrep/plottingPoints.component.summerPrep.js';
 import GraphingFunctions from './components/summerPrep/graphingFunctions.component.summerPrep.js';
 import FactoringQuadraticsTopics from './components/summerPrep/factoringQuadraticsTopics.component.summerPrep.js';
 import FactoringQuadratics from './components/summerPrep/factoringQuadratics.component.summerPrep.js';
@@ -401,7 +403,23 @@ function App() {
                     <IdentifyingFunctions username={username}/>
                   </Protected>
                 }
-          />          
+          /> 
+          <Route path="/plottingPoints/:topic"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <PlottingPoints username={username}/>
+                  </Protected>
+                }
+          />                  
+
+         <Route path="/plottingPointsTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <PlottingPointsTopics username={username}/>
+                  </Protected>
+                }
+          />                                                                                                                                                                                                                                                                                                                                                     
+
           <Route path="/graphingFunctions"
                 element={
                   <Protected isSignedIn={loggedIn}>

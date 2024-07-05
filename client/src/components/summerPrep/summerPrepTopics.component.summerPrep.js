@@ -17,8 +17,8 @@ export default function SummerPrepTopics({username}) {
                     <Button type="button" variant="primary" size="lg">Exponents</Button>
                 </NavLink>
                 <br /><br />
-                <NavLink to="#">
-                    <Button type="button" variant="primary" size="lg">Function Notation</Button>
+                <NavLink to="/plottingPointsTopics">
+                    <Button type="button" variant="primary" size="lg">Plotting Points</Button>
                 </NavLink>
                 <br /><br />
                 <NavLink to="/graphingFunctions">

@@ -1,0 +1,32 @@
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
+.black {
+    color: black;
+}   
+
+.svg-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2%
+}
+
+.svg-container svg {
+    width: 100%;
+    height: auto;
+
+}
+
+@media (min-width: 800px) {
+    .svg-container {
+        width: 70%;
+        height: auto;
+        margin:auto;
+    }
+}

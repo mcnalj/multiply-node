@@ -169,6 +169,7 @@ export default function ClickableCoordinates({username}) {
         const svgPoint = point.matrixTransform(svg.getScreenCTM().inverse());
         const nearestGridPoint = getNearestGridPoint(svgPoint);
         setCoordinates(nearestGridPoint);
+        console.log(nearestGridPoint);
     };
 
     const getNearestGridPoint = (point) => {
@@ -180,6 +181,7 @@ export default function ClickableCoordinates({username}) {
 
     function handleSubmit(event) {
         console.log("calling handle submit")
+        console.log("question x: " + questionObject.questionData.x + " , question y: " + questionObject.questionData.y);
         event.preventDefault();
 
         let stateToLift = {
@@ -191,7 +193,8 @@ export default function ClickableCoordinates({username}) {
 
         let answerMessage = '';
         let answerIsCorrect = false;
-        if (coordinates.x*2 == questionObject.questionData.x && coordinates.y*2 == questionObject.questionData.y) {
+        console.log("answer x: " + coordinates.x + " , answer y: " + coordinates.y);
+        if (coordinates.x == (questionObject.questionData.x * 2) && coordinates.y == (questionObject.questionData.y * -2)) {
             answerIsCorrect = true;
         }
         if (answerIsCorrect) { 
