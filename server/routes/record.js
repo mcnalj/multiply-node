@@ -440,6 +440,7 @@ recordRoutes.route('/metStandard/summerPrep').post(checkAuthenticated, async fun
   const sessionData = req.body;
   let msg = '';
   let success = false;
+  let setProperty = `progress.summerPrep.${sessionData.progressUnit}.skillData`;
   try {
     let updateSuccess = await dbo.client.db("employees")
     .collection("userData")
@@ -450,9 +451,10 @@ recordRoutes.route('/metStandard/summerPrep').post(checkAuthenticated, async fun
           totalQuestionsAttempted: sessionData.userData.questionsAttempted,
           totalQuestionsCorrect: sessionData.userData.questionsCorrect
         },
-        $addToSet: { "progress.summerPrep.quadratics.skillData":
-                      sessionData.progress.summerPrep.quadratics.skillData
-                    } 
+        $addToSet: { [setProperty]: sessionData.skillData }
+        // $addToSet: { "progress.summerPrep.quadratics.skillData":
+        //   sessionData.progress.summerPrep.quadratics.skillData
+        // } 
       },
       {upsert: true}
     );
