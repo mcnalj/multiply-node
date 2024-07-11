@@ -32,6 +32,7 @@ import Multiplication from './components/multiply/multiplication.component.multi
 import Calculus from './components/calculus/calculus.component.calculus';
 import ExponentsTopics from './components/calculus/calculus.component.exponentsTopics';
 import Exponents from './components/calculus/calculus.component.exponents';
+import Exponents2 from './components/calculus/calculus.component.exponents2';
 import Derivatives from './components/calculus/calculus.component.derivatives';
 import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
 import Markdown from './components/calculus/calculus.component.markdown';
@@ -79,6 +80,7 @@ import FactoringQuadratics from './components/summerPrep/factoringQuadratics.com
 import ExponentsSummer from './components/summerPrep/exponentsSummer.component.summerPrep.js';
 import SVGGraphs from './components/summerPrep/svgGraphs.component.summerPrep.js';
 import ClickableCoordinates from './components/summerPrep/clickableCoordinates.component.summerPrep.js';
+import EquationsOfLines from './components/summerPrep/equationsOfLines.component.summerPrep.js';
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -173,6 +175,13 @@ function App() {
                   </Protected>
                 }
           />
+          <Route path="/exponents2/:topic"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <Exponents2 username={username}/>
+                  </Protected>
+                }
+          />          
           <Route path="/derivatives/:topic"
                 element={
                   <Protected isSignedIn={loggedIn}>
@@ -461,7 +470,14 @@ function App() {
                     <ClickableCoordinates username={username}/>
                   </Protected>
                 }
-          />                                                                                                                                                                             
+          />
+          <Route path="/equationsOfLines"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <EquationsOfLines username={username}/>
+                  </Protected>
+                }
+          />                                                                                                                                                                                                                                                                                                                                                                    
                                                                                                                                                                    
 
 

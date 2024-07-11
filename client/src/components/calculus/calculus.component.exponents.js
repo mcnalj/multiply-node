@@ -1,9 +1,8 @@
+// This is currently depracated in favor of 
+// calculus.component.exponents2.js
+
 //TODO fix the unit depending on type of Exponent
-// figure out how to save it to the database with different units. DONE
-// Fix it so that it doesn't keep saving each question after we've met the standard. DONE
-// Add a mix it up option. DONE
 // maybe add simple polynomials
-// Add user ability to choose which type of questions. DONE
 // Makes sure all the questions to the 0 power are correct.
 // Deploy
 // Fix the look
@@ -126,9 +125,9 @@ export default function Exponents({username}) {
         return [xValue, xChoice];
     }
 
+    // It's a problem that this returns different types depending on the typeOfExponent. 
     function setAnswer(xValue, power, typeOfExponent, xChoice) {
       xValue = parseInt(xValue);
-      // It's a problem that this returns different types depending on the typeOfExponent.
       if (typeOfExponent === "positive") {
         // return xValue ** power;
         let tempAnswer = xValue ** power;

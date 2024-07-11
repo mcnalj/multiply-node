@@ -29,7 +29,7 @@ export default function SummerPrepTopics({username}) {
                     <Button type="button" variant="primary" size="lg">Identifying Functions</Button>
                 </NavLink>
                 <br /><br />
-                <NavLink to="#">
+                <NavLink to="/equationsOfLines">
                     <Button type="button" variant="primary" size="lg">Slopes / Equations of Lines</Button>
                 </NavLink>
                 <br /><br />                
