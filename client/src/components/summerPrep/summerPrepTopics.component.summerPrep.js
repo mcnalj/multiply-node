@@ -13,7 +13,7 @@ export default function SummerPrepTopics({username}) {
                     <Button type="button" variant="primary" size="lg">Cubes and Squares</Button>
                 </NavLink>
                 <br /><br />
-                <NavLink to="/exponentsSummer">
+                <NavLink to="/exponentsSummerGPT">
                     <Button type="button" variant="primary" size="lg">Exponents</Button>
                 </NavLink>
                 <br /><br />

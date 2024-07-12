@@ -56,7 +56,7 @@ export default function Exponents2({username}) {
         questionsCorrect: 0,
         questionsIncorrect: 0,
         questionsStreak: 0,
-        questionsToMeet: 3,
+        questionsToMeet: 7,
         progressBar: 0,
         metStandard: false, 
         getNextQuestion: next,

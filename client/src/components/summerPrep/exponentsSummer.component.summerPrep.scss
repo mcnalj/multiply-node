@@ -56,3 +56,37 @@
     background-color: red;
     color:black;
 }
+
+@keyframes flash {
+    0% { 
+        border-color: green;
+        border-width: 3px;
+        background-color: white;
+        color:black;
+    }
+    25% { 
+        background-color: darkslategray;     
+    }
+    50% { 
+        border-color: green;
+        border-width: 3px;
+        background-color: white;
+        color:black;
+    }
+    75% { 
+        background-color: darkslategray;     
+    }   
+    100% { 
+        border-color: green;
+        border-width: 3px;
+        background-color: white;
+        color:black;
+    }
+
+
+
+}
+
+.completed {
+    animation: flash 3s 1;
+}

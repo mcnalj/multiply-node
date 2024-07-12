@@ -78,6 +78,7 @@ import GraphingFunctions from './components/summerPrep/graphingFunctions.compone
 import FactoringQuadraticsTopics from './components/summerPrep/factoringQuadraticsTopics.component.summerPrep.js';
 import FactoringQuadratics from './components/summerPrep/factoringQuadratics.component.summerPrep.js';
 import ExponentsSummer from './components/summerPrep/exponentsSummer.component.summerPrep.js';
+import ExponentsSummerGPT from './components/summerPrep/exponentsSummerGPT.component.summerPrep.js';
 import SVGGraphs from './components/summerPrep/svgGraphs.component.summerPrep.js';
 import ClickableCoordinates from './components/summerPrep/clickableCoordinates.component.summerPrep.js';
 import EquationsOfLines from './components/summerPrep/equationsOfLines.component.summerPrep.js';
@@ -96,7 +97,6 @@ function App() {
   if (username && username != 'undefined') {
     loggedIn = true;
   }
-  console.log(cookies);
   // const [username, setUsername] = useState("");
   // const allCookies = new Cookies();
   // var myCookie = allCookies.get('username');
@@ -457,6 +457,13 @@ function App() {
                   </Protected>
                 }
           />  
+          <Route path="/exponentsSummerGPT"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ExponentsSummerGPT username={username}/>
+                  </Protected>
+                }
+          />            
           <Route path="/svgGraphs"
                 element={
                   <Protected isSignedIn={loggedIn}>
