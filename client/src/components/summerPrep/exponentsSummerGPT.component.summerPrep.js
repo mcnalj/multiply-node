@@ -7,10 +7,15 @@ import '../../App.scss';
 import '../../index.scss';
 import './exponentsSummer.component.summerPrep.scss';
 
+import {
+  MatchingComponent
+} from '../calculus/answerComponents/matchingComponent.component.answerComponents.js';
+
 // import confetti from 'canvas-confetti';
 
 addStyles();
 
+// TODO: import this from answerComponents
 const exponentsMatches = [
   {
     leftLatex: `x^2`,
@@ -140,7 +145,7 @@ export default function ExponentsSummerGPT ({username,}) {
   const [rightOptions, setRightOptions] = useState([]);
 
   useEffect(() => {
-    const randomizedQuestionArray = populateQuestionArray(5, true, false, false);
+    const randomizedQuestionArray = populateQuestionArray(exponentsMatches, 5, true, false, false);
     const options = setOptions(randomizedQuestionArray);
     setLeftOptions(options.leftOptions);
     setRightOptions(options.rightOptions);
@@ -160,6 +165,7 @@ export default function ExponentsSummerGPT ({username,}) {
         <>
             <h2 className="text-center">Exponents Matching</h2>
             <MatchingComponent 
+                matchObjects={exponentsMatches}
                 leftOptions={leftOptions}
                 rightOptions={rightOptions}
                 setIsFinished={setIsFinished}
@@ -169,99 +175,16 @@ export default function ExponentsSummerGPT ({username,}) {
   }
 }
 
-export function MatchingComponent ({ leftOptions, rightOptions, setIsFinished}) {
-    const [clickedIndex, setClickedIndex] = useState(null);
-    const [currentLeft, setCurrentLeft] = useState({option: null, index: null});
-    const [currentRight, setCurrentRight] = useState({option: null, index: null});
-    const [incorrectIndex, setIncorrectIndex] = useState([]);
-    const [matches, setMatches] = useState([]);
-    const [isCompleted, setIsCompleted] = useState(false);
-    
-    const handleLeftClick = (option, index) => {
-      setCurrentLeft({option: option, index: index});
-      checkMatch({option: option, index: index}, currentRight, index);
-    };
 
-    const handleRightClick = (option, index) => {
-      setCurrentRight({option: option, index: index});
-      checkMatch(currentLeft, {option: option, index:index}, index);
-    };
-
-    const checkMatch = (left, right, index) => {
-        if (left?.option && right?.option) {
-          const leftButton = exponentsMatches.findIndex(obj => obj.leftLatex === left.option);
-          const rightButton = exponentsMatches.findIndex(obj => obj.rightLatex === right.option);  
-          if (leftButton === rightButton) {
-              setMatches(prevMatches => [...prevMatches, left.index, right.index]);
-              if (matches.length === 8) {
-                setIsCompleted(true); // this triggers the animation
-                setTimeout(()=> { 
-                  setIsFinished(true); 
-                }, 4000); // this changes the JSX returned in the parent
-              }
-          } else {
-              setIncorrectIndex([left.index, right.index])
-              setTimeout(()=> {
-                  setIncorrectIndex([]);
-              }, 1800);
-          }
-          setCurrentLeft({option: null, index: null});
-          setCurrentRight({option: null, index: null});
-          setClickedIndex(null);
-        } else {
-          console.log("Setting clicked index: " + index);
-          setClickedIndex(index);
-        }
-    };
-
-    const getButtonClass = (index, isLeft) => {
-        const clicked = isLeft ? clickedIndex === index : clickedIndex === index;
-        const matched = matches.includes(index);
-        const incorrect = incorrectIndex.includes(index);
-        return `col-12 fs-3 p-1 box ${clicked ? 'clicked' : ''} ${matched ? 'matched' : ''} ${incorrect ? 'incorrect' : ''}`;
-    };
-
-    return (
-        <div>
-            <div className={`col-12 p-3 ${isCompleted ? 'completed matching' : 'matching'}`}>
-                {[...Array(5)].map((_, index) => (
-                    <div className="row mt-3" key={index}>
-                        <div className="col-6 text-center mt-2">
-                            <Button
-                                onClick={() => handleLeftClick(leftOptions[index], index+'left')}
-                                variant="outline-light"
-                                className={getButtonClass(index+'left', true)}
-                            >
-                                <StaticMathField>{leftOptions[index]}</StaticMathField>
-                            </Button>
-                        </div>
-                        <div className="col-6 text-center mt-2">
-                            <Button
-                                onClick={() => handleRightClick(rightOptions[index], index+'right')}
-                                variant="outline-light"
-                                className={getButtonClass(index+'right', false)}
-                            >
-                                <StaticMathField>{rightOptions[index]}</StaticMathField>
-                            </Button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <Link to="/summerPrepTopics">
-                <button type="button" className="btn btn-lg btn-success mt-2">BACK TO SUMMER TOPICS</button><br /><br />
-            </Link>
-        </div>
-    );
-};
-
-function populateQuestionArray (arrayLength=5, includeLevel1=true, includeLevel2=false, includeLevel3=false) {
+// TODO: import these functions from answerComponents
+function populateQuestionArray (matchesArray, arrayLength=5, includeLevel1=true, includeLevel2=false, includeLevel3=false) {
 
   const levels = [];
   if (includeLevel1) levels.push(1);
   if (includeLevel2) levels.push(2);
   if (includeLevel3) levels.push(3);
 
-  const filteredArray = exponentsMatches.filter(obj => levels.includes(obj.level));
+  const filteredArray = matchesArray.filter(obj => levels.includes(obj.level));
   return shuffle(filteredArray).slice(0, arrayLength);
 }
 

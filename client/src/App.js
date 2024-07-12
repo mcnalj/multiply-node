@@ -33,6 +33,7 @@ import Calculus from './components/calculus/calculus.component.calculus';
 import ExponentsTopics from './components/calculus/calculus.component.exponentsTopics';
 import Exponents from './components/calculus/calculus.component.exponents';
 import Exponents2 from './components/calculus/calculus.component.exponents2';
+import ExponentsVariety from './components/calculus/calculus.component.exponentsVariety';
 import Derivatives from './components/calculus/calculus.component.derivatives';
 import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
 import Markdown from './components/calculus/calculus.component.markdown';
@@ -72,6 +73,7 @@ import StandardsTracker from './components/standards/standardsTracker.component.
 
 import SummerPrepTopics from './components/summerPrep/summerPrepTopics.component.summerPrep.js';
 import IdentifyingFunctions from './components/summerPrep/identifyingFunctions.component.summerPrep.js';
+import IdentifyingFunctionsExtractAnswers from './components/summerPrep/identifyingFunctionsExtractAnswers.component.summerPrep.js';
 import PlottingPointsTopics from './components/summerPrep/plottingPointsTopics.component.summerPrep.js';
 import PlottingPoints from './components/summerPrep/plottingPoints.component.summerPrep.js';
 import GraphingFunctions from './components/summerPrep/graphingFunctions.component.summerPrep.js';
@@ -182,6 +184,13 @@ function App() {
                   </Protected>
                 }
           />          
+          <Route path="/exponentsVariety/:topic"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <ExponentsVariety username={username}/>
+                  </Protected>
+                }
+          />                    
           <Route path="/derivatives/:topic"
                 element={
                   <Protected isSignedIn={loggedIn}>
@@ -412,7 +421,14 @@ function App() {
                     <IdentifyingFunctions username={username}/>
                   </Protected>
                 }
-          /> 
+          />
+          <Route path="/identifyingFunctionsExtractAnswers"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <IdentifyingFunctionsExtractAnswers username={username}/>
+                  </Protected>
+                }
+          />           
           <Route path="/plottingPoints/:topic"
                 element={
                   <Protected isSignedIn={loggedIn}>

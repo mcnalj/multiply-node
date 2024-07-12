@@ -23,24 +23,35 @@ import {
 } from '../infrastructure/recordProgress.js';
 
 import {
-    getRandomCorrectMessage,
-    getStreakMessage,
-    getRandomIncorrectMessage,
-} from '../infrastructure/messages.js';
+    matchObjects
+} from './answerComponents/matchObjects.js';
+
+import {
+    MatchingComponent
+} from './answerComponents/matchingComponent.component.answerComponents.js'; 
+
+import {
+    populateQuestionArray,
+    setOptions
+} from './answerComponents/matchingParentUtilityFunctions.js'; 
 
 import {
   TypedInputAnswerForm
 } from './answerComponents/typedInputAnswerInput.component.answerCompoments.js';
 
-// import { config} from '../constants.js';
-// var url = config.url.API_URL;
 
 addStyles();
 
-export default function Exponents2({username}) {
+export default function ExponentsVariety({username}) {
+
+    // These are for the matching component
+    const [isFinished, setIsFinished] = useState(false);
+    const [leftOptions, setLeftOptions] = useState([]);
+    const [rightOptions, setRightOptions] = useState([]);
+  
+
 
     const parameter = useParams()
-
     const [topic, setTopic] = useState(parameter.topic);
 
     const [questionObject, setQuestionObject] = useState({
@@ -225,8 +236,12 @@ export default function Exponents2({username}) {
     const startTime = new Date();
 
     useEffect(() => {
-        navigate(`/exponents2/${topic}`);
+        navigate(`/exponentsVariety/${topic}`);
         questionEngine(topic);
+        const randomizedQuestionArray = populateQuestionArray(matchObjects, 5, true, false, false);
+        const options = setOptions(randomizedQuestionArray);
+        setLeftOptions(options.leftOptions);
+        setRightOptions(options.rightOptions); 
     }, [topic]);
 
     function next(topic){
@@ -312,17 +327,37 @@ export default function Exponents2({username}) {
     } else {
     return (
       <div className="col-12 mt-3">
-        <div className="row">
-            <p className="col-12 text-center fs-2 mt-2">
-            <StaticMathField>{questionObject.functionLatex}</StaticMathField>
-            </p>
-        </div>
-        <TypedInputAnswerForm
-            questionObject={questionObject}
-            quizProgress={quizProgress}
-            setQuizProgress={setQuizProgress}
-            topic={topic}
-        />
+        {
+            quizProgress.questionsAttempted === 4 ? (
+                <>
+                    <div className="row">
+                        <p className="col-12 text-center fs-2 mt-2">
+                        </p>
+                    </div>
+                    <MatchingComponent
+                        matchObjects={matchObjects}
+                        leftOptions={leftOptions}
+                        rightOptions={rightOptions}
+                        setQuizProgress={setQuizProgress}
+                        setIsFinished={setIsFinished}
+                    />
+                </>
+            ) : (
+                <>
+                    <div className="row">
+                        <p className="col-12 text-center fs-2 mt-2">
+                            <StaticMathField>{questionObject.functionLatex}</StaticMathField>
+                        </p>
+                    </div>
+                    <TypedInputAnswerForm
+                        questionObject={questionObject}
+                        quizProgress={quizProgress}
+                        setQuizProgress={setQuizProgress}
+                        topic={topic}
+                    />
+                </>
+            )
+        }
         <div className="progressBar mt-4 mb-4 col-10 offset-1">
             <ProgressBar now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
         </div>
@@ -339,160 +374,3 @@ export default function Exponents2({username}) {
     )
   }
 };
-
-function AnswerForm({questionObject, quizProgress, setQuizProgress, topic}) {
-  const mathFieldRef = useRef(null);
-  
-  useEffect(() => {
-    if (mathFieldRef.current) {
-      mathFieldRef.current.focus();
-    }
-  }, []);
-
-  const [userAnswer, setUserAnswer] = useState('');
-  const [answerMessage, setAnswerMessage] = useState('');
-
-  const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
-
-  function updateSituation(value) {
-    // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
-    let pattern = `\\frac{1}{\\left\(\\right\)}`;
-    // This is a regex that removes MathQuill's default big parens \left and \right.
-    let regex = /\\left\(\\right\)/g;
-    if ( pattern == value.userAnswer) {
-      let replacedString = `\\frac{1}{()}`;
-      return setUserAnswer(replacedString);          
-    }
-    if ( regex.test(value.userAnswer)) {
-      let beginning = regex.lastIndex - 13
-      let trimmedString = value.userAnswer.slice(0, beginning);
-      let replacedString = trimmedString + "()";
-      return setUserAnswer(replacedString);
-    } else {
-        return setUserAnswer(value.userAnswer);
-    }
-}
-
-  const handleKeyDown = event => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleSubmit(event);
-    }
-  }
-
-  // This will stay on the same question if you get it wrong.
-  // I am now updating quizProgress after the pause.
-  // That will cause the progress bar to fill in as you get a new question.
-  // The progress bar will not fill in before you are taken to the next question component.
-  // Add a setTimeout to update the progress bar after the met standard pause.
-
-  function handleSubmit(event) {
-
-    event.preventDefault();
-
-    const CORRECT_PAUSE = 1500;
-    const INCORRECT_PAUSE = 4000;
-    const MEETS_STANDARD_PAUSE = 3000;
-    const MIN_STREAK = 4;
-    const DEFAULT_INPUT_BOX_STYLE = {backgroundColor:"white", color: "black", borderWidth: "0px", borderColor: "gray"}
-    const CORRECT_INPUT_BOX_STYLE = {backgroundColor: "green", color:"white", borderWidth: "0px", borderColor: "gray"}
-    const INCORRECT_INPUT_BOX_STYLE = {backgroundColor:"white", color: "red", borderWidth: "2px", borderColor: "red"}
-
-    let isCorrect = false;
-    let answerMessage = '';
-    let pause = CORRECT_PAUSE;
-    let answer = userAnswer.replace(/\s/g, '');
-
-    const updateProgress = (correct, streak) => {
-        setQuizProgress(prevState => ({
-            ...prevState,
-            questionsAttempted: prevState.questionsAttempted + 1,
-            questionsCorrect: prevState.questionsCorrect + (correct ? 1 : 0),
-            questionsIncorrect: prevState.questionsIncorrect + (correct ? 0 : 1),
-            questionsStreak: streak,
-            progressBar: Math.round(((prevState.questionsCorrect + (correct ? 1 : 0)) / prevState.questionsToMeet) * 100), 
-            metStandard: prevState.questionsCorrect + (correct ? 1 : 0) >= prevState.questionsToMeet       
-        }));
-    };
-
-    const handleCorrectAnswer = () => {
-        setBoxStyle(CORRECT_INPUT_BOX_STYLE);
-        const meetsStandard = quizProgress.questionsCorrect + 1 >= quizProgress.questionsToMeet;
-        answerMessage = meetsStandard 
-            ? "Success! You met the standard. Go to the Next Topic . . ."
-            : quizProgress.questionsStreak + 1 < MIN_STREAK
-            ? getRandomCorrectMessage()
-            : getStreakMessage(quizProgress.questionsStreak + 1);
-        pause = meetsStandard ? MEETS_STANDARD_PAUSE : CORRECT_PAUSE;
-        setAnswerMessage(answerMessage);
-    };
-
-    const handleIncorrectAnswer = () => {
-        setBoxStyle(INCORRECT_INPUT_BOX_STYLE);
-        answerMessage = getRandomIncorrectMessage();
-        setAnswerMessage(answerMessage);
-        pause = INCORRECT_PAUSE;
-    };
-
-    if (questionObject.answersArray.includes(answer)) {
-        isCorrect = true;
-        handleCorrectAnswer();
-    } else {
-        handleIncorrectAnswer();
-    }
-
-    setTimeout(function() {
-        setBoxStyle(DEFAULT_INPUT_BOX_STYLE)        
-        if (isCorrect) {
-          updateProgress(true, quizProgress.questionsStreak + 1);
-          if (quizProgress.questionsCorrect + 1 >= quizProgress.questionsToMeet) {
-              quizProgress.doneWithTopic();
-          } else {
-            quizProgress.getNextQuestion(topic);
-          }
-        } else {
-          updateProgress(false, 0);
-          // Turn this back on if you want an new question after a wrong answer.
-          // quizProgress.getNextQuestion(topic);
-
-        }
-        setUserAnswer('');
-        setAnswerMessage('');
-    }, pause) // end of setTimeout
-  } // end of handleSubmit    
-
-  return (
-    <form onSubmit={handleSubmit} method="post" action="#">
-        <p className="col-12 text-center fs-2">
-            <StaticMathField>{'f(' + questionObject.xValue + ') ='}</StaticMathField>
-        </p>
-        <div className="col-8 offset-2">
-                <EditableMathField
-                    type="input"
-                    id="answerInput"
-                    className="form-control text-center fs-3"
-                    style={boxStyle}
-                    aria-describedby="answer input"
-                    latex={userAnswer}
-                    onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
-                    mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
-                    onKeyDown={handleKeyDown}
-                />
-        </div>     
-        <p className="col-12 text-center mt-3">{answerMessage}</p>
-        <Button
-            variant="primary"
-            type="submit"
-            id="submitBtn"
-            size="lg"
-            className="col-6 offset-3" 
-          >
-            SUBMIT
-          </Button>
-    </form>
-  )
-}
-
- 
-
-

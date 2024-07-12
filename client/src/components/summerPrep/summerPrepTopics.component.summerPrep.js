@@ -25,7 +25,7 @@ export default function SummerPrepTopics({username}) {
                     <Button type="button" variant="primary" size="lg">Graphing Functions</Button>
                 </NavLink>
                 <br /><br />
-                <NavLink to="/identifyingFunctions">
+                <NavLink to="/identifyingFunctionsExtractAnswers">
                     <Button type="button" variant="primary" size="lg">Identifying Functions</Button>
                 </NavLink>
                 <br /><br />

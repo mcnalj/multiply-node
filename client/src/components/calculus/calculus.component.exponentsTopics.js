@@ -8,27 +8,27 @@ export default function ExponentsTopics() {
             </div>
             <div>
                 <div>
-                    <Link to="/exponents2/positive">
+                    <Link to="/exponentsVariety/positive">
                         <button type="button" className="btn btn-lg btn-success">Simple Exponents</button><br /><br />
                     </Link>
                 </div>
                 <div>
-                    <Link to="/exponents2/negative">
+                    <Link to="/exponentsVariety/negative">
                         <button type="button" className="btn btn-lg btn-success">Negative Exponents</button><br /><br />
                     </Link>
                 </div>
                 <div>
-                    <Link to="/exponents2/fractional">
+                    <Link to="/exponentsVariety/fractional">
                         <button type="button" className="btn btn-lg btn-success">Fractional Exponents</button><br /><br />
                     </Link>
                 </div>
                 <div>
-                    <Link to="/exponents2/negativeFractional">
+                    <Link to="/exponentsVariety/negativeFractional">
                         <button type="button" className="btn btn-lg btn-success">Negative Fractional Exponents</button><br /><br />
                     </Link>
                 </div>
                 <div>
-                    <Link to="/exponents/mixed">
+                    <Link to="/exponentsVariety/mixed">
                         <button type="button" className="btn btn-lg btn-success">Mix of All Types</button><br /><br />
                     </Link>
                 </div>
