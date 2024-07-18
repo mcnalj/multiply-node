@@ -72,6 +72,7 @@ import StandardsTopics from './components/standards/standardsTopics.component.st
 import StandardsTracker from './components/standards/standardsTracker.component.standards';
 
 import SummerPrepTopics from './components/summerPrep/summerPrepTopics.component.summerPrep.js';
+import CubesAndSquares from './components/summerPrep/cubesAndSquares.component.summerPrep.js';
 import IdentifyingFunctions from './components/summerPrep/identifyingFunctions.component.summerPrep.js';
 import IdentifyingFunctionsExtractAnswers from './components/summerPrep/identifyingFunctionsExtractAnswers.component.summerPrep.js';
 import PlottingPointsTopics from './components/summerPrep/plottingPointsTopics.component.summerPrep.js';
@@ -415,6 +416,13 @@ function App() {
                   </Protected>
                 }
           />
+          <Route path="/cubesAndSquares"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <CubesAndSquares username={username}/>
+                  </Protected>
+                }
+          />            
           <Route path="/identifyingFunctions"
                 element={
                   <Protected isSignedIn={loggedIn}>

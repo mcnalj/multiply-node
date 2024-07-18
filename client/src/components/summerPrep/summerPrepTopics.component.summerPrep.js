@@ -9,7 +9,7 @@ export default function SummerPrepTopics({username}) {
                 <h1>Get Ready for AP Calculus!</h1>
             </div>
             <div className="mt-3">
-                <NavLink to="#">
+                <NavLink to="/cubesAndSquares">
                     <Button type="button" variant="primary" size="lg">Cubes and Squares</Button>
                 </NavLink>
                 <br /><br />
