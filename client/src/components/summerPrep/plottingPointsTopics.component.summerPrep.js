@@ -9,6 +9,10 @@ export default function PlottingPointsTopics({username}) {
                 <h1>Plotting Points</h1>
             </div>
             <div className="mt-3">
+                <NavLink to="/plottingPointsPolynomials">
+                    <Button type="button" variant="primary" size="lg">Polynomial Functions</Button>
+                </NavLink>
+                <br /><br />                
                 <NavLink to="/plottingPoints/Sine">
                     <Button type="button" variant="primary" size="lg">Sine Function</Button>
                 </NavLink>

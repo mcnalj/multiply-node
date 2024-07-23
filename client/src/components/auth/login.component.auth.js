@@ -47,6 +47,42 @@ export default function Login({setCookie, setUsername})  {
       navigate("/");
     }
   }
+
+  async function signIn(e) {
+    e.preventDefault();
+    try {
+      console.log("About to try the fetch.")
+      const response = await fetch(`${url}/record/login-google`, {
+      method: "GET",
+      // mode: 'no-cors',
+      credentials: 'include',
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    console.log("After the fetch.");
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const answer = await response.json();
+    console.log(answer);
+
+    setForm({ username: "", password: ""});
+
+    if (answer.success) {
+      setCookie('username', answer.username);
+      setUsername(answer.username);
+      navigate("/success");
+    } else {
+      navigate("/");
+    }
+  } catch (error) {
+    console.error(error);
+    window.alert(error);
+  }
+}
     return (
       <div className="col-12">
         <div className="row">
@@ -85,7 +121,8 @@ export default function Login({setCookie, setUsername})  {
               </p>
             </form>
           </div>
+        </div>
+          <button type="submit" className="btn btn-primary" onClick={signIn}>Sign in with Google</button>
         </div> 
-      </div>
     );
   }

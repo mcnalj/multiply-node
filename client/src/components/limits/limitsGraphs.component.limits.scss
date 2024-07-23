@@ -1,0 +1,58 @@
+.matching {
+    background-color: darkslategray;
+}
+
+.finished {
+    border-style: solid;
+    border-color: lightgreen;
+    border-width: 5px;
+    background-color: white;  
+}
+
+.box {
+    height: 12vh;
+}
+
+.clicked {
+    border-color: lightgreen;
+    border-width: 3px;
+    // height: 16vh;
+    // background-color: lightgreen;
+    color: lightgreen;
+}
+
+.clicked:hover {
+    border-color: lightgreen;
+    border-width: 3px;
+    // height: 16vh;
+    // background-color: lightgreen;
+    color:lightgreen;
+}
+
+.matched {
+    border-color: green;
+    border-width: 3px;
+    background-color: lightgreen;
+    color:black;
+}
+
+.matched:hover {
+    border-color: green;
+    border-width: 3px;
+    background-color: lightgreen;
+    color:black;
+}
+
+.incorrect {
+    border-color: black;
+    border-width: 3px;
+    background-color: red;
+    color:black;
+}
+
+.incorrect:hover {
+    border-color: black;
+    border-width: 3px;
+    background-color: red;
+    color:black;
+}

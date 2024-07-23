@@ -59,7 +59,7 @@ export function SVGCoordinatePlane() {
                     return (
                         <g key={i}>
                             <line key={i} x1="-0.3" y1={y} x2="0.3" y2={y} stroke="black" strokeWidth="0.1" />
-                            <text x="-1" y={y} textAnchor="middle" fontSize="1">{i - 5 != 0 ? i - 5 : ""}</text>
+                            <text x="-1" y={-y} textAnchor="middle" fontSize="1">{i - 5 != 0 ? i - 5 : ""}</text>
                         </g>
                     );
                 })}

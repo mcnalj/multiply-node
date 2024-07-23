@@ -22,6 +22,10 @@ export default function Calculus({username}) {
                     <Button type="button" variant="primary" size="lg">Exponents</Button>
                 </NavLink>
                 <br /><br />
+                <NavLink to="/limitsGraphs">
+                    <Button type="button" variant="primary" size="lg">Limits</Button>
+                </NavLink>
+                <br /><br />                
                 <NavLink to="/derivativesTopics">
                     <Button type="button" variant="primary" size="lg">Derivatives</Button>
                 </NavLink>

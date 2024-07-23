@@ -1,3 +1,5 @@
+
+
 var express = require('express');
 var recordRoutes = express.Router();
 const dbo = require("../db/conn");
@@ -7,9 +9,22 @@ const fetch = require('node-fetch');
 const axios = require('axios');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const GoogleStrategy = require('passport-google-oidc');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
+
+require('dotenv').config({path: '../config.env'});
+
+// const cors = require('cors');
+
+// const app = express();
+
+// // Enable CORS for all routes
+// app.use(cors({
+//   origin: 'http://localhost:3000',
+//   credentials: true
+// }));
 
 
 const JwtStrategy = require('passport-jwt').Strategy;
@@ -134,6 +149,8 @@ recordRoutes.route("/login-user").get(function(req, res) {
   res.json({msg: "Not logged in.", success: false});
 });
 
+
+
 recordRoutes.route("/login-user").post(passport.authenticate('local', {
   successRedirect: 'success',
   failureRedirect: 'login-user'
@@ -152,7 +169,7 @@ recordRoutes.route("/success").get(function(req, res) {
     res.json({msg: "Successfully logged in", success: true, username:passportUser});
 });
 
-// authentication routes
+// These were working with the local strategy.
 passport.serializeUser(function(user, cb) {
   process.nextTick(function() {
     cb(null, { id: user._id, username: user.username });
@@ -164,6 +181,61 @@ passport.deserializeUser(function(user, cb) {
     return cb(null, user);
   });
 });
+
+
+//Route for initiating Google authentication
+recordRoutes.route('/login-google').get(passport.authenticate('google', { scope: ['openid', 'profile', 'email'] })
+);
+
+// recordRoutes.route('/login-google').get(function(req, res) {
+//   console.log("In the google authenticate function");
+//   return res.json({msg: "Google authentication", success: true, username: "MackTheNice"});
+// });
+
+// this is according to Passport
+recordRoutes.route('/oauth2/redirect/google').get(passport.authenticate('google', { failureRedirect: '/login-user', failureMessage: true }),
+  function(req, res) {
+    console.log("in the google redirect")
+    res.redirect('/success');
+});
+
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  // callbackURL: "http://localhost:5000/oauth2/redirect/google"
+  callbackURL: "/oauth2/redirect/google"
+},
+async (issuer, profile, done) => {
+  console.log("In the passport google Strategy");
+  // Find or create the user in your database
+  let user = await dbo.client.db("employees").collection("users").findOne({ googleId: profile.id });
+
+  if (!user) {
+    // If user does not exist, create a new user
+    user = await dbo.client.db("employees").collection("users").insertOne({
+      googleId: profile.id,
+      username: profile.displayName,
+      email: profile.emails[0].value,
+      provider: provider
+    });
+  }
+
+  return done(null, user);
+}));
+
+// Serialize user
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+// Deserialize user
+passport.deserializeUser(async (id, done) => {
+  let user = await dbo.client.db("employees").collection("users").findOne({ _id: id });
+  done(null, user);
+});
+
+
 
 // put this back to get back to good on the local strategy
 passport.use(new LocalStrategy(async function verify(username, password, cb) {

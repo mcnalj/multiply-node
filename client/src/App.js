@@ -77,6 +77,7 @@ import IdentifyingFunctions from './components/summerPrep/identifyingFunctions.c
 import IdentifyingFunctionsExtractAnswers from './components/summerPrep/identifyingFunctionsExtractAnswers.component.summerPrep.js';
 import PlottingPointsTopics from './components/summerPrep/plottingPointsTopics.component.summerPrep.js';
 import PlottingPoints from './components/summerPrep/plottingPoints.component.summerPrep.js';
+import PlottingPointsPolynomials from './components/summerPrep/plottingPointsPolynomials.component.summerPrep.js';
 import GraphingFunctions from './components/summerPrep/graphingFunctions.component.summerPrep.js';
 import FactoringQuadraticsTopics from './components/summerPrep/factoringQuadraticsTopics.component.summerPrep.js';
 import FactoringQuadratics from './components/summerPrep/factoringQuadratics.component.summerPrep.js';
@@ -85,6 +86,8 @@ import ExponentsSummerGPT from './components/summerPrep/exponentsSummerGPT.compo
 import SVGGraphs from './components/summerPrep/svgGraphs.component.summerPrep.js';
 import ClickableCoordinates from './components/summerPrep/clickableCoordinates.component.summerPrep.js';
 import EquationsOfLines from './components/summerPrep/equationsOfLines.component.summerPrep.js';
+
+import LimitsGraphs from './components/limits/limitsGraphs.component.limits.js';
 
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false)
@@ -445,6 +448,13 @@ function App() {
                 }
           />                  
 
+         <Route path="/plottingPointsPolynomials"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <PlottingPointsPolynomials username={username}/>
+                  </Protected>
+                }
+          />                                                                                                                                                                                                                                                                                                                                                     
          <Route path="/plottingPointsTopics"
                 element={
                   <Protected isSignedIn={loggedIn}>
@@ -452,6 +462,7 @@ function App() {
                   </Protected>
                 }
           />                                                                                                                                                                                                                                                                                                                                                     
+
 
           <Route path="/graphingFunctions"
                 element={
@@ -508,8 +519,14 @@ function App() {
                     <EquationsOfLines username={username}/>
                   </Protected>
                 }
-          />                                                                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                   
+          />
+          <Route path="/limitsGraphs"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <LimitsGraphs username={username}/>
+                  </Protected>
+                }
+          />                                                                                                                                                       
 
 
                                                                                                             

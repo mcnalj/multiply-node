@@ -15,7 +15,7 @@ export default function GraphingFunctions() {
   for (let x = 0.1; x<4; x+=0.1) {
     curvePoints.push({x: 3*x, y: (1/x)*-3})
   }
-  console.log(curvePoints)
+  
 
   const curvePathData = curvePoints.map((point) => {
     const {x, y} = point;
@@ -23,6 +23,19 @@ export default function GraphingFunctions() {
   }).join(' ');
 
   const curvePath = `M 0.1,-30 L${curvePathData}`;
+
+
+  const points = Array.from({ length: 200 }, (_, i) => {
+  const x = (i / 20) - 5;
+  let y = ((x ** 2) -3) * (-1);
+  return { x: 2 * x, y: 2 * y };
+});
+
+const pointsBeforeHole = points.filter(point => point.x > 2);
+const pointsAfterHole = points.filter(point => point.x < 2);
+
+
+
   
   return (
     <div>
@@ -1425,6 +1438,106 @@ export default function GraphingFunctions() {
       fill="none"
       strokeWidth="0.2"
     />
+
+  </svg>
+</div>
+
+
+
+
+<div>
+  <p> Graph of Hole</p>
+  <p> The points are created at the top of the file</p>
+  <svg width="400" height="400" viewBox="-12 -12 24 24" xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+        <marker id="arrow-left-up" markerWidth="3" markerHeight="3" refX="3" refY="1.5" orient="auto" markerUnits="strokeWidth">
+        <path d="M3,0 L3,3 L0,1.5 z" fill="black" />
+        </marker>
+        <marker id="arrow-right-down" markerWidth="3" markerHeight="3" refX="0" refY="1.5" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L0,3 L3,1.5 z" fill="black" />
+        </marker>
+    </defs>
+
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="black" strokeWidth="0.2" markerStart="url(#arrow-left-up)" markerEnd="url(#arrow-right-down)"  />        
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="black" strokeWidth="0.2" markerStart="url(#arrow-left-up)" markerEnd="url(#arrow-right-down)"  />
+
+    <text x="10" y="-0.5" textAnchor="middle" fontSize="1.0">x</text>
+    <text x="2" y="-10" textAnchor="end" fontSize="1.0">f(x)</text>
+
+    <g id="gridLinesX">
+      {[...Array(11)].map((_, i) => {
+        const y = 2*(i - 5);
+        return (
+          <g key={i}>
+            <line key={i} x1="-10" x2="10" y1={y} y2={y} stroke="gray" strokeWidth="0.05" />
+          </g>
+        );
+      })}
+    </g>
+
+    <g id="gridLinesY">
+      {[...Array(11)].map((_, i) => {
+        const x = 2*(i - 5);
+        return (
+          <g key={i}>
+            <line key={i} x1={x} x2={x} y1="-10" y2="10" stroke="gray" strokeWidth="0.05" />
+          </g>
+        );
+      })}
+    </g>
+
+
+    <g id="hashMarksX">
+        {[...Array(11)].map((_, i) => {
+            const x = 2*i - 10;
+            return (
+                <g key={i}>
+                <line key={i} x1={x} y1="-0.3" x2={x} y2="0.3" stroke="black" strokeWidth="0.1" />
+                <text x={x} y="1.2" textAnchor="middle" fontSize="1">{i-5 != 0 ? i-5: ""}</text>
+                </g>
+            );
+        })}
+    </g>
+
+    <g id="hashMarksY">
+        {[...Array(11)].map((_, i) => {
+            const y = 2*i - 10;
+            return (
+                <g key={i}>
+                <line key={i} x1="-0.3" y1={y} x2="0.3" y2={y} stroke="black" strokeWidth="0.1" />
+                <text x="-1" y={y} textAnchor="middle" fontSize="1">{i-5 != 0 ? i-5 : ""}</text>
+                </g>
+            );
+        })}
+    </g>
+
+  <polyline
+    points={pointsBeforeHole.map(point => `${point.x} ${point.y}`).join(' ')}
+    stroke="blue"
+    fill="none"
+    strokeWidth="0.2"
+  />
+  <polyline
+    points={pointsAfterHole.map(point => `${point.x} ${point.y}`).join(' ')}
+    stroke="blue"
+    fill="none"
+    strokeWidth="0.2"
+  />
+  <circle cx="2" cy="4" r="0.3" fill="none" strokeWidth="0.2" stroke="blue" />
+  <circle cx="2" cy="8" r="0.3" fill="blue" strokeWidth="0.2" stroke="blue" />
+
+    {/* <polyline
+      points={[
+        ...Array.from({ length: 100}, (_, i) => i).map(i => {
+          const x = (i/10) - 5;
+          let y = ((x**2)-5) * (-1);
+          return `${2*x} ${2*y}`;
+        })]}
+      stroke="blue"
+      fill="none"
+      strokeWidth="0.2"
+    /> */}
 
   </svg>
 </div>
