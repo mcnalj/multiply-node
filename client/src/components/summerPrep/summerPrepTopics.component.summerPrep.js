@@ -9,14 +9,18 @@ export default function SummerPrepTopics({username}) {
                 <h1>Get Ready for AP Calculus!</h1>
             </div>
             <div className="mt-3">
-                <NavLink to="/cubesAndSquares">
-                    <Button type="button" variant="primary" size="lg">Cubes and Squares</Button>
+                <NavLink to="/multiplicationTopics">
+                    <Button type="button" variant="primary" size="lg">Multiplication Topics</Button>
                 </NavLink>
                 <br /><br />
                 <NavLink to="/exponentsSummerGPT">
                     <Button type="button" variant="primary" size="lg">Exponents</Button>
                 </NavLink>
                 <br /><br />
+                <NavLink to="/functionNotation">
+                    <Button type="button" variant="primary" size="lg">Function Notation</Button>
+                </NavLink>
+                <br /><br />              
                 <NavLink to="/plottingPointsTopics">
                     <Button type="button" variant="primary" size="lg">Plotting Points</Button>
                 </NavLink>
@@ -53,9 +57,6 @@ export default function SummerPrepTopics({username}) {
                     <Button type="button" variant="primary" size="lg">SVG Graphs</Button>
                 </NavLink>
                 <br /><br />
-                <NavLink to="/clickableCoordinates">
-                    <Button type="button" variant="primary" size="lg">Clickable Coordinates</Button>
-                </NavLink>                
             </div>
         </div>
     );

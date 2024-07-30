@@ -183,6 +183,9 @@ const multipleChoiceQuestions = [
 
 
 ];
+// graph of x/x-3
+// graph of 1/x + 2
+// whacky graphs and left and right
 
 function shuffleArray(array) {
     for(let i = array.length -1; i > 0; i--) {

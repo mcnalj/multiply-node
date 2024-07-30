@@ -7,7 +7,7 @@ import '../../App.scss';
 import '../../index.scss';
 import './identifyingFunctions.component.summerPrep.scss';
 
- import {
+import {
     setSessionData,
     recordProgress
 } from '../infrastructure/recordProgress.js';

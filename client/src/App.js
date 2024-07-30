@@ -72,6 +72,7 @@ import StandardsTopics from './components/standards/standardsTopics.component.st
 import StandardsTracker from './components/standards/standardsTracker.component.standards';
 
 import SummerPrepTopics from './components/summerPrep/summerPrepTopics.component.summerPrep.js';
+import MultiplicationTopics from './components/summerPrep/multiplicationTopics.component.summerPrep.js';
 import CubesAndSquares from './components/summerPrep/cubesAndSquares.component.summerPrep.js';
 import IdentifyingFunctions from './components/summerPrep/identifyingFunctions.component.summerPrep.js';
 import IdentifyingFunctionsExtractAnswers from './components/summerPrep/identifyingFunctionsExtractAnswers.component.summerPrep.js';
@@ -84,7 +85,7 @@ import FactoringQuadratics from './components/summerPrep/factoringQuadratics.com
 import ExponentsSummer from './components/summerPrep/exponentsSummer.component.summerPrep.js';
 import ExponentsSummerGPT from './components/summerPrep/exponentsSummerGPT.component.summerPrep.js';
 import SVGGraphs from './components/summerPrep/svgGraphs.component.summerPrep.js';
-import ClickableCoordinates from './components/summerPrep/clickableCoordinates.component.summerPrep.js';
+import FunctionNotation from './components/summerPrep/functionNotation.component.summerPrep.js';
 import EquationsOfLines from './components/summerPrep/equationsOfLines.component.summerPrep.js';
 
 import LimitsGraphs from './components/limits/limitsGraphs.component.limits.js';
@@ -419,7 +420,14 @@ function App() {
                   </Protected>
                 }
           />
-          <Route path="/cubesAndSquares"
+          <Route path="/multiplicationTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <MultiplicationTopics username={username}/>
+                  </Protected>
+                }
+          />                      
+          <Route path="/cubesAndSquares/:topic"
                 element={
                   <Protected isSignedIn={loggedIn}>
                     <CubesAndSquares username={username}/>
@@ -506,10 +514,10 @@ function App() {
                   </Protected>
                 }
           />                                                                                                                                                                             
-          <Route path="/clickableCoordinates"
+          <Route path="/functionNotation"
                 element={
                   <Protected isSignedIn={loggedIn}>
-                    <ClickableCoordinates username={username}/>
+                    <FunctionNotation username={username}/>
                   </Protected>
                 }
           />

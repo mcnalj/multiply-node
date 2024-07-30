@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import Form from 'react-bootstrap/Form'
-import InputGroup from 'react-bootstrap/InputGroup';
+import { Link, useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
@@ -12,9 +11,30 @@ import {
 } from '../calculus/answerComponents/typedInputAnswerInput.component.answerCompoments.js';
 
 export default function CubesAndSquares({username}){
+  
+  const parameter = useParams()
+  const tempTopic = parameter.topic;
+  const [topic, setTopic] = useState(tempTopic);
 
-  const [makeChoice, setMakeChoice] = useState(true);
-  const [topic, setTopic] = useState("squares");
+  function getTitle(topic) {
+    let title = "";
+    if (topic === "squares") {
+      title = "Squares Practice";
+    } else if (topic === "cubes") {
+      title = "Cubes Practice";
+    } else if (topic === "mixed") {
+      title = "Mixed Squares and Cubes Practice";
+    }
+    return title;
+  }
+
+  const [title, setTitle]= useState(getTitle(topic));
+
+  const [isFinished, setIsFinished] = useState(false);
+  // This is really just an array of numbers, not the questionArray
+  // Next step is make it a real question array.
+  const [questionArray, setQuestionArray] = useState([]);
+  const [questionsRequired, setQuestionsRequired] = useState(10);
 
   const [questionObject, setQuestionObject] = useState({
     multiplicand: 0,
@@ -25,26 +45,39 @@ export default function CubesAndSquares({username}){
   });
 
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [isRandom, setIsRandom] = useState(false);
+  
+  const [showSquares, setShowSquares] = useState(true)
 
   const [quizProgress, setQuizProgress] = useState({  
       questionsAttempted: 0,
       questionsCorrect: 0,
       questionsIncorrect: 0,
       questionsStreak: 0,
-      questionsToMeet: 10,
+      questionsToMeet: questionsRequired,
       progressBar: 0,
       metStandard: false,
       getNextQuestion: next,
       doneWithTopic: done     
   })
 
-const startTime = new Date();
+const startTime = useRef(new Date());
 var initialTime = 180;
 
 useEffect(() => {
-    getNextQuestion(questionArray, questionIndex, topic);
-}, [questionIndex, topic]);
+  console.log("topic: ", topic);
+  let [tempQuestionArray, tempQuestionsRequired]  = loadQuestionArray(topic);
+  console.log("tempQuestionArray: ", tempQuestionArray);
+  setQuestionArray(tempQuestionArray);
+  setQuestionsRequired(tempQuestionsRequired);
+  setQuizProgress(prevState => ({
+    ...prevState,
+    questionsToMeet: tempQuestionsRequired
+  }));
+}, [topic]);
+
+useEffect(() => {
+    getNextQuestion();
+}, [questionArray, questionIndex]);
 
 function next(){
     setQuestionIndex(prevState => (
@@ -54,9 +87,10 @@ function next(){
 
 async function done(){
     try {
+        setIsFinished(true);
         const endTime = new Date();
         const totalTime = endTime - startTime;
-        const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "functions", "equationsOfLines", username);
+        const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "cubesAndSquare", "squares", username);
         const result = await recordProgress(sessionData, "summerPrep");
         // what should we do with this result?
         console.log(result.msg);
@@ -66,27 +100,34 @@ async function done(){
     }
 }
 
-function setQuestionArray(random, type) {
-  // the populates the questionArray with the numbers from 1 to 15 and if
+function loadQuestionArray(topic) {
+  console.log("in loadQuestionArray");
+  console.log("topic: ", topic);
+  // the populates the questionArray with the numbers from 1 to 17 and if
   // if random is true, it sorts them into random order.
-  let questionArray = [];
-  if (type = "squares") {
-  for (let i = 1; i < 16; i++) {
-    questionArray.push(i);
-  }
-  } else if (type === "cubes") {
-    for (let i = 1; i < 7; i++) { 
-      questionArray.push(i);
+  let tempQuestionArray = [];
+  let tempTotalQuestions = 10;
+  if (topic === "squares") {
+    console.log("in squares");
+    for (let i = 1; i < 11; i++) {
+      tempQuestionArray.push(i);
     }
-  } else if (type === "mixed") {
-    for (let i = 1; i < 16; i++) {  
-      questionArray.push(i);
+  } else if (topic === "cubes") {
+    console.log("in cubes");
+    for (let i = 1; i < 8; i++) { 
+      tempQuestionArray.push(i);
     }
+    tempTotalQuestions = 7;
+  } else if (topic === "mixed") {
+    console.log("in mixed");
+    for (let i = 1; i < 18; i++) {  
+      tempQuestionArray.push(i);
+    }
+    console.log("shuffling tempQuestionArray")
+    tempQuestionArray = shuffle(tempQuestionArray);
+    tempTotalQuestions = 17;
   }
-  if (random) {
-    questionArray = shuffle(questionArray);
-  }
-  return questionArray;
+  return [tempQuestionArray, tempTotalQuestions];
 }
 
 function shuffle(array) {
@@ -100,16 +141,30 @@ function shuffle(array) {
   return array;
 }
 
-function getNextQuestion(questionArray, questionIndex, topic){
+function getNextQuestion(){
+  console.log(topic);
+  console.log(questionArray);
   const multiplicand = questionArray[questionIndex];
-  const multiplier = questionArray[questionIndex];
-  const question = setQuestion(multiplier, topic);
+  let multiplier = questionArray[questionIndex];
+  let question = setQuestion(multiplier, topic, false);
   let answer = 0;
   if (topic === "squares") {
     answer = multiplier * multiplier;
   } else if (topic === "cubes") {
     answer = multiplier * multiplier * multiplier;
+  } else if (topic === "mixed") {
+    let isCubed = false;
+    if (multiplier >= 11) {
+      isCubed = true;
+      multiplier = multiplier - 10;
+      answer = multiplier * multiplier * multiplier;
+      question = setQuestion(multiplier, "cubes", isCubed);
+    } else {
+      answer = multiplier * multiplier;
+    }
   }
+  console.log("setting question object")
+  console.log("multiplicand: ", multiplicand);
   setQuestionObject({
     multiplicand: multiplicand,
     multiplier: multiplier,
@@ -119,97 +174,68 @@ function getNextQuestion(questionArray, questionIndex, topic){
   })
 }
 
-function setQuestion(multiplierX, topic) {
+function setQuestion(multiplierX, topic, isCubed) {
   let question = "";
   if (topic === "squares") {
     question = `${multiplierX}^2 =`;
+    setShowSquares(true)
   } else if (topic === "cubes") {
     question = `${multiplierX}^3 =`;
+    setShowSquares(false);
+  } else if (topic === "mixed") {
+    if (isCubed) {
+      let multiplier = multiplierX - 10;
+      question = `${multiplier}^3 =`;
+      setShowSquares(false);
+    } else {
+      question = `${multiplierX}^2 =`;
+      setShowSquares(true);
+    }
   }
   return question
 }
 
-let questionArray = setQuestionArray(isRandom, true);
-
-function handleTopicChange(e) {
-  let topicSelected = e.target.value;
-  questionArray = setQuestionArray(isRandom, topicSelected);
-  setMakeChoice(false);
-  setQuestionIndex(0);
-  setTopic(topicSelected);
-}
-
-const [isCorrect, setIsCorrect] = useState(false);
-  
-var initialTime = 180;
-var missedList = [];
-var sessionMissedList = [];
+// let questionArray, totalQuestions  = setQuestionArray(isRandom, true);
 
 
-function checkAnswer(multiplicand, multiplier, userAnswer) {
-  let isCorrect = false;
-  let questionAnswer = multiplicand * multiplier;
-  if (questionAnswer == userAnswer) {
-    isCorrect = true;
-  }
-  return isCorrect;
-}
-
-function addQuestionToMissedList(questionTuple, missedList) {
-  if (!missedList.some(item => item[0] === questionTuple[0] && item[1] === questionTuple[1])) {
-    missedList.push(questionTuple);
-  }
-  return missedList;
-}
-
-if (makeChoice) {
+if (isFinished) {
   return (
     <>
-      <Container>
-        <div>
-          <h3>
-            Squares and Cubes!
-          </h3>
-          <p>Practice these until they are automatic.</p> 
+        <div className="p-4 fs-4">
+          <p>
+            Congratulations! 
+          </p>
+          <p>You have completed the {title} set.</p>
+          <p>Practice until these are automatic.</p> 
         </div>
-        <Form>
-          <Form.Select size="lg" aria-label="select a challenge" onChange={handleTopicChange}>
-            <option>Select your challenge</option>
-            <option value="squares">Practice Squares</option>
-            <option value="cubes">Practice Cubes</option>
-            <option value="mixed">Mix of Squares and Cubes</option>
-          </Form.Select>
-          <Form.Check
-            type="switch"
-            label="Ask questions in sequence"
-            id="sequenceSwitch"
-          />
-        </Form>
-      </Container>
+        <div>
+          <Link to="/multiplicationTopics" className="btn btn-primary">Back To Topics</Link>
+        </div>
     </>
   )
   } else {
     return (
       <>
+        <div className="pt-3">
+          <h3>{title} </h3> 
+        </div>
         <CirclesPage
           questionObject={questionObject}
           quizProgress={quizProgress}
           setQuizProgress={setQuizProgress}
           topic={topic}
           initialTime={initialTime}
+          showSquares={showSquares}
         />
       </>
     );
   }
 }
 
-function CirclesPage({questionObject, quizProgress, setQuizProgress, topic, initialTime})  {
+function CirclesPage({questionObject, quizProgress, setQuizProgress, topic, initialTime, showSquares})  {
 
   return (
     <div>
-        <div>
-          <h3>Squaring Practice</h3>
-        </div>
         <TypedInputAnswerFormCubesAndSquares
           questionObject={questionObject}
           quizProgress={quizProgress}
@@ -219,6 +245,7 @@ function CirclesPage({questionObject, quizProgress, setQuizProgress, topic, init
         <div id="infoRow" className="row">
           <CountdownTimer initialTime={initialTime} />
         </div>
+        {showSquares ? (
         <div id="svgRow" className="row">
           <div className="col-8 offset-2">
             <SVGComponent
@@ -227,6 +254,11 @@ function CirclesPage({questionObject, quizProgress, setQuizProgress, topic, init
               multiplier={questionObject.multiplier}
             />
           </div>
+        </div>
+        )
+        : null}
+        <div>
+          <Link to="/multiplicationTopics" className="btn btn-primary">Back To Topics</Link>
         </div>
       </div>
   );
@@ -274,7 +306,7 @@ function CountdownTimer({ initialTime }) {
   );
 }
 
-export function SVGComponent({color, multiplier, multiplicand}) {
+function SVGComponent({color, multiplier, multiplicand}) {
   const circles = []
   function populateCircleList(circles, multiplier, multiplicand) {
     circles = [];
@@ -318,4 +350,3 @@ export function SVGComponent({color, multiplier, multiplicand}) {
       </Container>
   );
 }
-
