@@ -39,6 +39,13 @@ import {
   TypedInputAnswerForm
 } from './answerComponents/typedInputAnswerInput.component.answerCompoments.js';
 
+import {
+  multipleChoiceQuestions,
+  shuffleArray
+} from '../questionBank/multipleChoiceQuestions.js';
+
+import MultipleChoiceButtons from './answerComponents/multipleChoiceButtons.component.answerComponent.js';
+
 
 addStyles();
 
@@ -48,9 +55,18 @@ export default function ExponentsVariety({username}) {
     const [isFinished, setIsFinished] = useState(false);
     const [leftOptions, setLeftOptions] = useState([]);
     const [rightOptions, setRightOptions] = useState([]);
-  
 
+    // These are for the multiple choice component
+    const [multipleChoiceQuestionIndex, setMultipleChoiceQuestionIndex] = useState(0);
+    const [multipleChoiceQuestionObject, setMultipleChoiceQuestionObject] = useState({
+        questionData: '',
+        answersArray: []
+    });
+    const [multipleChoiceQuestionsArray, setMultipleChoiceQuestionsArray] = useState(shuffleArray([...multipleChoiceQuestions]));
+        
+    const [answerMessage, setAnswerMessage] = useState('');
 
+    // These are for the typed input component
     const parameter = useParams()
     const [topic, setTopic] = useState(parameter.topic);
 
@@ -66,13 +82,25 @@ export default function ExponentsVariety({username}) {
         questionsCorrect: 0,
         questionsIncorrect: 0,
         questionsStreak: 0,
-        questionsToMeet: 7,
+        questionsToMeet: 10,
         progressBar: 0,
         metStandard: false, 
         getNextQuestion: next,
         doneWithTopic: done,         
     });
-  
+
+    function handleIncrementFromMultipleChoice() {
+      if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet - 1) {
+          done();
+      } else {
+          nextMultipleChoice();
+      }    
+  }
+
+  function nextMultipleChoice() {
+      setMultipleChoiceQuestionIndex(prevIndex => prevIndex + 1);
+  }
+
     function setFunction(typeOfExponent) {
       // typeOfExponent can be positive, negative, fractional
       // Looks like if exponent is positive, getRandomIntInclusive(0, 19)
@@ -196,7 +224,9 @@ export default function ExponentsVariety({username}) {
             answersArray.push(answerLatex);
             return [answerLatex, answersArray];
         } else if (typeOfExponent === "fractional") {
+          // this answer needs to be parsed as an integer
             let tempAnswer = Math.pow(xValue, 1/power)
+            tempAnswer = Math.round(tempAnswer);
             const answerLatex = tempAnswer.toString();
             answersArray.push(answerLatex);
             return [answerLatex, answersArray];
@@ -233,16 +263,51 @@ export default function ExponentsVariety({username}) {
           );   
     }
 
-    const startTime = new Date();
+    const startTime = useRef(new Date());
 
     useEffect(() => {
+        let includeLevel1 = false;
+        let includeLevel2 = false;
+        let includeLevel3 = false;
+        let includeLevel4 = false;
         navigate(`/exponentsVariety/${topic}`);
+        if (topic === "positive") {
+          includeLevel1 = true;
+        } else if (topic === "negative") {
+          includeLevel2 = true;
+        } else if (topic === "fractional") {
+          includeLevel3 = true;
+        } else if (topic === "negativeFractional") {
+          includeLevel4 = true;
+        } else {
+          includeLevel1 = true;
+          includeLevel2 = true;
+          includeLevel3 = true;
+          includeLevel4 = true;
+        }
         questionEngine(topic);
-        const randomizedQuestionArray = populateQuestionArray(matchObjects, 5, true, false, false);
+        const randomizedQuestionArray = populateQuestionArray(matchObjects, 5, includeLevel1, includeLevel2, includeLevel3, includeLevel4);
         const options = setOptions(randomizedQuestionArray);
         setLeftOptions(options.leftOptions);
-        setRightOptions(options.rightOptions); 
+        setRightOptions(options.rightOptions);        
+        // setMultipleChoiceQuestionsArray(shuffleArray([...multipleChoiceQuestions]));
     }, [topic]);
+
+    useEffect(() => {
+      console.log ("gmcq fired");
+      getMultipleChoiceQuestion();
+  }, [multipleChoiceQuestionIndex]);
+
+  function getMultipleChoiceQuestion() {
+      console.log(multipleChoiceQuestionsArray);
+      const tempMultipleChoiceQuestionObject = multipleChoiceQuestionsArray[multipleChoiceQuestionIndex];
+      const answersArray = shuffleArray(Object.values(tempMultipleChoiceQuestionObject.answers));
+
+      setMultipleChoiceQuestionObject({
+          questionData: tempMultipleChoiceQuestionObject,
+          answersArray: answersArray
+      });
+  }
 
     function next(topic){
       questionEngine(topic); 
@@ -326,12 +391,13 @@ export default function ExponentsVariety({username}) {
       )
     } else {
     return (
-      <div className="col-12 mt-3">
+      <div className="col-12">
         {
-            quizProgress.questionsAttempted === 4 ? (
+            quizProgress.questionsCorrect === 2 ? (
                 <>
                     <div className="row">
-                        <p className="col-12 text-center fs-2 mt-2">
+                        <p className="col-12 text-center fs-5">
+                          Match an expression in the opposite column.
                         </p>
                     </div>
                     <MatchingComponent
@@ -342,34 +408,58 @@ export default function ExponentsVariety({username}) {
                         setIsFinished={setIsFinished}
                     />
                 </>
-            ) : (
-                <>
+            ) : quizProgress.questionsCorrect < 1 || quizProgress.questionsCorrect > 8 ?
+              ( 
+                <div>
                     <div className="row">
-                        <p className="col-12 text-center fs-2 mt-2">
-                            <StaticMathField>{questionObject.functionLatex}</StaticMathField>
+                      <div className="col-12">
+                          <ProgressBar variant="primary" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
+                      </div>
+                    </div>
+                    <p className="fs-5">Evaluate the exponential term.</p>
+                    <div>
+                        <p className="fs-2">
+                            <StaticMathField>{multipleChoiceQuestionObject.questionData.question}</StaticMathField>
+                            =
                         </p>
                     </div>
-                    <TypedInputAnswerForm
-                        questionObject={questionObject}
-                        quizProgress={quizProgress}
+
+                    <MultipleChoiceButtons
+                        questionObject={multipleChoiceQuestionObject}
+                        handleIncrement={handleIncrementFromMultipleChoice}
                         setQuizProgress={setQuizProgress}
-                        topic={topic}
+                        setAnswerMessage={setAnswerMessage}
                     />
-                </>
-            )
+                </div>
+  
+
+            ) : (
+              <>
+              <div className="row">
+                <div className="progressBar col-12">
+                  <ProgressBar now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
+                </div>
+              </div>
+              <div className="row">
+                  <p className="col-12 text-center fs-2">
+                      <StaticMathField>{questionObject.functionLatex}</StaticMathField>
+                  </p>
+              </div>
+              <TypedInputAnswerForm
+                  questionObject={questionObject}
+                  quizProgress={quizProgress}
+                  setQuizProgress={setQuizProgress}
+                  topic={topic}
+              />
+          </>
+            ) 
         }
-        <div className="progressBar mt-4 mb-4 col-10 offset-1">
-            <ProgressBar now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
+        <div>
+            <p className="fs-3">{answerMessage}</p>
         </div>
         <Link to="/exponentsTopics">
-          <button type="button" className="btn btn-lg btn-success mt-3">OTHER TOPICS</button><br /><br />
+          <button type="button" className="btn btn-success mt-5">BACK TO EXPONENTS TOPICS</button><br /><br />
         </Link>
-        <div className="row">
-            <h4>EXPONENTS</h4>
-        </div>
-        <div className="row">
-            <p className="col-12 text-center">Evaluate each exponential term for the x-value provided.</p>
-        </div>
       </div>
     )
   }

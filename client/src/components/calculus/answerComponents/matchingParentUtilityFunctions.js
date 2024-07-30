@@ -1,9 +1,10 @@
-function populateQuestionArray (matchesArray, arrayLength=5, includeLevel1=true, includeLevel2=false, includeLevel3=false) {
+function populateQuestionArray (matchesArray, arrayLength=5, includeLevel1=true, includeLevel2=false, includeLevel3=false, includeLevel4=false) {
 
     const levels = [];
     if (includeLevel1) levels.push(1);
     if (includeLevel2) levels.push(2);
     if (includeLevel3) levels.push(3);
+    if (includeLevel4) levels.push(4);
   
     const filteredArray = matchesArray.filter(obj => levels.includes(obj.level));
     return shuffle(filteredArray).slice(0, arrayLength);

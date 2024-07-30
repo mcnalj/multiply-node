@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button} from 'react-bootstrap';
 import { addStyles, StaticMathField } from 'react-mathquill'
 import { Link } from "react-router-dom";
+import { FaCheckCircle } from 'react-icons/fa';
 
 import '../../../App.scss';
 import '../../../index.scss';
@@ -44,7 +45,7 @@ export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, se
                         metStandard: (prevState.questionsCorrect + 1) >= prevState.questionsToMeet ? true : false,
                     }));        
                     setIsFinished(true); // do we still need isFinished? bc we have quizProgress 
-                }, 4000); // this changes the JSX returned in the parent
+                }, 2000); // this changes the JSX returned in the parent
               }
           } else {
               setIncorrectIndex([left.index, right.index])
@@ -70,7 +71,13 @@ export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, se
 
     return (
         <div>
-            <div className={`col-12 p-3 ${isCompleted ? 'completed matching' : 'matching'}`}>
+            {isCompleted && (
+                <div className="checkmark-container">
+                    <FaCheckCircle className="checkmark" />
+                </div>
+            )}
+            {/* <div className={`col-12 p-3 ${isCompleted ? 'completed matching' : 'matching'}`}> */}
+            <div className="col-12 p-3 matching">
                 {[...Array(5)].map((_, index) => (
                     <div className="row mt-3" key={index}>
                         <div className="col-6 text-center mt-2">

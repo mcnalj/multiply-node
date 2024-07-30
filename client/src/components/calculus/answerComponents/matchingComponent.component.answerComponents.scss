@@ -57,33 +57,53 @@
     color:black;
 }
 
-@keyframes flash {
-    0% { 
-        border-color: green;
-        border-width: 3px;
-        background-color: white;
-        color:black;
-    }
-    25% { 
-        background-color: darkslategray;     
-    }
-    50% { 
-        border-color: green;
-        border-width: 3px;
-        background-color: white;
-        color:black;
-    }
-    75% { 
-        background-color: darkslategray;     
-    }   
-    100% { 
-        border-color: green;
-        border-width: 3px;
-        background-color: white;
-        color:black;
-    }
-}
+// @keyframes flash {
+//     0% { 
+//         border-color: green;
+//         border-width: 3px;
+//         background-color: white;
+//         color:black;
+//     }
+//     25% { 
+//         background-color: darkslategray;     
+//     }
+//     50% { 
+//         border-color: green;
+//         border-width: 3px;
+//         background-color: white;
+//         color:black;
+//     }
+//     75% { 
+//         background-color: darkslategray;     
+//     }   
+//     100% { 
+//         border-color: green;
+//         border-width: 3px;
+//         background-color: white;
+//         color:black;
+//     }
+// }
 
-.completed {
-    animation: flash 3s 1;
-}
+// .completed {
+//     animation: flash 3s 1;
+// }
+
+.checkmark-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000; /* Ensure it is on top of other content */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    border-radius: 50%;
+    padding: 20px;
+  }
+  
+  .checkmark {
+    font-size: 100px;
+    color: green;
+  }
+  

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
-import Button from 'react-bootstrap/Button';
+import { Button, ProgressBar } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 
 import { recordProgress, setSessionData } from '../infrastructure/recordProgress.js';
@@ -216,6 +216,11 @@ if (isFinished) {
   } else {
     return (
       <>
+        <div className="row">
+          <div className="progressBar col-12">
+            <ProgressBar now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
+          </div>
+        </div>
         <div className="pt-3">
           <h3>{title} </h3> 
         </div>
@@ -242,9 +247,9 @@ function CirclesPage({questionObject, quizProgress, setQuizProgress, topic, init
           setQuizProgress={setQuizProgress}
           topic={topic}
         />
-        <div id="infoRow" className="row">
+        {/* <div id="infoRow" className="row">
           <CountdownTimer initialTime={initialTime} />
-        </div>
+        </div> */}
         {showSquares ? (
         <div id="svgRow" className="row">
           <div className="col-8 offset-2">
