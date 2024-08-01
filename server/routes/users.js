@@ -114,6 +114,57 @@ usersRoutes.route("/singleUsersProgress").post(checkAuthenticated, async functio
   }
 });
 
+usersRoutes.route("/getProgress/summerPrep/functions/plottingPoints").post(checkAuthenticated, async function (req, response) { 
+  const username = req.body.username;
+  let query = { username: username};
+  let projection = {
+    _id: false,
+    username: true,
+    progress: {
+      $cond: {
+        if: { $ifNull: ['$progress', false]},
+        then: '$progress',
+        else: '$$REMOVE'
+      }
+    },
+  }
+  try {
+    let plottingPointsData = {
+      plottingPointsPolynomials: [],
+      plottingPointsSine: [],
+      plottingPointsCosine: []
+    };
+    let results =  await dbo.client.db("employees")
+      .collection("userData")
+      .findOne(query, projection)
+    if (results.progress) {
+      if (results.progress.summerPrep) {
+        if (results.progress.summerPrep.functions) {
+          if (results.progress.summerPrep.functions.skillData) {
+            let unfilteredData = results.progress.summerPrep.functions.skillData;
+            for (let i = 0; i < unfilteredData.length; i++) {
+              if (unfilteredData[i]?.skill === "plottingPointsPolynomials") {
+                plottingPointsData.plottingPointsPolynomials.push(unfilteredData[i]);
+              }
+              else if (unfilteredData[i]?.skill === "plottingPointsSine") {
+                plottingPointsData.plottingPointsSine.push(unfilteredData[i]);
+              } else if (unfilteredData[i]?.skill === "plottingPointsCosine") {
+                plottingPointsData.plottingPointsCosine.push(unfilteredData[i]);
+              }
+            }
+          }
+        }
+      }
+    }
+    response.json(plottingPointsData);
+  }
+  catch(error) {
+    console.error("Error fetching progress:", error);
+    response.json(null);
+  }
+});
+
+
 usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req, response) {
   const user = req.session.passport.user.username;
   const questionTopics = {
