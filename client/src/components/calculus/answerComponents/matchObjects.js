@@ -21,7 +21,7 @@ const matchObjects = [
     },
     {
       leftLatex: `x^0`,
-      rightLatex: `1`,
+      rightLatex: `1 `,
       level: 1
     },
     {
@@ -60,11 +60,6 @@ const matchObjects = [
       level: 2
     },
     {
-      leftLatex: `3^0`,
-      rightLatex: `1`,
-      level: 2
-    },
-    {
       leftLatex: `8^1`,
       rightLatex: `8`,
       level: 2
@@ -76,7 +71,7 @@ const matchObjects = [
     },
     {
       leftLatex: `2^{-4}`,
-      rightLatex: `\\frac{1}{16}`,
+      rightLatex: `\\frac{1}{2 \\cdot 2 \\cdot 2 \\cdot 2} `,
       level: 2
     },
     {
@@ -100,23 +95,8 @@ const matchObjects = [
       level: 3
     },
     {
-      leftLatex: `x^{-\\frac{1}{2}}`,
-      rightLatex: `\\frac{1}{\\sqrt{x}}`,
-      level: 3
-    },
-    {
-      leftLatex: `x^{-\\frac{1}{3}}`,
-      rightLatex: `\\frac{1}{\\sqrt[3]{x}}`,
-      level: 3
-    },  
-    {
       leftLatex: `x^{-\\frac{3}{2}}`,
       rightLatex: `\\frac{1}{\\sqrt{x^3}}`,
-      level: 3
-    },
-    {
-      leftLatex: `x^{-\\frac{4}{3}}`,
-      rightLatex: `\\frac{1}{\\sqrt[3]{x^4}}`,
       level: 3
     },
     {
@@ -129,11 +109,6 @@ const matchObjects = [
       rightLatex: `\\frac{1}{\\sqrt[3]{x}}`,
       level: 4
     },  
-    {
-      leftLatex: `x^{-\\frac{3}{2}}`,
-      rightLatex: `\\frac{1}{\\sqrt{x^3}}`,
-      level: 4
-    },
     {
       leftLatex: `x^{-\\frac{4}{3}}`,
       rightLatex: `\\frac{1}{\\sqrt[3]{x^4}}`,
@@ -151,7 +126,7 @@ const matchObjects = [
     },  
     {
       leftLatex: `\\frac{1}{x^{-\\frac{3}{2}}}`,
-      rightLatex: `\\sqrt{x^3}`,
+      rightLatex: `\\sqrt{x \\cdot x \\cdot x}`,
       level: 4
     },
     {

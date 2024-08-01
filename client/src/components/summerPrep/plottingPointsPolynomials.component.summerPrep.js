@@ -1,5 +1,5 @@
 import React, { useState, useEffect }from 'react';
-import { Link, useParams } from "react-router-dom";
+import { Link, NavLink, useParams } from "react-router-dom";
 import { ProgressBar, Button } from 'react-bootstrap';
 import { addStyles, StaticMathField } from 'react-mathquill';
 
@@ -247,7 +247,7 @@ const polynomialArray = [
     questionsIncorrect: 0,
     currentStreak: 0,
     questionsStreak: 0,
-    questionsToMeet: 2,
+    questionsToMeet: 8,
     progressBar: 0,
     doneWithTopic: done,
     metStandard: false,
@@ -421,6 +421,35 @@ const polynomialArray = [
     setIsChecking(!isChecking);
   } // if coordinates
   }
+  if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet) {
+    console.log("Met the standard!");
+   return (
+    <div className="col-12 mt-3">
+      <div className="row">
+          <h1>Plotting Points</h1>
+      </div>
+      <div className="row">
+          <p className="col-sm-12 fs-5">Excellent! You met the standard!</p>
+      </div>
+      <div className="mt-3">
+        <NavLink to="/plottingPointsPolynomials">
+            <Button type="button" variant="primary" size="lg">Polynomial Functions</Button>
+        </NavLink>
+        <br /><br />                
+        <NavLink to="/plottingPoints/Sine">
+            <Button type="button" variant="primary" size="lg">Sine Function</Button>
+        </NavLink>
+        <br /><br />
+        <NavLink to="/plottingPoints/Cosine">
+            <Button type="button" variant="primary" size="lg">Cosine Function</Button>
+        </NavLink>
+        <br /><br />
+        <NavLink to="/summerPrepTopics">
+            <Button type="button" variant="primary" size="lg">Back to Summer Prep</Button>
+        </NavLink>                
+      </div>
+    </div>
+  ) } else {
 
 
   return (
@@ -489,4 +518,5 @@ const polynomialArray = [
       </Link>     
     </div>
     );
+}
 }

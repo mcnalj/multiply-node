@@ -91,7 +91,7 @@ export default function FactoringQuadratics({username}) {
         questionsCorrect: 0,
         questionsIncorrect: 0,
         questionsStreak: 0,
-        questionsToMeet: 3,
+        questionsToMeet: 8,
         progressBar: 0,
         doneWithTopic: done,
         metStandard: false,       
@@ -152,9 +152,30 @@ export default function FactoringQuadratics({username}) {
             // Show a message to the user
         }
     }
-
+    if (questionObject.metStandard) {
+        return (
+            <div className="col-12">
+                <div className="row">
+                    <p className="col-12 text-center fs-2 mt-2">
+                        Great work!
+                    </p>
+                </div>
+                <div className="row">
+                    <p className="col-12 text-center fs-2 mt-2">
+                        You met the standard. Happy factoring!
+                    </p>
+                </div>                
+                <Link to="/factoringQuadraticsTopics">
+                    <button type="button" className="btn btn-lg btn-success mt-3">BACK TO QUADRATICS TOPICS</button><br /><br />
+                </Link>
+            </div>
+        )
+    } else {
     return (
-        <div className="col-12 mt-3">
+        <div className="col-12">
+            <div className="progressBar mb-2">
+              <ProgressBar now={questionObject.progressBar} label={`${questionObject.progressBar}%`} max='100'/>
+          </div>  
           <div className="row">
               <p className="col-12 text-center fs-2 mt-2">
               <StaticMathField>{questionObject.functionLatex}</StaticMathField>
@@ -164,14 +185,12 @@ export default function FactoringQuadratics({username}) {
               questionObj={questionObject}
               startTime={startTime}
           />
-          <div className="progressBar mt-4 mb-4 col-10 offset-1">
-              <ProgressBar now={questionObject.progressBar} label={`${questionObject.progressBar}%`} max='100'/>
-          </div>
           <Link to="/factoringQuadraticsTopics">
             <button type="button" className="btn btn-lg btn-success mt-3">BACK TO QUADRATICS TOPICS</button><br /><br />
           </Link>
         </div>
       )
+    }
 }
 
 function AnswerForm({questionObj, startTime}) {
@@ -317,7 +336,7 @@ function AnswerForm({questionObj, startTime}) {
                 </p>
             </div>
    
-            <p className="col-12 text-center mt-3">{answerMessage}</p>
+            <p className="col-12 text-center mt-3 fs-3">{answerMessage}</p>
             <Button
                 variant="primary"
                 type="submit"

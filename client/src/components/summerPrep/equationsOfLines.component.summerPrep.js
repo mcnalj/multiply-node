@@ -42,7 +42,7 @@ export default function EquationsOfLines({username}) {
         questionsCorrect: 0,
         questionsIncorrect: 0,
         questionsStreak: 0,
-        questionsToMeet: 2,
+        questionsToMeet: 8,
         progressBar: 0,
         metStandard: false,
         getNextQuestion: next,
@@ -180,6 +180,20 @@ export default function EquationsOfLines({username}) {
             // Show a message to the user
         }
     }
+    if (quizProgress.questionsCorrect === quizProgress.questionsToMeet) {   
+      return (
+          <div>
+              <div className="row">
+                  <div className="col-12">
+                      <h1>Great job!</h1>
+                      <p>You completed the Equations of Lines practice.</p>
+                      <p>Keep up the hard work!</p>
+                      <Link to="/summerPrepTopics" className="btn btn-primary">Summer Prep Topics</Link>
+                  </div>
+              </div>
+          </div>
+      )
+  } else {
 
     return (
         <div className="col-12">
@@ -209,6 +223,7 @@ export default function EquationsOfLines({username}) {
           </Link>
         </div>
       )
+}
 }
 
 function EquationOfLineAnswerForm({questionObject, quizProgress, setQuizProgress, startTime}) {

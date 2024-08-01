@@ -147,7 +147,7 @@ export function OverXGraphPath() {
                 points={[
                     ...Array.from({ length: 99 }, (_, i) => i + 1).map(i => {
                         const x = (i - 100) / 10;
-                        const y = (1 / (x / 2)) * 2
+                        const y = (1 / (x / 2)) * -2;
                         return `${x} ${y}`;
                     })
                 ]}
@@ -160,7 +160,7 @@ export function OverXGraphPath() {
                 points={[
                     ...Array.from({ length: 99 }, (_, i) => i + 1).map(i => {
                         const x = ((i + 100) - 100) / 10;
-                        const y = x != 0 ? (1 / (x / 2)) * 2 : 1000;
+                        const y = x != 0 ? (1 / (x / 2)) * -2 : 1000;
                         return `${x} ${y}`;
                     })
                 ]}

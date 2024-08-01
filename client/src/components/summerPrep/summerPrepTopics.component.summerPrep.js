@@ -25,23 +25,23 @@ export default function SummerPrepTopics({username}) {
                     <Button type="button" variant="primary" size="lg">Plotting Points</Button>
                 </NavLink>
                 <br /><br />
-                <NavLink to="/graphingFunctions">
+                {/* <NavLink to="/graphingFunctions">
                     <Button type="button" variant="primary" size="lg">Graphing Functions</Button>
-                </NavLink>
-                <br /><br />
-                <NavLink to="/identifyingFunctionsExtractAnswers">
+                </NavLink> */}
+                {/* <br /><br /> */}
+                <NavLink to="/identifyingFunctions">
                     <Button type="button" variant="primary" size="lg">Identifying Functions</Button>
                 </NavLink>
                 <br /><br />
                 <NavLink to="/equationsOfLines">
-                    <Button type="button" variant="primary" size="lg">Slopes / Equations of Lines</Button>
+                    <Button type="button" variant="primary" size="lg">Equations of Lines</Button>
                 </NavLink>
                 <br /><br />                
                 <NavLink to="/factoringQuadraticsTopics">
                     <Button type="button" variant="primary" size="lg">Factoring Quadratics</Button>
                 </NavLink>
                 <br /><br />
-                <NavLink to="#">
+                {/* <NavLink to="#">
                     <Button type="button" variant="primary" size="lg">Trigonometry</Button>
                 </NavLink>
                 <br /><br />                
@@ -55,7 +55,7 @@ export default function SummerPrepTopics({username}) {
                 <br /><br />
                 <NavLink to="/svgGraphs">
                     <Button type="button" variant="primary" size="lg">SVG Graphs</Button>
-                </NavLink>
+                </NavLink> */}
                 <br /><br />
             </div>
         </div>
