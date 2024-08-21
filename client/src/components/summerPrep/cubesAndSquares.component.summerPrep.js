@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button, ProgressBar } from 'react-bootstrap';
+import { ProgressBar } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 
 import { recordProgress, setSessionData } from '../infrastructure/recordProgress.js';
@@ -64,9 +64,7 @@ const startTime = useRef(new Date());
 var initialTime = 180;
 
 useEffect(() => {
-  console.log("topic: ", topic);
   let [tempQuestionArray, tempQuestionsRequired]  = loadQuestionArray(topic);
-  console.log("tempQuestionArray: ", tempQuestionArray);
   setQuestionArray(tempQuestionArray);
   setQuestionsRequired(tempQuestionsRequired);
   setQuizProgress(prevState => ({
@@ -93,7 +91,6 @@ async function done(){
         const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "cubesAndSquare", "squares", username);
         const result = await recordProgress(sessionData, "summerPrep");
         // what should we do with this result?
-        console.log(result.msg);
     } catch (error) {
         console.error("Failed to record progress: ", error);
         // Show a message to the user
@@ -101,29 +98,23 @@ async function done(){
 }
 
 function loadQuestionArray(topic) {
-  console.log("in loadQuestionArray");
-  console.log("topic: ", topic);
   // the populates the questionArray with the numbers from 1 to 17 and if
   // if random is true, it sorts them into random order.
   let tempQuestionArray = [];
   let tempTotalQuestions = 10;
   if (topic === "squares") {
-    console.log("in squares");
     for (let i = 1; i < 11; i++) {
       tempQuestionArray.push(i);
     }
   } else if (topic === "cubes") {
-    console.log("in cubes");
     for (let i = 1; i < 8; i++) { 
       tempQuestionArray.push(i);
     }
     tempTotalQuestions = 7;
   } else if (topic === "mixed") {
-    console.log("in mixed");
     for (let i = 1; i < 18; i++) {  
       tempQuestionArray.push(i);
     }
-    console.log("shuffling tempQuestionArray")
     tempQuestionArray = shuffle(tempQuestionArray);
     tempTotalQuestions = 17;
   }
@@ -142,8 +133,6 @@ function shuffle(array) {
 }
 
 function getNextQuestion(){
-  console.log(topic);
-  console.log(questionArray);
   const multiplicand = questionArray[questionIndex];
   let multiplier = questionArray[questionIndex];
   let question = setQuestion(multiplier, topic, false);
@@ -163,8 +152,6 @@ function getNextQuestion(){
       answer = multiplier * multiplier;
     }
   }
-  console.log("setting question object")
-  console.log("multiplicand: ", multiplicand);
   setQuestionObject({
     multiplicand: multiplicand,
     multiplier: multiplier,

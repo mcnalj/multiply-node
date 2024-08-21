@@ -122,7 +122,7 @@ export default function Login({setCookie, setUsername})  {
             </form>
           </div>
         </div>
-          <button type="submit" className="btn btn-primary" onClick={signIn}>Sign in with Google</button>
+          {/* <button type="submit" className="btn btn-primary" onClick={signIn}>Sign in with Google</button> */}
         </div> 
     );
   }

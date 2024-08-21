@@ -30,10 +30,8 @@ export default function PlottingPointsTopics({username}) {
             let tempPolynomial = null;
             let tempSine = null;
             let tempCosine = null;
-            console.log(data);
             if (data) {
                 if (data.plottingPointsPolynomials) {
-                    console.log(data.plottingPointsPolynomials);
                     tempPolynomial = "inProgress";
                     for (let i = 0; i < data.plottingPointsPolynomials.length; i++) {
                         if (data.plottingPointsPolynomials[i].sessionData?.metStandard) {
@@ -70,7 +68,6 @@ export default function PlottingPointsTopics({username}) {
     };
         fetchedStatus();
     }, [username]);
-
 
     const buttonStyle = {
         position: 'relative',

@@ -18,15 +18,10 @@ import {
 } from '../infrastructure/recordProgress.js';
 
 import {
-    correctMessages,
-    incorrectMessages,
-    streakMessages,
     getRandomCorrectMessage,
     getStreakMessage,
     getRandomIncorrectMessage,
   } from '../infrastructure/messages.js';
-
-// import { IntegrationAnswerForm } from '../calculus/answerForm.component.calculus.js';
 
 addStyles();
 
@@ -42,7 +37,7 @@ export default function EquationsOfLines({username}) {
         questionsCorrect: 0,
         questionsIncorrect: 0,
         questionsStreak: 0,
-        questionsToMeet: 8,
+        questionsToMeet: 6,
         progressBar: 0,
         metStandard: false,
         getNextQuestion: next,
@@ -144,10 +139,7 @@ export default function EquationsOfLines({username}) {
           } else if (slopeStr === '-1') {
               answerCoordinatesArray.push(`y${yAnswerStr}=-x${xAnswerStr}`);
           }
-      }
-  
-      console.log(answerCoordinatesArray);
-  
+      }  
       setQuestionObject({
           yIntercept: yIntercept,
           slope: slope,
@@ -155,7 +147,7 @@ export default function EquationsOfLines({username}) {
       });
   }
 
-    const startTime = new Date();
+    const startTime = useRef(new Date());
 
     useEffect(() => {
         getNewLine();
@@ -166,21 +158,19 @@ export default function EquationsOfLines({username}) {
     }
 
     async function done(){
-        console.log("done")
         try {
             const endTime = new Date();
             const totalTime = endTime - startTime;
             const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "functions", "equationsOfLines", username);
             const result = await recordProgress(sessionData, "summerPrep");
             // what should we do with this result?
-            console.log(result.msg);
             getNewLine();
         } catch (error) {
             console.error("Failed to record progress: ", error);
             // Show a message to the user
         }
     }
-    if (quizProgress.questionsCorrect === quizProgress.questionsToMeet) {   
+    if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet) {   
       return (
           <div>
               <div className="row">
@@ -329,7 +319,7 @@ function EquationOfLineAnswerForm({questionObject, quizProgress, setQuizProgress
         // pause after grading
         setTimeout(function() {
             setBoxStyle({backgroundColor:"white", color: "black", borderWidth: "0px", borderColor: "gray"})        
-            if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet) {
+            if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet -1) {
                 quizProgress.doneWithTopic();
             }
             updateSituation({answerMessage: '', userAnswer: '', correctAnswer: ''})

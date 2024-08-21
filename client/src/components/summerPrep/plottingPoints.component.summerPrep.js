@@ -1,4 +1,4 @@
-import React, { useState, useEffect }from 'react';
+import React, { useState, useEffect, useRef }from 'react';
 import { Link, useParams, NavLink } from "react-router-dom";
 import { ProgressBar, Button } from 'react-bootstrap';
 import { addStyles, StaticMathField } from 'react-mathquill';
@@ -6,12 +6,9 @@ import { addStyles, StaticMathField } from 'react-mathquill';
 import './plottingPoints.component.summerPrep.scss';
 
 import {
-  correctMessages,
-  incorrectMessages,
   streakMessages,
   getRandomCorrectMessage,
   getRandomIncorrectMessage,
-  getRandomStreakMessage
 } from '../infrastructure/messages.js';
 
 import {
@@ -28,10 +25,6 @@ import {
     CosPath2
  } from '../SVGs/graphs/cosGraph2.component.graphs.js';
  
- import {
-    XSquaredGraph
- } from '../SVGs/graphs/xSquaredGraph.component.graphs.js';
-
  import {
     setSessionData,
     recordProgress
@@ -216,8 +209,8 @@ export default function PlottingPoints({username}) {
       xAnswer: 27.48,
       yAnswer: 5.5,
       fOfXLatex: `f(7π/4)`,
-      questionLatex: `\\sin\\left(\\frac{7\\pi}{4}\\left)`,
-      answerLatex: `\\sin\\left(\\frac{7\\pi}{4}\\left) = -\\frac{\\sqrt{2}}{2}`,
+      questionLatex: `\\sin\\left(\\frac{7\\pi}{4}\\right)`,
+      answerLatex: `\\sin\\left(\\frac{7\\pi}{4}\\right) = -\\frac{\\sqrt{2}}{2}`,
     },        
     {
       functionLatex: `f(x)=\\sin(x)`,
@@ -241,8 +234,6 @@ export default function PlottingPoints({username}) {
     },                                                                
 ]
 
-
-
 const cosArray = [
   {
     functionLatex: `f(x)=\\cos(x)`,
@@ -262,7 +253,7 @@ const cosArray = [
     yAnswer: -6.8,
     fOfXLatex: `f(π/6)`,
     questionLatex: `\\cos\\left(\\frac{\\pi}{6}\\right)`,
-    asnwerLatex: `\\cos\\left(\\frac{\\pi}{6}\\right) = \\frac{\\sqrt{3}}{2}`,
+    answerLatex: `\\cos\\left(\\frac{\\pi}{6}\\right) = \\frac{\\sqrt{3}}{2}`,
   },
   {
     functionLatex: `f(x)=\\cos(x)`,
@@ -391,8 +382,8 @@ const cosArray = [
     xAnswer: 27.48,
     yAnswer: -5.5,
     fOfXLatex: `f(7π/4)`,
-    questionLatex: `\\cos\\left(\\frac{7\\pi}{4}\\left)`,
-    answerLatex: `\\cos\\left(\\frac{7\\pi}{4}\\left) = \\frac{\\sqrt{2}}{2}`,
+    questionLatex: `\\cos\\left(\\frac{7\\pi}{4}\\right)`,
+    answerLatex: `\\cos\\left(\\frac{7\\pi}{4}\\right) = \\frac{\\sqrt{2}}{2}`,
   },        
   {
     functionLatex: `f(x)=\\cos(x)`,
@@ -450,12 +441,12 @@ const cosArray = [
     return array;
   }
 
-  const shuffledGraphDataArray = shuffleArray([...questionArray]);
-
+  const shuffledGraphDataArrayRef = useRef(shuffleArray([...questionArray]));
+  
   const [answerMessage, setAnswerMessage] = useState("");
   
   const [questionObject, setQuestionObject] = useState({
-    questionData: shuffledGraphDataArray[questionIndex], 
+    questionData: shuffledGraphDataArrayRef.current[questionIndex], 
   });
 
   // const [questionObject, setQuestionObject] = useState({
@@ -477,7 +468,7 @@ const cosArray = [
 
   useEffect(() => {
         
-    const graphQuestionObject = shuffledGraphDataArray[questionIndex];
+    const graphQuestionObject = shuffledGraphDataArrayRef.current[questionIndex];
   
     setQuestionObject(
       {
@@ -486,7 +477,7 @@ const cosArray = [
     );
   }, [questionIndex]);
 
-  const startTime = new Date();
+  const startTime = useRef(new Date());
 
   function next() {
     setQuestionIndex(prevState => (
@@ -498,15 +489,10 @@ const cosArray = [
     try {
         const endTime = new Date();
         const totalTime = endTime - startTime;
-        console.log(totalTime);
-        console.log("quizProgress: ");
-        console.dir(quizProgress);
         let topicName = "plottingPoints" + topic;
         const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "functions", topicName, username);
         // we are going to need to pass url information if we're not in summerPrep
-        console.dir(sessionData);
         const result = await recordProgress(sessionData, "summerPrep");
-        console.log(result.msg);
         // what should we do with this result?
         setQuestionIndex(prevState => (
           prevState + 1
@@ -554,45 +540,36 @@ const cosArray = [
       setAnswerMessage("Please plot a point on the graph.");
     } else {
       if (isChecking) {
-      setCoordinates(null);
-      setAnswerMessage("");
-      if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet) {
-        done()
+        setCoordinates(null);
+        setAnswerMessage("");
+        if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet) {
+          done()
+        } else {
+          next(); 
+        } 
       } else {
-        next(); 
-      } 
-    } else {
-      let answerMessage = '';
-      let answerIsCorrect = false;
-      if (coordinates.x === questionObject.questionData.xAnswer && coordinates.y === questionObject.questionData.yAnswer) {
-          answerIsCorrect = true;
-          setIsCorrect(true);
-      }
-      if (answerIsCorrect) { 
-        let currentStreak = quizProgress.currentStreak + 1;
-        if (currentStreak < 4) {
-          answerMessage = getRandomCorrectMessage();
-            // let index = getRandomIntInclusive(0, ((correctMessages.length)))
-            // answerMessage = correctMessages[index];
-        } else {
-            let questionsStreakIndex = currentStreak - 4;
-            // answerMessage = streakMessages[index];
-            if (questionsStreakIndex >= streakMessages.length) {
-              questionsStreakIndex = 0;
-            }
-            // answerMessage = streakMessages(questionsStreakIndex);
-            answerMessage = getRandomCorrectMessage();
+        let answerMessage = '';
+        let answerIsCorrect = false;
+        if (coordinates.x === questionObject.questionData.xAnswer && coordinates.y === questionObject.questionData.yAnswer) {
+            answerIsCorrect = true;
+            setIsCorrect(true);
         }
-        if (currentStreak > quizProgress.questionsStreak) {
-        setQuizProgress(prevState => ({
-          ...prevState,
-          questionsAttempted: prevState.questionsAttempted + 1,
-          questionsCorrect: prevState.questionsAttempted + 1,
-          questionsStreak: prevState.questionsStreak + 1,
-          currentStreak:prevState.currentStreak + 1,
-          progressBar: Math.round(((prevState.questionsCorrect + 1) / prevState.questionsToMeet) * 100), 
-        }));
-        } else {
+        if (answerIsCorrect) { 
+          let currentStreak = quizProgress.currentStreak + 1;
+          if (currentStreak < 4) {
+            answerMessage = getRandomCorrectMessage();
+              // let index = getRandomIntInclusive(0, ((correctMessages.length)))
+              // answerMessage = correctMessages[index];
+          } else {
+              let questionsStreakIndex = currentStreak - 4;
+              // answerMessage = streakMessages[index];
+              if (questionsStreakIndex >= streakMessages.length) {
+                questionsStreakIndex = 0;
+              }
+              // answerMessage = streakMessages(questionsStreakIndex);
+              answerMessage = getRandomCorrectMessage();
+          }
+          if (currentStreak > quizProgress.questionsStreak) {
           setQuizProgress(prevState => ({
             ...prevState,
             questionsAttempted: prevState.questionsAttempted + 1,
@@ -601,27 +578,35 @@ const cosArray = [
             currentStreak:prevState.currentStreak + 1,
             progressBar: Math.round(((prevState.questionsCorrect + 1) / prevState.questionsToMeet) * 100), 
           }));
+          } else {
+            setQuizProgress(prevState => ({
+              ...prevState,
+              questionsAttempted: prevState.questionsAttempted + 1,
+              questionsCorrect: prevState.questionsAttempted + 1,
+              questionsStreak: prevState.questionsStreak + 1,
+              currentStreak:prevState.currentStreak + 1,
+              progressBar: Math.round(((prevState.questionsCorrect + 1) / prevState.questionsToMeet) * 100), 
+            }));
+          }
+        } else {
+            setIsCorrect(false);
+            answerMessage = getRandomIncorrectMessage();
+            setQuizProgress(prevState => ({
+              ...prevState,
+              questionsAttempted: prevState.questionsAttempted + 1,
+              questionsIncorrect: prevState.questionsIncorrect + 1,
+              questionsStreak: 0,
+            }));
         }
-        console.dir(quizProgress);
-    } else {
-        setIsCorrect(false);
-        answerMessage = getRandomIncorrectMessage();
-        setQuizProgress(prevState => ({
-          ...prevState,
-          questionsAttempted: prevState.questionsAttempted + 1,
-          questionsIncorrect: prevState.questionsIncorrect + 1,
-          questionsStreak: 0,
-        }));
-    }
-      setAnswerMessage(answerMessage);
-    }
-    setIsChecking(!isChecking);
-  } // if coordinates
+        setAnswerMessage(answerMessage);
+      }
+      setIsChecking(!isChecking);
+    } // if coordinates
   }
 
 
   // const xArray = ['0', 'π/6', 'π/4', 'π/3', 'π/2', '2π/3', '3π/4', '5π/6', 'π', '7π/6', '5π/4', '4π/3', '3π/2', '5π/3', '7π/4', '11π/6', '2π'];
-  if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet) {
+  if (!isChecking && (quizProgress.questionsCorrect >= quizProgress.questionsToMeet)) {
    return (
     <div className="col-12 mt-3">
       <div className="row">
@@ -631,16 +616,8 @@ const cosArray = [
           <p className="col-sm-12 fs-5">Excellent! You met the standard!</p>
       </div>
       <div className="mt-3">
-        <NavLink to="/plottingPointsPolynomials">
-            <Button type="button" variant="primary" size="lg">Polynomial Functions</Button>
-        </NavLink>
-        <br /><br />                
-        <NavLink to="/plottingPoints/Sine">
-            <Button type="button" variant="primary" size="lg">Sine Function</Button>
-        </NavLink>
-        <br /><br />
-        <NavLink to="/plottingPoints/Cosine">
-            <Button type="button" variant="primary" size="lg">Cosine Function</Button>
+        <NavLink to="/plottingPointsTopics">
+            <Button type="button" variant="primary" size="lg">Plotting Points Topics</Button>
         </NavLink>
         <br /><br />
         <NavLink to="/summerPrepTopics">

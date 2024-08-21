@@ -97,7 +97,7 @@ export default function FactoringQuadratics({username}) {
         metStandard: false,       
     })
 
-    const startTime = new Date();
+    const startTime = useRef(new Date());
 
     function next(liftedState){
         let quadraticParameters = getQuadraticParameters();
@@ -123,7 +123,6 @@ export default function FactoringQuadratics({username}) {
         try {
             const endTime = new Date();
             const totalTime = endTime - startTime;
-            console.log("total time: " + totalTime);
             const sessionData = setSessionData(liftedState, startTime, totalTime, "summerPrep", "quadratics", topic, username);
             // we are going to need to pass url information if we're not in summerPrep
             const result = await recordProgress(sessionData, "summerPrep");

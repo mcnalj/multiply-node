@@ -1,4 +1,4 @@
-import React, { useState, useEffect }from 'react';
+import React, { useState, useEffect, useRef }from 'react';
 import { Link, NavLink, useParams } from "react-router-dom";
 import { ProgressBar, Button } from 'react-bootstrap';
 import { addStyles, StaticMathField } from 'react-mathquill';
@@ -232,12 +232,12 @@ const polynomialArray = [
     return array;
   }
 
-  const shuffledGraphDataArray = shuffleArray([...questionArray]);
+  const shuffledGraphDataArrayRef = useRef(shuffleArray([...questionArray]));
 
   const [answerMessage, setAnswerMessage] = useState("");
   
   const [questionObject, setQuestionObject] = useState({
-    questionData: shuffledGraphDataArray[questionIndex], 
+    questionData: shuffledGraphDataArrayRef.current[questionIndex], 
   });
 
   const [quizProgress, setQuizProgress] = useState({
@@ -255,7 +255,7 @@ const polynomialArray = [
 
   useEffect(() => {
         
-    const graphQuestionObject = shuffledGraphDataArray[questionIndex];
+    const graphQuestionObject = shuffledGraphDataArrayRef.current[questionIndex];
   
     setQuestionObject(
       {
@@ -264,7 +264,7 @@ const polynomialArray = [
     );
   }, [questionIndex]);
 
-  const startTime = new Date();
+  const startTime = useRef(new Date());
 
   function next() {
     setQuestionIndex(prevState => (
@@ -279,9 +279,7 @@ const polynomialArray = [
         let topicName = "plottingPoints" + topic;
         const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "functions", topicName, username);
         // we are going to need to pass url information if we're not in summerPrep
-        console.dir(sessionData);
         const result = await recordProgress(sessionData, "summerPrep");
-        console.log(result.msg);
         // what should we do with this result?
         setQuestionIndex(prevState => (
           prevState + 1
@@ -296,12 +294,8 @@ const polynomialArray = [
       const svg = event.currentTarget;
       const point = svg.createSVGPoint();
       point.x = event.clientX;
-      console.log("x: " + event.clientX);
-      point.y = event.clientY;
-      console.log("y: " + event.clientY);
+      point.y = event.clientY
       const svgPoint = point.matrixTransform(svg.getScreenCTM().inverse());
-      console.log("x: " + svgPoint.x);
-        console.log("y: " + svgPoint.y);
       const nearestGridPoint = getNearestGridPointTrig(svgPoint);
     //    const finalCoordinates = translateToCorrectCoordinates(nearestGridPoint);
     //    console.log(finalCoordinates);
@@ -405,7 +399,6 @@ const polynomialArray = [
             progressBar: Math.round(((prevState.questionsCorrect + 1) / prevState.questionsToMeet) * 100), 
           }));
         }
-        console.dir(quizProgress);
     } else {
         setIsCorrect(false);
         answerMessage = getRandomIncorrectMessage();
@@ -421,8 +414,7 @@ const polynomialArray = [
     setIsChecking(!isChecking);
   } // if coordinates
   }
-  if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet) {
-    console.log("Met the standard!");
+  if (!isChecking && (quizProgress.questionsCorrect >= quizProgress.questionsToMeet)) {
    return (
     <div className="col-12 mt-3">
       <div className="row">
@@ -432,16 +424,8 @@ const polynomialArray = [
           <p className="col-sm-12 fs-5">Excellent! You met the standard!</p>
       </div>
       <div className="mt-3">
-        <NavLink to="/plottingPointsPolynomials">
-            <Button type="button" variant="primary" size="lg">Polynomial Functions</Button>
-        </NavLink>
-        <br /><br />                
-        <NavLink to="/plottingPoints/Sine">
-            <Button type="button" variant="primary" size="lg">Sine Function</Button>
-        </NavLink>
-        <br /><br />
-        <NavLink to="/plottingPoints/Cosine">
-            <Button type="button" variant="primary" size="lg">Cosine Function</Button>
+        <NavLink to="/plottingPointsTopics">
+            <Button type="button" variant="primary" size="lg">Plotting Points Topics</Button>
         </NavLink>
         <br /><br />
         <NavLink to="/summerPrepTopics">
@@ -450,8 +434,6 @@ const polynomialArray = [
       </div>
     </div>
   ) } else {
-
-
   return (
     <div>
       <div className="row">
@@ -510,9 +492,6 @@ const polynomialArray = [
           }
         </svg>
       </div>
-
-
-
       <Link to="/plottingPointsTopics">
             <button type="button" className="btn btn-lg btn-success mt-3">BACK TO TOPICS</button><br /><br />
       </Link>     

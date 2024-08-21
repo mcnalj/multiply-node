@@ -222,7 +222,6 @@ export default function FunctionNotation({username}) {
 
   const startTime = useRef(new Date());
 
-
 function updateQuizProgress(isCorrect) {
   setQuizProgress(prevState => {
       return {
@@ -248,7 +247,6 @@ async function done() {
       const totalTime = endTime - startTime;
       const sessionData = setSessionData(quizProgress,startTime, totalTime, "summerPrep", "functions", "functionNotation", username);
       const result = await recordProgress(sessionData, "summerPrep");
-      console.log(result.msg);
       // what should we do with this result?
       setQuestionIndex(0);
       setIsFinished(true);
@@ -256,7 +254,6 @@ async function done() {
       console.error("Failed to record progress: ", error);
       // Show a message to the user      
     }
-
   }
 
     const handleClick = (event) => {
@@ -286,7 +283,6 @@ async function done() {
         }
         setAnswerMessage(answerIsCorrect ? "Correct!" : "Incorrect!");
         updateQuizProgress(answerIsCorrect);
-        console.dir(quizProgress)
         setPointColor(answerIsCorrect ? "green" : "red");
         setButtonText("Next");
         } else if (buttonText === "Next") {

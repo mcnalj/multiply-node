@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from "react-router-dom";
 import { Button, ProgressBar } from 'react-bootstrap';
 import { addStyles, StaticMathField } from 'react-mathquill'
@@ -152,7 +152,6 @@ export default function IdentifyingFunctions({username}) {
     const [isFinished, setIsFinished] = useState(false);
 
     useEffect(() => {
-        console.log(shuffledGraphDataArray)
         const graphQuestionObject = shuffledGraphDataArray[graphIndex];
         const answersArray = shuffleArray(Object.values(graphQuestionObject.answers));
 
@@ -162,7 +161,7 @@ export default function IdentifyingFunctions({username}) {
         });
     }, [graphIndex]);
 
-    const startTime = new Date();
+    const startTime = useRef(new Date());
 
     function next() {
         setGraphIndex(prevState => (
@@ -176,7 +175,6 @@ export default function IdentifyingFunctions({username}) {
             const totalTime = endTime - startTime;
             const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "functions", "identifyingFunctions", username);
             const result = await recordProgress(sessionData, "summerPrep");
-            console.log(result.msg);
             // what should we do with this result?
             setGraphIndex(0);
             setIsFinished(true);
@@ -188,8 +186,6 @@ export default function IdentifyingFunctions({username}) {
 
     function handleClick(value) {
         let buttonClicked = "button" + questionObject.answersArray.indexOf(value);
-        console.log(buttonClicked)
-        console.log(questionObject.questionData.answers.correctAnswer);
         if (value == questionObject.questionData.answers.correctAnswer) {
             setAnswerMessage("Correct!");
             setButtonClass({[buttonClicked]: 'matched'});
