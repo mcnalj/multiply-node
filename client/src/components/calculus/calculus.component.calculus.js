@@ -18,14 +18,14 @@ export default function Calculus({username}) {
                 <h1>Calculus Page</h1>
             </div>
             <div className="mt-3">
-                <NavLink to="/exponentsTopics">
+                {/* <NavLink to="/exponentsTopics">
                     <Button type="button" variant="primary" size="lg">Exponents</Button>
                 </NavLink>
-                <br /><br />
-                <NavLink to="/limitsGraphs">
+                <br /><br /> */}
+                {/* <NavLink to="/limitsGraphs">
                     <Button type="button" variant="primary" size="lg">Limits</Button>
                 </NavLink>
-                <br /><br />                
+                <br /><br />                 */}
                 <NavLink to="/derivativesTopics">
                     <Button type="button" variant="primary" size="lg">Derivatives</Button>
                 </NavLink>
