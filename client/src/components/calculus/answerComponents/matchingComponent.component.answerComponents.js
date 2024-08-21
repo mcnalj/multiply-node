@@ -8,14 +8,14 @@ import '../../../App.scss';
 import '../../../index.scss';
 import './matchingComponent.component.answerComponents.scss';
 
-export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, setQuizProgress, setIsFinished, }) {
+export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, setQuizProgress, setIsFinished,}) {
     const [clickedIndex, setClickedIndex] = useState(null);
     const [currentLeft, setCurrentLeft] = useState({option: null, index: null});
     const [currentRight, setCurrentRight] = useState({option: null, index: null});
     const [incorrectIndex, setIncorrectIndex] = useState([]);
     const [matches, setMatches] = useState([]);
     const [isCompleted, setIsCompleted] = useState(false);
-    
+    console.log(leftOptions);
     const handleLeftClick = (option, index) => {
       setCurrentLeft({option: option, index: index});
       checkMatch({option: option, index: index}, currentRight, index);

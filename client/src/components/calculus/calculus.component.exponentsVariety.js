@@ -82,7 +82,7 @@ export default function ExponentsVariety({username}) {
         questionsCorrect: 0,
         questionsIncorrect: 0,
         questionsStreak: 0,
-        questionsToMeet: 10,
+        questionsToMeet: 11,
         progressBar: 0,
         metStandard: false, 
         getNextQuestion: next,
@@ -204,8 +204,6 @@ export default function ExponentsVariety({username}) {
           }
         }
         xValue = xValue.toString();
-        console.log("xValue: " + xValue);
-        console.log("xChoice: " + xChoice);
         return [xValue, xChoice];
     }
 
@@ -249,9 +247,7 @@ export default function ExponentsVariety({username}) {
         }
         const [power, functionLatex] = setFunction(engine);
         const [xValue, xChoice] = setXValue(power, engine);
-        console.log("xValue: " + xValue + ", power: " + power + ", engine: " + engine + ", xChoice: " + xChoice);
         const [answerLatex, answersArray] = setAnswer(xValue, power, engine, xChoice);
-        console.log("answerLatex: " + answerLatex + ", answersArray: " + answersArray)
 
         setQuestionObject(
             {
@@ -270,36 +266,44 @@ export default function ExponentsVariety({username}) {
         let includeLevel2 = false;
         let includeLevel3 = false;
         let includeLevel4 = false;
+        let filteredMultipleChoiceQuestions;
         navigate(`/exponentsVariety/${topic}`);
         if (topic === "positive") {
           includeLevel1 = true;
+          filteredMultipleChoiceQuestions = multipleChoiceQuestions.filter(q => q.level === 1);
         } else if (topic === "negative") {
           includeLevel2 = true;
+          filteredMultipleChoiceQuestions = multipleChoiceQuestions.filter(q => q.level === 2);
         } else if (topic === "fractional") {
           includeLevel3 = true;
+          filteredMultipleChoiceQuestions = multipleChoiceQuestions.filter(q => q.level === 3); 
         } else if (topic === "negativeFractional") {
           includeLevel4 = true;
+          filteredMultipleChoiceQuestions = multipleChoiceQuestions.filter(q => q.level === 4);
         } else {
           includeLevel1 = true;
           includeLevel2 = true;
           includeLevel3 = true;
           includeLevel4 = true;
+          filteredMultipleChoiceQuestions = multipleChoiceQuestions;
         }
         questionEngine(topic);
         const randomizedQuestionArray = populateQuestionArray(matchObjects, 5, includeLevel1, includeLevel2, includeLevel3, includeLevel4);
         const options = setOptions(randomizedQuestionArray);
         setLeftOptions(options.leftOptions);
-        setRightOptions(options.rightOptions);        
+        setRightOptions(options.rightOptions);
+
+        setMultipleChoiceQuestionsArray(shuffleArray([...filteredMultipleChoiceQuestions]));
+        setMultipleChoiceQuestionIndex(0);      
         // setMultipleChoiceQuestionsArray(shuffleArray([...multipleChoiceQuestions]));
     }, [topic]);
 
     useEffect(() => {
-      console.log ("gmcq fired");
       getMultipleChoiceQuestion();
-  }, [multipleChoiceQuestionIndex]);
+  }, [multipleChoiceQuestionIndex, multipleChoiceQuestionsArray]);
 
   function getMultipleChoiceQuestion() {
-      console.log(multipleChoiceQuestionsArray);
+    if (multipleChoiceQuestionsArray.length > 0) {
       const tempMultipleChoiceQuestionObject = multipleChoiceQuestionsArray[multipleChoiceQuestionIndex];
       const answersArray = shuffleArray(Object.values(tempMultipleChoiceQuestionObject.answers));
 
@@ -307,6 +311,7 @@ export default function ExponentsVariety({username}) {
           questionData: tempMultipleChoiceQuestionObject,
           answersArray: answersArray
       });
+    }
   }
 
     function next(topic){
@@ -322,7 +327,7 @@ export default function ExponentsVariety({username}) {
             const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "exponents", topic, username); 
             const result = await recordProgress(sessionData, "summerPrep");
             // What should we do with this result?
-            console.log(result.msg);      
+            // console.log(result.msg);      
         } catch (error) {
             console.error("Failed to record progress: ", error);
             // Show a message to the user
@@ -331,8 +336,12 @@ export default function ExponentsVariety({username}) {
 
     const navigate = useNavigate()
 
-    function calculus() {  
-      navigate("/calculus");
+    function summerPrep() {  
+      navigate("/summerPrepTopics");
+    }
+
+    function exponentsTopics() {
+      navigate("/exponentsTopics");
     }
 
     function sameTopic() {
@@ -383,9 +392,10 @@ export default function ExponentsVariety({username}) {
                 <p className="col-sm-12 fs-5">Excellent! You met the standard!</p>
             </div>
             <div className="row">
-              <Button variant="primary" onClick={nextTopic} className="col-8 offset-2 mt-2" size="lg">NEXT TOPIC</Button>
-              <Button variant="primary" onClick={sameTopic} className="col-8 offset-2 mt-2" size="lg">MORE OF THE SAME</Button>
-              <Button variant="primary" onClick={calculus} className="col-8 offset-2 mt-2" size="lg">BACK TO CALCULUS</Button>
+              {/* <Button variant="primary" onClick={nextTopic} className="col-8 offset-2 mt-2" size="lg">NEXT TOPIC</Button>
+              <Button variant="primary" onClick={sameTopic} className="col-8 offset-2 mt-2" size="lg">MORE OF THE SAME</Button> */}
+              <Button variant="primary" onClick={exponentsTopics} className="col-8 offset-2 mt-2" size="lg">BACK TO EXPONENTS TOPICS</Button>
+              <Button variant="primary" onClick={summerPrep} className="col-8 offset-2 mt-2" size="lg">BACK TO SUMMER PREP</Button>
             </div>
         </div>
       )
@@ -393,7 +403,7 @@ export default function ExponentsVariety({username}) {
     return (
       <div className="col-12">
         {
-            quizProgress.questionsCorrect === 2 ? (
+            quizProgress.questionsCorrect === 5 ? (
                 <>
                     <div className="row">
                         <p className="col-12 text-center fs-5">
@@ -408,7 +418,7 @@ export default function ExponentsVariety({username}) {
                         setIsFinished={setIsFinished}
                     />
                 </>
-            ) : quizProgress.questionsCorrect < 1 || quizProgress.questionsCorrect > 8 ?
+            ) : quizProgress.questionsCorrect < 2 || quizProgress.questionsCorrect > 8 ?
               ( 
                 <div>
                     <div className="row">
@@ -429,6 +439,7 @@ export default function ExponentsVariety({username}) {
                         handleIncrement={handleIncrementFromMultipleChoice}
                         setQuizProgress={setQuizProgress}
                         setAnswerMessage={setAnswerMessage}
+                        startTime={startTime}
                     />
                 </div>
   

@@ -5,23 +5,8 @@ const matchObjects = [
       level: 1
     },
     {
-      leftLatex: `x^{-1}`,
-      rightLatex: `\\frac{1}{x}`,
-      level: 1
-    },
-    {
-      leftLatex: `x^{-3}`,
-      rightLatex: `\\frac{1}{x \\cdot x \\cdot x}`,
-      level: 1
-    },
-    {
-      leftLatex: `x^{-2}`,
-      rightLatex: `\\frac{1}{x^2}`,
-      level: 1
-    },
-    {
-      leftLatex: `x^0`,
-      rightLatex: `1 `,
+      leftLatex: `x^3`,
+      rightLatex: `x \\cdot x \\cdot x`,
       level: 1
     },
     {
@@ -30,15 +15,71 @@ const matchObjects = [
       level: 1
     },
     {
+      leftLatex: `x^0`,
+      rightLatex: `1`,
+      level: 1
+    },
+    {
+      leftLatex: `2^3`,
+      rightLatex: `2 \\cdot 2 \\cdot 2`,
+      level: 1
+    },
+    {
+      leftLatex: `2^4`,
+      rightLatex: `16`,
+      level: 1
+    },
+    {
       leftLatex: `x^4`,
       rightLatex: `x \\cdot x \\cdot x \\cdot x`,
       level: 1
     },
     {
-      leftLatex: `x^{-4}`,
-      rightLatex: `\\frac{1}{x^4}`,
+      leftLatex: `5^2`,
+      rightLatex: `25`,
       level: 1
     },
+    
+    // {
+    //   leftLatex: `x^2`,
+    //   rightLatex: `x \\cdot x`,
+    //   level: 1
+    // },
+    // {
+    //   leftLatex: `x^{-1}`,
+    //   rightLatex: `\\frac{1}{x}`,
+    //   level: 1
+    // },
+    // {
+    //   leftLatex: `x^{-3}`,
+    //   rightLatex: `\\frac{1}{x \\cdot x \\cdot x}`,
+    //   level: 1
+    // },
+    // {
+    //   leftLatex: `x^{-2}`,
+    //   rightLatex: `\\frac{1}{x^2}`,
+    //   level: 1
+    // },
+    // {
+    //   leftLatex: `x^0`,
+    //   rightLatex: `1 `,
+    //   level: 1
+    // },
+    // {
+    //   leftLatex: `x^1`,
+    //   rightLatex: `x`,
+    //   level: 1
+    // },
+    // {
+    //   leftLatex: `x^4`,
+    //   rightLatex: `x \\cdot x \\cdot x \\cdot x`,
+    //   level: 1
+    // },
+    // {
+    //   leftLatex: `x^{-4}`,
+    //   rightLatex: `\\frac{1}{x^4}`,
+    //   level: 1
+    // },
     {
       leftLatex: `3^2`,
       rightLatex: `3 \\cdot 3`,

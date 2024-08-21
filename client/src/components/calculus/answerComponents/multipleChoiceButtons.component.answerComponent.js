@@ -9,7 +9,7 @@ import './multipleChoiceButtons.component.answerComponent.scss';
 
 addStyles();
 
-export default function MultipleChoiceButtons({questionObject, handleIncrement, setQuizProgress, setAnswerMessage}) {
+export default function MultipleChoiceButtons({questionObject, handleIncrement, setQuizProgress, setAnswerMessage, startTime}) {
     const [buttonClass, setButtonClass] = useState({button0: '', button1: '', button2: '', button3: ''});
 
     function updateQuizProgress(isCorrect) {

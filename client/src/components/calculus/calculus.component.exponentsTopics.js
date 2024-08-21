@@ -33,8 +33,8 @@ export default function ExponentsTopics() {
                     </Link>
                 </div>
                 <div>
-                    <Link to="/calculus">
-                        <button type="button" className="btn btn-lg btn-success">Back to Calculus</button><br /><br />
+                    <Link to="/summerPrepTopics">
+                        <button type="button" className="btn btn-lg btn-success">Back to Summer Prep</button><br /><br />
                     </Link>
                 </div>                                
             </div>
