@@ -1,43 +1,39 @@
-import React from "react";
-import { Link } from 'react-router-dom';
-export default function ExponentsTopics() {
+import React from 'react';
+import { TopicsProgress } from '../summerPrep/topicsProgress.component.summerPrep';
+
+export default function ExponentsTopics({username}) {
+    const topics = [
+        {
+            topicName: "positive", buttonText: "Simple Exponents", path: "/exponentsVariety/positive"         
+        },
+        {
+            topicName: "negative", buttonText: "Negative Exponents", path: "/exponentsVariety/negative"
+        },
+        {
+            topicName: "fractional", buttonText: "Fractional Exponents", path: "/exponentsVariety/fractional"
+        },
+        {
+            topicName: "negativeFractional", buttonText: "Negative Fractional Exponents", path: "/exponentsVariety/negativeFractional"
+        },
+        {
+            topicName: "mixed", buttonText: "Mix of All Types", path: "/exponentsVariety/mixed"
+        },        
+    ];
+    
+    const section = "summerPrep";
+    
+    const unit = "exponents";
+    
+    const backLink = "/summerPrepTopics";
+    
+    const backLinkText = "Back to Summer Prep";
+
     return (
-        <div>
+        <>
             <div>
-                <h1>Exponents Practice</h1>
+                <h1>Exponents Topics</h1>
             </div>
-            <div>
-                <div>
-                    <Link to="/exponentsVariety/positive">
-                        <button type="button" className="btn btn-lg btn-success">Simple Exponents</button><br /><br />
-                    </Link>
-                </div>
-                <div>
-                    <Link to="/exponentsVariety/negative">
-                        <button type="button" className="btn btn-lg btn-success">Negative Exponents</button><br /><br />
-                    </Link>
-                </div>
-                <div>
-                    <Link to="/exponentsVariety/fractional">
-                        <button type="button" className="btn btn-lg btn-success">Fractional Exponents</button><br /><br />
-                    </Link>
-                </div>
-                <div>
-                    <Link to="/exponentsVariety/negativeFractional">
-                        <button type="button" className="btn btn-lg btn-success">Negative Fractional Exponents</button><br /><br />
-                    </Link>
-                </div>
-                <div>
-                    <Link to="/exponentsVariety/mixed">
-                        <button type="button" className="btn btn-lg btn-success">Mix of All Types</button><br /><br />
-                    </Link>
-                </div>
-                <div>
-                    <Link to="/summerPrepTopics">
-                        <button type="button" className="btn btn-lg btn-success">Back to Summer Prep</button><br /><br />
-                    </Link>
-                </div>                                
-            </div>
-        </div>
+            <TopicsProgress username={username} topics={topics} section={section} unit={unit} backLink={backLink} backLinkText={backLinkText} />
+        </>
     );
 }

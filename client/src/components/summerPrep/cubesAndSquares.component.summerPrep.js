@@ -88,7 +88,7 @@ async function done(){
         setIsFinished(true);
         const endTime = new Date();
         const totalTime = endTime - startTime;
-        const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "cubesAndSquare", "squares", username);
+        const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "multiplication", topic, username);
         const result = await recordProgress(sessionData, "summerPrep");
         // what should we do with this result?
     } catch (error) {
@@ -196,7 +196,7 @@ if (isFinished) {
           <p>Practice until these are automatic.</p> 
         </div>
         <div>
-          <Link to="/multiplicationTopics" className="btn btn-primary">Back To Topics</Link>
+          <Link to="/multiplicationTopics" className="btn btn-primary">Back To Multiplication Topics</Link>
         </div>
     </>
   )
@@ -250,7 +250,7 @@ function CirclesPage({questionObject, quizProgress, setQuizProgress, topic, init
         )
         : null}
         <div>
-          <Link to="/multiplicationTopics" className="btn btn-primary">Back To Topics</Link>
+          <Link to="/multiplicationTopics" className="btn btn-primary">Back To Multiplication Topics</Link>
         </div>
       </div>
   );

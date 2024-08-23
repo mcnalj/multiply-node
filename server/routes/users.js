@@ -114,6 +114,57 @@ usersRoutes.route("/singleUsersProgress").post(checkAuthenticated, async functio
   }
 });
 
+// usersRoutes.route("/getProgress/summerPrep/multiplication").post(checkAuthenticated, async function (req, response) { 
+//   const username = req.body.username;
+//   let query = { username: username};
+//   let projection = {
+//     _id: false,
+//     username: true,
+//     progress: {
+//       $cond: {
+//         if: { $ifNull: ['$progress', false]},
+//         then: '$progress',
+//         else: '$$REMOVE'
+//       }
+//     },
+//   }
+//   try {
+//     let multiplicationData = {
+//       squares: [],
+//       cubes: [],
+//       mixed: []
+//     };
+//     let results =  await dbo.client.db("employees")
+//       .collection("userData")
+//       .findOne(query, projection)
+//     if (results.progress) {
+//       if (results.progress.summerPrep) {
+//         if (results.progress.summerPrep.cubesAndSquare) {
+//           if (results.progress.summerPrep.cubesAndSquare.skillData) {
+//             let unfilteredData = results.progress.summerPrep.cubesAndSquare.skillData;
+//             for (let i = 0; i < unfilteredData.length; i++) {
+//               if (unfilteredData[i]?.skill === "squares") {
+//                 multiplicationData.squares.push(unfilteredData[i]);
+//               }
+//               else if (unfilteredData[i]?.skill === "cubes") {
+//                 multiplicationData.cubes.push(unfilteredData[i]);
+//               } else if (unfilteredData[i]?.skill === "mixed") {
+//                 multiplicationData.mixed.push(unfilteredData[i]);
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//     response.json(multiplicationData);
+//   }
+//   catch(error) {
+//     console.error("Error fetching progress:", error);
+//     response.json(null);
+//   }
+// });
+
+
 usersRoutes.route("/getProgress/summerPrep/functions/plottingPoints").post(checkAuthenticated, async function (req, response) { 
   const username = req.body.username;
   let query = { username: username};
@@ -163,6 +214,70 @@ usersRoutes.route("/getProgress/summerPrep/functions/plottingPoints").post(check
     response.json(null);
   }
 });
+
+usersRoutes.route("/getProgress/summerPrep/:topic").post(checkAuthenticated, async function (req, response) {
+  const username = req.body.username;
+  const { topic } = req.params;
+  const query = { username: username };
+  const projection = {
+    _id: false,
+    username: true,
+    progress: {
+      $cond: {
+        if: { $ifNull: ['$progress', false] },
+        then: '$progress',
+        else: '$$REMOVE'
+      }
+    }
+  };
+
+  try {
+    let topicData = {};
+    const results = await dbo.client.db("employees")
+      .collection("userData")
+      .findOne(query, projection);
+
+    if (results?.progress?.summerPrep?.[topic]?.skillData) {
+      const unfilteredData = results.progress.summerPrep[topic].skillData;
+
+      // Loop through the skill data and categorize them by skill name
+      unfilteredData.forEach(item => {
+        if (item?.skill) {
+          if (!topicData[item.skill]) {
+            topicData[item.skill] = []; // Create an array for the skill if it doesn't exist
+          }
+          topicData[item.skill].push(item); // Add the item to the appropriate skill array
+        }
+      });
+    }
+    response.json(topicData);
+  } catch (error) {
+    console.error("Error fetching progress:", error);
+    response.status(500).json({ error: "Error fetching progress" });
+  }
+});
+
+
+
+// function getProgressData(results, unitName, skillsArray) {
+//   let skillData = [];
+//   const variables = [...myArray];
+//   if (results.progress.summerPrep) {
+//     if (results.progress.summerPrep[unitName]) {
+//       if (results.progress.summerPrep[unitName].skillData) {
+//         skillData = results.progress.summerPrep[skillName].skillData;
+//         for (let i = 0; i < skillData.length; i++) {
+//           for (let j = 0; j < skillsArray.length; j++) {
+//             if (skillData[i]?.skill === skillsArray[j]) {
+//               skillData.push(skillData[i]);
+//             }
+//           }
+//       }
+//     }
+//   }
+//   return skillData;
+// }
+
 
 
 usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req, response) {

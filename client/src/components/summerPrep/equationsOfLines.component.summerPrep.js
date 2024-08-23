@@ -208,8 +208,8 @@ export default function EquationsOfLines({username}) {
               setQuizProgress={setQuizProgress}
               startTime={startTime}
           />
-          <Link to="/summerPrepTopics">
-            <button type="button" className="btn btn-lg btn-success mt-3">BACK TO SUMMER PREP</button><br /><br />
+          <Link to="/plottingPointsTopics">
+            <button type="button" className="btn btn-lg btn-success mt-3">Back to Functions Topics</button><br /><br />
           </Link>
         </div>
       )

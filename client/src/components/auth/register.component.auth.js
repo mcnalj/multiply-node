@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import './styles.component.auth.scss';
 import { config} from '../constants';
 var url = config.url.API_URL;
@@ -15,6 +16,8 @@ export default function SignUp({setCookie, setUsername})  {
     });
     const [responseMsg, setResponseMsg] = useState("");
 
+    const navigate = useNavigate();
+    
     function updateForm(value) {
       return setForm((prev) => {
         return { ...prev, ...value };
@@ -42,7 +45,7 @@ export default function SignUp({setCookie, setUsername})  {
         setCookie('username', answer.passportData.username);
         setUsername(answer.passportData.username);
         setForm({ firstName: "", lastName: "", email: "", username: "", password: "", classCode: ""});
-        //navigate("/success"); // this looks for a route on the client
+        navigate("/summerPrepTopics"); // this looks for a route on the client
       } else {
         setResponseMsg(answer.msg);
       }

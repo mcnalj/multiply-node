@@ -684,7 +684,7 @@ const cosArray = [
         </Button>
       </form>
       <Link to="/plottingPointsTopics">
-            <button type="button" className="btn btn-lg btn-success mt-3">BACK TO TOPICS</button><br /><br />
+            <button type="button" className="btn btn-lg btn-success mt-3">Back to Functions Topics</button><br /><br />
       </Link>     
     </div>
     );

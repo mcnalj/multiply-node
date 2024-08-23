@@ -416,8 +416,8 @@ async function done() {
         </Button>
         <p className="fs-4 mt-1">{answerMessage}</p>
       </form>
-      <Link to="/summerPrepTopics">
-            <button type="button" className="btn btn-lg btn-success">BACK TO SUMMER TOPICS</button><br /><br />
+      <Link to="/plottingPointsTopics">
+            <button type="button" className="btn btn-lg btn-success">Back to Function Topics</button><br /><br />
       </Link>     
     </>
     )
