@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Button, Alert } from 'react-bootstrap';
 import { FaCheckCircle, FaHourglassHalf, FaAdjust, FaSpinner, FaDotCircle } from 'react-icons/fa';
 import { fetchStatus } from '../infrastructure/fetchStatus';
+
 import { config} from '../constants';
 var url = config.url.API_URL;
 
@@ -31,7 +32,8 @@ export function TopicsProgress({ username, topics, section, unit, backLink, back
         if (status === 'metStandard') {
             return <FaCheckCircle style={iconStyle} color="green" />;
         } else if (status === 'inProgress') {
-            return <FaAdjust style={iconStyle} color="orange" />;
+            return <FaHourglassHalf style={iconStyle} color='green' />;
+            
         }
         return null;
     }

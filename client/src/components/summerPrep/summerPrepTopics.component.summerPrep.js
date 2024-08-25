@@ -57,7 +57,7 @@ export default function SummerPrepTopics({username}) {
         if (status === 'metStandard') {
             return <FaCheckCircle style={iconStyle} color="green" />;
         } else if (status === 'inProgress') {
-            return <FaAdjust style={iconStyle} color="orange" />;
+            return <FaAdjust style={iconStyle} color="green" />;
         }
         return null;
     }

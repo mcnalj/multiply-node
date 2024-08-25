@@ -35,6 +35,7 @@ export default function Success({username}) {
             }).then((result) => {
                 console.log(result);
                 result.usersData.includes("CALC23") ? visibleObj.calculus = true : visibleObj.calculus = false;
+                result.usersData.includes("CALC24") ? visibleObj.calculus = true : visibleObj.calculus = false;
                 result.usersData.includes("MT2023") ? visibleObj.mockTrial = true : visibleObj.mockTrial = false;
                 result.usersData.includes("CODE23") ? visibleObj.theCode = true : visibleObj.theCode = false;
                 result.usersData.includes("CREW23") ? visibleObj.crew = true : visibleObj.crew = false;
@@ -64,7 +65,7 @@ export default function Success({username}) {
                         {
                             visibleClasses.calculus &&
                                 (
-                                    <NavLink to="/calculus">
+                                    <NavLink to="/summerPrepTopics">
                                         <Button className="mt-2">Calculus</Button>
                                     </NavLink>
                                     
