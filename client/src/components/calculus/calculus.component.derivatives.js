@@ -33,6 +33,7 @@ import PowerRule from '../explanations/powerRule.component.explanations.js'
 import {  PowerRuleCoefficients,
           PowerRuleFractionalCoefficients,
           PowerRuleNegativeExponents,
+          PowerRuleNegativeExponentsCoefficients,
           PowerRuleFractionalExponents,
           PowerRuleFractionalExponentsIntegerCoefficients,
           PowerRuleFractionalExponentsFractionalCoefficients,
@@ -661,6 +662,18 @@ function ModalComponent ({currentTopic}) {
           Explain!
         </Button>
         <PowerRuleNegativeExponents 
+          show={show}
+          handleClose={handleClose}
+        />
+      </>
+    )
+  } else if (currentTopic == 250) {
+    return(
+      <>
+        <Button className="m-2" variant="info" onClick={handleShow}>
+          Explain!
+        </Button>
+        <PowerRuleNegativeExponentsCoefficients 
           show={show}
           handleClose={handleClose}
         />

@@ -81,7 +81,7 @@ export function PowerRuleCoefficients({show, handleClose}) {
           </div>
         </div>
         <div className="row mt-4">
-            <p>We don't have to write the 1 in <StaticMathField>{`2x^1`}</StaticMathField>.</p>
+            <p>We don't have to write the 1 in <StaticMathField>{`-8x^1`}</StaticMathField>.</p>
             <p>If there is no coefficient, that means the coefficient is 1.</p>
         </div>     
       </Modal.Body>
@@ -174,14 +174,14 @@ export function PowerRuleNegativeExponents({show, handleClose}) {
             </div>
           </div>
           <div className="row mt-2">
-            <p>Once rewritten, it is easier to use the Power Rule to find the derivative.</p>
+            <p>Once rewritten, it is easier to use the Power Rule to find the derivative. (After you find the derivative, it is good practice to rewrite it back to its original, fractional form.)</p>
             <div className="col-4 offset-1">
-              <StaticMathField className="text-end">{`\\frac{d}{dx} \\frac{1}{x^4} \\quad = \\frac{d}{dx} x^{-4} \\quad = -4x^{-5}`}</StaticMathField><br />
+              <StaticMathField className="text-end">{`\\frac{d}{dx} \\frac{1}{x^4} \\quad = \\frac{d}{dx} x^{-4} \\quad = -4x^{-5} \\quad =\\frac{-4}{x^5}`}</StaticMathField><br />
             </div>
           </div>
           <div className="row mt-2">
             <div className="col-4 offset-1">
-              <StaticMathField className="text-end">{`\\frac{d}{dx} \\frac{3}{x^2} \\quad = \\frac{d}{dx} 3x^{-2} \\quad = -6x^{-3}`}</StaticMathField><br />
+              <StaticMathField className="text-end">{`\\frac{d}{dx} \\frac{3}{x^2} \\quad = \\frac{d}{dx} 3x^{-2} \\quad = -6x^{-3} \\quad =\\frac{-6}{x^3}`}</StaticMathField><br />
             </div>
           </div>
         </div>                  
@@ -195,7 +195,32 @@ export function PowerRuleNegativeExponents({show, handleClose}) {
   )    
 }
 
-export function PowerRuleNegativeExponentsCoefficients() {
+export function PowerRuleNegativeExponentsCoefficients({show, handleClose}) {
+  return (
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>The Power Rule with Negative Exponents and Coefficients</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>These problems are presented as a mix of two forms.</p>
+        <p>Some have negative exponents and some have exponential terms in the denominator.</p>
+        <p>To get credit for being correct, the answer has to be presented in the same form as the question.</p>
+        <div className="row mt-2">
+          <div className="col-4 offset-1">
+            <StaticMathField className="text-end">{` \\frac{d}{dx}2x^{-5} \\quad = -10x^{-6}`}</StaticMathField><br />
+          </div>
+          <div className="col-4 offset-1">
+            <StaticMathField className="text-end">{` \\frac{d}{dx}\\frac{2}{x^5} \\quad = \\frac{-10}{x^6}`}</StaticMathField><br />
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  )    
     
 }
 
@@ -241,13 +266,15 @@ export function PowerRuleFractionalExponents({show, handleClose}) {
         </div>
         <div className="row">
           <div className="col-4 offset-2">
-            <StaticMathField className="text-end">{`\\frac{d}{dx} -4x^2 = 2 \\cdot -4 x^{2-1}`}</StaticMathField><br />
-            <StaticMathField className="text-end">{`\\frac{d}{dx} -4x^2 = -8x^{1} = -8x`}</StaticMathField><br />
+            <StaticMathField className="text-end">{`\\frac{d}{dx} 5x^{\\frac{2}{3}} = \\frac{2}{3} \\cdot 5 x^{\\frac{2}{3}-1}`}</StaticMathField><br />
+            <StaticMathField className="text-end">{`\\frac{d}{dx} 5x^{\\frac{2}{3}} = \\frac{10}{3}x^{\\frac{2}{3} - \\frac{3}{3}} = \\frac{10}{3}x^{-\\frac{1}{3}}`}</StaticMathField><br />
           </div>
         </div>
         <div className="row mt-4">
-            <p>We don't have to write the 1 in <StaticMathField>{`2x^1`}</StaticMathField>.</p>
-            <p>If there is no coefficient, that means the coefficient is 1.</p>
+            <p>We could rewrite that as <StaticMathField>{`\\frac{10}{3x^{\\frac{1}{3}}}`}</StaticMathField>.</p>
+            <p>And we could rewrite <StaticMathField>{`x^{\\frac{1}{3}}`}</StaticMathField> in radical form as <StaticMathField>{`\\sqrt[3]{x}`}</StaticMathField>.</p>
+            <p>So <StaticMathField>{`\\frac{10}{3}x^{-\\frac{1}{3}}`}</StaticMathField> could also be written as <StaticMathField>{`\\frac{10}{3\\sqrt[3]{x}}`}</StaticMathField>.</p>
+            <p>(Sorry that the "3" in the "root 3" symbol is hard to read!)</p>
         </div>     
       </Modal.Body>
       <Modal.Footer>
@@ -289,7 +316,12 @@ export function PowerRuleFractionalExponentsIntegerCoefficients({show, handleClo
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<StaticMathField className="text-end">{` = \\frac{5 \\cdot 4}{3}x^{\\frac{4}{3} - \\frac{3}{3}} `}</StaticMathField><br />
             <StaticMathField className="text-end">{`= \\frac{20}{3}x^{\\frac{1}{3}}`}</StaticMathField>
           </div>
-        </div>     
+        </div>
+        <br></br>
+        <p>To get credit for a correct answer, your fractions have to be reduced to their simplest form.</p>
+        <p>For example, an answer of <StaticMathField>{`\\frac{10}{4}x^{\\frac{1}{4}}`}</StaticMathField> has to be written as <StaticMathField>{`\\frac{5}{2}x^{\\frac{1}{4}}`}</StaticMathField>.</p>
+        <p>And the coefficient in <StaticMathField>{`\\frac{42}{3}x^{\\frac{1}{3}}`}</StaticMathField> has to be reduced to a whole number and written as <StaticMathField>{`14x^{\\frac{1}{3}}`}</StaticMathField>.</p>
+
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
@@ -379,7 +411,7 @@ export function PowerRuleNegativeFractionalExponents({show, handleClose}) {
         </div>
         <div className="row">
           <div className="col-4 offset-2">
-            <StaticMathField className="text-end">{`\\frac{d}{dx} x^{=\\frac{4}{3}} = -\\frac{4}{3}x^{-\\frac{4}{3} - 1}`}</StaticMathField><br />
+            <StaticMathField className="text-end">{`\\frac{d}{dx} x^{-\\frac{4}{3}} = -\\frac{4}{3}x^{-\\frac{4}{3} - 1}`}</StaticMathField><br />
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<StaticMathField className="text-end">{` = -\\frac{4}{3}x^{-\\frac{4}{3} - \\frac{3}{3}} `}</StaticMathField><br />
             <StaticMathField className="text-end">{`= -\\frac{4}{3}x^{-\\frac{7}{3}}`}</StaticMathField>
             <StaticMathField className="text-end">{`= -\\frac{4}{3\\sqrt[3]{x^7}}`}</StaticMathField>
