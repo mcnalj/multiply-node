@@ -645,6 +645,39 @@ recordRoutes.route("/listClasses").post(async function (req, response) {
   }
 });
 
+recordRoutes.route("/derivativesSkillsCompleted").post(async function (req, response) {
+  const user = req.session?.passport?.user?.username;
+  if (!user) {
+    response.json({completedSkillsArray: null})
+    return
+  }
+  let query = { username: user };
+  let options = {projection: { progress: 1 }};
+
+  try {
+    let completedSkillsArrayDerivatives = [];
+    let results = await dbo.client.db("employees")
+      .collection("userData")
+      .findOne(query, options)
+    if (results.progress.calculus) {
+      if (results.progress.calculus.derivatives) {
+        if (results.progress.calculus.derivatives.skillData) {
+          results.progress.calculus.derivatives.skillData.forEach(element => {
+            if (!completedSkillsArrayDerivatives.includes(element.skill)) {
+              completedSkillsArrayDerivatives.push(element.skill);
+            }
+          })
+        }
+      }
+    }  
+    response.json({ completedSkillsArrayDerivatives: completedSkillsArrayDerivatives });
+
+  } catch(error) {
+    console.error("Error fetching derivatives skills:", error);
+    response.json({ completedSkillsArrayDerivatives: null })
+  }
+});
+
 recordRoutes.route("/skillsCompleted").post(async function (req, response) {
   const user = req.session?.passport?.user?.username;
   if (!user) {

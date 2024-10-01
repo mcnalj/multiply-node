@@ -36,6 +36,9 @@ import Exponents2 from './components/calculus/calculus.component.exponents2';
 import ExponentsVariety from './components/calculus/calculus.component.exponentsVariety';
 import Derivatives from './components/calculus/calculus.component.derivatives';
 import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
+
+import PowerRuleIntegerExponentsTopics from './components/calculus/powerRuleIntegerExponentsTopics.component.calculus.js';
+
 import Markdown from './components/calculus/calculus.component.markdown';
 
 import DerivativeRules from './components/flashcards/derivativeRules.component.flashcards';
@@ -207,6 +210,14 @@ function App() {
                 element={
                   <Protected isSignedIn={loggedIn}>
                     <DerivativesTopics username={username}/>
+                  </Protected>
+                }
+          />
+
+          <Route path="/powerRuleIntegerExponentsTopics"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <PowerRuleIntegerExponentsTopics username={username}/>
                   </Protected>
                 }
           />

@@ -257,6 +257,48 @@ usersRoutes.route("/getProgress/summerPrep/:topic").post(checkAuthenticated, asy
   }
 });
 
+usersRoutes.route("/getProgress/calculus/:topic").post(checkAuthenticated, async function (req, response) {
+  const username = req.body.username;
+  const { topic } = req.params;
+  const query = { username: username };
+  const projection = {
+    _id: false,
+    username: true,
+    progress: {
+      $cond: {
+        if: { $ifNull: ['$progress', false] },
+        then: '$progress',
+        else: '$$REMOVE'
+      }
+    }
+  };
+
+  try {
+    let topicData = {};
+    const results = await dbo.client.db("employees")
+      .collection("userData")
+      .findOne(query, projection);
+
+    if (results?.progress?.calculus?.[topic]?.skillData) {
+      const unfilteredData = results.progress.calculus[topic].skillData;
+
+      // Loop through the skill data and categorize them by skill name
+      unfilteredData.forEach(item => {
+        if (item?.skill) {
+          if (!topicData[item.skill]) {
+            topicData[item.skill] = []; // Create an array for the skill if it doesn't exist
+          }
+          topicData[item.skill].push(item); // Add the item to the appropriate skill array
+        }
+      });
+    }
+    response.json(topicData);
+  } catch (error) {
+    console.error("Error fetching progress:", error);
+    response.status(500).json({ error: "Error fetching progress" });
+  }
+});
+
 
 
 // function getProgressData(results, unitName, skillsArray) {

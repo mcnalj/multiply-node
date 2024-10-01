@@ -116,6 +116,10 @@ export default function DerivativesTopics() {
                         <Button variant={backgroundColors.powerRuleMix} className="m-2">Power Rule Mix</Button>
                     </NavLink>
                     <br />
+                    <NavLink to="/powerRuleIntegerExponentsTopics" >
+                        <Button variant="primary" className="m-2">Power Rule with Integer Exponents</Button>
+                    </NavLink>
+                    <br />
                     <NavLink to="/calculus" >
                         <Button variant="success" className="m-2">Back to Calculus</Button>
                     </NavLink>
