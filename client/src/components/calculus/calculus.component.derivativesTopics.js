@@ -4,6 +4,9 @@ import { Button } from 'react-bootstrap';
 import { config} from '../constants';
 var url = config.url.API_URL;
 
+// This is deprecated. It has been replaced by powerRuleSubtopics and powerRuleSkills.
+// I can delete it after the badge system on pwerRuleSubtopics is working.
+
 export default function DerivativesTopics() {
     let backgroundColorObject = {
         simplePowerRule: "info",
@@ -24,6 +27,7 @@ export default function DerivativesTopics() {
     useEffect(() => {
         // Why doesn't this work if a I delete setBackgroundColors
        // seems like this is a promise and its working once it's resolved?
+       
         let returnObj = fetchSkillsArray(backgroundColorObject);
         console.log(returnObj);
         setBackgroundColors(returnObj);
@@ -118,6 +122,10 @@ export default function DerivativesTopics() {
                     <br />
                     <NavLink to="/powerRuleIntegerExponentsTopics" >
                         <Button variant="primary" className="m-2">Power Rule with Integer Exponents</Button>
+                    </NavLink>
+                    <br />
+                    <NavLink to="/powerRuleSubtopics" >
+                        <Button variant="primary" className="m-2">Power Rule Subtopics</Button>
                     </NavLink>
                     <br />
                     <NavLink to="/calculus" >

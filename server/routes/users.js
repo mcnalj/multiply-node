@@ -215,6 +215,8 @@ usersRoutes.route("/getProgress/summerPrep/functions/plottingPoints").post(check
   }
 });
 
+// These next two routes are the same, but one is for summerPrep and the other is for calculus
+// Have chatGPT explain how to make them dynamic
 usersRoutes.route("/getProgress/summerPrep/:topic").post(checkAuthenticated, async function (req, response) {
   const username = req.body.username;
   const { topic } = req.params;
@@ -298,28 +300,6 @@ usersRoutes.route("/getProgress/calculus/:topic").post(checkAuthenticated, async
     response.status(500).json({ error: "Error fetching progress" });
   }
 });
-
-
-
-// function getProgressData(results, unitName, skillsArray) {
-//   let skillData = [];
-//   const variables = [...myArray];
-//   if (results.progress.summerPrep) {
-//     if (results.progress.summerPrep[unitName]) {
-//       if (results.progress.summerPrep[unitName].skillData) {
-//         skillData = results.progress.summerPrep[skillName].skillData;
-//         for (let i = 0; i < skillData.length; i++) {
-//           for (let j = 0; j < skillsArray.length; j++) {
-//             if (skillData[i]?.skill === skillsArray[j]) {
-//               skillData.push(skillData[i]);
-//             }
-//           }
-//       }
-//     }
-//   }
-//   return skillData;
-// }
-
 
 
 usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req, response) {

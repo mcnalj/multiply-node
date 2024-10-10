@@ -26,7 +26,7 @@ export default function Calculus({username}) {
                     <Button type="button" variant="primary" size="lg">Limits</Button>
                 </NavLink>
                 <br /><br />                 */}
-                <NavLink to="/derivativesTopics">
+                <NavLink to="/powerRuleTopics">
                     <Button type="button" variant="primary" size="lg">Derivatives</Button>
                 </NavLink>
                 <br /><br />

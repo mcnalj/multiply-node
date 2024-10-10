@@ -37,7 +37,8 @@ import ExponentsVariety from './components/calculus/calculus.component.exponents
 import Derivatives from './components/calculus/calculus.component.derivatives';
 import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
 
-import PowerRuleIntegerExponentsTopics from './components/calculus/powerRuleIntegerExponentsTopics.component.calculus.js';
+import PowerRuleTopics from './components/calculus/calculus.component.powerRuleTopics.js';
+import PowerRuleSkills from './components/calculus/calculus.component.powerRuleSkills.js';
 
 import Markdown from './components/calculus/calculus.component.markdown';
 
@@ -214,10 +215,18 @@ function App() {
                 }
           />
 
-          <Route path="/powerRuleIntegerExponentsTopics"
+          <Route path="/powerRuleTopics"
                 element={
                   <Protected isSignedIn={loggedIn}>
-                    <PowerRuleIntegerExponentsTopics username={username}/>
+                    <PowerRuleTopics username={username}/>
+                  </Protected>
+                }
+          />
+
+          <Route path="/powerRuleSkills/:skill"
+                element={
+                  <Protected isSignedIn={loggedIn}>
+                    <PowerRuleSkills username={username}/>
                   </Protected>
                 }
           />

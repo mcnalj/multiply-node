@@ -69,22 +69,41 @@ export const fetchStatusObject = async (url, username, skillList, setButtonStatu
             body: JSON.stringify({username: username})
         });
         const data = await response.json();
+        console.log(data);
 
         let quizStatus = {};
-
-        if (data) {
-            Object.keys(data).forEach(skill => {
-                if (data[skill]?.length > 0) {
-                    let tempStatus = "inProgress";
-                    for (let i = 0; i < data[skill].length; i++) {
-                        if (data[skill][i].sessionData?.metStandard) {
-                            tempStatus = "metStandard";
-                            break; // Stop checking further if the standard is met
+        if (section === "summerPrep") {
+            if (data) {
+                Object.keys(data).forEach(skill => {
+                    console.log(skill);
+                    if (data[skill]?.length > 0) {
+                        let tempStatus = "inProgress";
+                        for (let i = 0; i < data[skill].length; i++) {
+                            if (data[skill][i].sessionData?.metStandard) {
+                                tempStatus = "metStandard";
+                                break; // Stop checking further if the standard is met
+                            }
                         }
+                        quizStatus[skill] = tempStatus;
                     }
-                    quizStatus[skill] = tempStatus;
-                }
-            });
+                });
+            }
+        } else {
+            if (data) {
+                Object.keys(data).forEach(skill => {
+                    console.log(skill);
+                    if (data[skill]?.length > 0) {
+                        let tempStatus = "inProgress";
+                        for (let i = 0; i < data[skill].length; i++) {
+                            if (data[skill][i].sessionsData?.metStandard) {
+                                tempStatus = "metStandard";
+                                break; // Stop checking further if the standard is met
+                            }
+                        }
+                        quizStatus[skill] = tempStatus;
+                    }
+                });
+            }
         }
         const allSkillsMetStandard = skillList.every(skill => quizStatus[skill] === 'metStandard');
         if (allSkillsMetStandard) {
