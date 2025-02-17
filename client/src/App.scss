@@ -59,6 +59,20 @@ $purpleBase: #44016C;
 // $paleLimeBackground: #A5FEAD;
 $paleLimeBackground: #38AD47;
 
+
+$niceLime: #58CC02;
+$lightLime: #89E219;
+$slateBlack: #4B4B4B;
+$goldenYellow: #FFC800;
+$orangeOrange: #FF9600;
+$softPurple: #CE82ff;
+
+// text colors
+$darkerGray: #333333;
+$darkGray: #444444;
+$gray: #555555;
+$lightGray: #666666;
+$charcoal: #2C2C2C;
 // kinda close to bootstrap defaults
 // $primary: #00348; // dark blue
 // $secondary: #D56C33; // orange
@@ -69,6 +83,10 @@ $paleLimeBackground: #38AD47;
 // $light: #D2B278;  // sand tan
 // $dark: black;
 // $white: white;
+:root {
+  --golden-yellow: #{$goldenYellow};
+}
+
 
 .App {
   // text-align: center;
@@ -93,8 +111,8 @@ $paleLimeBackground: #38AD47;
 .appContent {
   background: #A5FEAD !important;
   min-height: 100vh;
-  font-weight: 400;
-  font-family: 'Fira Sans', sans-serif;
+  // font-weight: 400;
+  // font-family: 'Fira Sans', sans-serif;
 }
 
 // #questionArea {

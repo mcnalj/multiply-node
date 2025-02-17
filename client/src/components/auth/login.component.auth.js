@@ -5,7 +5,8 @@ import './styles.component.auth.scss';
 import { config } from '../constants.js';
 var url = config.url.API_URL;
 
-export default function Login({setCookie, setUsername})  {
+// export default function Login({setCookie, setUsername})  {
+export default function Login()  {
   const [form, setForm] = useState({
     username: "",
     password: "",
@@ -40,8 +41,9 @@ export default function Login({setCookie, setUsername})  {
     const answer = await response.json();
     setForm({ username: "", password: ""});
     if (answer.success) {
-      setCookie('username', answer.username);
-      setUsername(answer.username);
+      // depracated by login with google
+      // setCookie('username', answer.username);
+      // setUsername(answer.username);
       navigate("/success");
     } else {
       navigate("/");
@@ -72,8 +74,9 @@ export default function Login({setCookie, setUsername})  {
     setForm({ username: "", password: ""});
 
     if (answer.success) {
-      setCookie('username', answer.username);
-      setUsername(answer.username);
+      //depracated by login with google
+      // setCookie('username', answer.username);
+      // setUsername(answer.username);
       navigate("/success");
     } else {
       navigate("/");

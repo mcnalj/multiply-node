@@ -1,62 +1,100 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import { Routes, Route, useNavigate, NavLink } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import Image from 'react-bootstrap/Image';
+import Dropdown from 'react-bootstrap/Dropdown';
 import './styles.component.navbar.scss';
+import { config} from '../constants';
 
-// export default function Navbar1() {
-//     return (
-//         <div>
-//             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-//                 <div className="container-fluid">
-//                     <a className="navbar-brand" href="#">Navbar</a>
-//                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-//                     <span className="navbar-toggler-icon"></span>
-//                     </button>
-//                     <div className="collapse navbar-collapse" id="navbarNav">
-//                     <ul className="navbar-nav">
-//                         <li className="nav-item">
-//                         <NavLink to="/categories" className="nav-link active" aria-current="page" href="#">Home</NavLink>
-//                         </li>
-//                         <li className="nav-item">
-//                             <a className="nav-link" href="#">Math</a>
-//                         </li>
-//                         <li className="nav-item">
-//                             <a className="nav-link" href="#">Blog</a>
-//                         </li>
-//                         <li className="nav-item">
-//                             <a className="nav-link" href="/logout">Logout</a>
-//                         </li>                        
-//                     </ul>
-//                     </div>
-//                 </div>
-//             </nav>
-//         </div>
+var url = config.url.API_URL;
+const defaultAvatar = "https://via.placeholder.com/40?text=👤";
 
-//     );
-// }
+export default function Navigation({isAuthenticated, username, avatarUrl}) {
+  const navigate = useNavigate();
+  console.log("username in navbar: " + username);
 
-export default function Navigation({username, loggedIn}) {
-    return (
-        <Navbar bg="dark" expand="sm" className="custom-navbar">
+  const profileImage = avatarUrl || defaultAvatar;
+  
+  return (
+      <Navbar bg="dark" expand="sm" className="custom-navbar">
         <Container>
-          <Navbar.Brand className="nav-text" href="/">STEM Circus</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Brand className="nav-text me-3" href="/calculusHome">STEM Circus</Navbar.Brand>
+          <Dropdown className="d-sm-none">
+            <Dropdown.Toggle
+              variant="link"
+              id="dropdown-user"
+              className="border-0 text-decoration-none text-light p-0 d-flex align-items-center"
+            >
+              <Image
+                src={profileImage}
+                alt="Avatar"
+                width={40}
+                height={40}
+                roundedCircle
+                className="me-1"
+              />
+              {/* <span className="caret" style={{ fontSize: "1rem" }}>▼</span> */}
+            </Dropdown.Toggle>
+            <Dropdown.Menu align="end">
+              {isAuthenticated ? (
+                <>
+                  <Dropdown.Item href="/userProgress">{isAuthenticated ? "Progress" : ""}</Dropdown.Item>
+                  <Dropdown.Item href="/manageClasses">{isAuthenticated ? "Manage Classes" : ""}</Dropdown.Item>
+                  <Dropdown.Item onClick={() => navigate('/updateProfile')}>Update Profile</Dropdown.Item>
+                  <Dropdown.Item href="/privacy">Privacy Policy</Dropdown.Item>
+                  <Dropdown.Item href="/termsofservice">Terms of Service</Dropdown.Item>
+                  <Dropdown.Item href="/logout">Logout</Dropdown.Item>
+                </>
+              ) : (
+                <Dropdown.Item href="/login">Sign-in</Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          </Dropdown>
+
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link className="nav-text" href="/calculus">Calculus</Nav.Link>
-              <Nav.Link className="nav-text" href="/summerPrepTopics">Summer Prep</Nav.Link>
+            <Nav className="me-auto d-flex align-items-center">
+              <NavLink className="nav-text mx-3 d-flex align-items-center" to="/calculus">Calculus</NavLink>
+              <NavLink className="nav-text mx-3 d-flex align-items-center" to="/summerPrepTopics">Summer Prep</NavLink>
               {/* <Nav.Link className="nav-text" href="/categories">Trivia</Nav.Link>
               <Nav.Link className="nav-text" href="/multiply">Multiply</Nav.Link> */}
-              
             </Nav>
-            <Nav>
-              <Nav.Link className="nav-text" href="/manageClasses">{username}</Nav.Link>
-              <Nav.Link className="nav-text" href="/userProgress">{loggedIn ? "Progress" : ""}</Nav.Link>
-              <Nav.Link className="nav-text" href={loggedIn ? "/logout" : "/login"}>{loggedIn ? "Logout" : "Login" }</Nav.Link>
-            </Nav>
+            <div className="d-none d-sm-flex align-items-center">
+              <Image
+                src={profileImage}
+                width={40}
+                height={40}
+                roundedCircle
+                className="me-2 cursor-pointer"
+                onClick={() => isAuthenticated && navigate('/updateProfile')}
+              />
+              {isAuthenticated ? (
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      variant="link"
+                      id="dropdown-user"
+                      className="border-0 text-decoration-none text-light p-0"
+                      style={{ fontSize: "0.9rem" }}
+                    >
+                      {username}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu align="end">
+                      <Dropdown.Item href="/userProgress">{isAuthenticated ? "Progress" : ""}</Dropdown.Item>
+                      <Dropdown.Item href="/manageClasses">{isAuthenticated ? "Manage Classes" : ""}</Dropdown.Item>
+                      <Dropdown.Item onClick={() => navigate('/updateProfile')}>Update Profile</Dropdown.Item>
+                      <Dropdown.Item href="/privacy">Privacy Policy</Dropdown.Item>
+                      <Dropdown.Item href="/termsofservice">Terms of Service</Dropdown.Item>
+                      <Dropdown.Item href="/logout">Logout</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+              ): (
+                <Nav.Link href="/login" className="text-light">Sign-in</Nav.Link>
+              )}
+            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      );
+    );
 }

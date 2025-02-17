@@ -28,4 +28,36 @@ router.get('/markdownService', async function(req, res, next) {
   }
 })
 
+router.get('/markdownPrivacyPolicy', async function(req, res, next) {
+  try {
+    const markdownFilePath = path.join(__dirname, '../public/markdown/privacy_policy.md');
+    const data = await readFile(markdownFilePath, 'utf8')
+    res.setHeader('Content-Type', 'text/markdown');
+    res.send(data);
+  } catch (error) {
+    console.error('Error reading markdown file:', error);
+    if (error.code === 'ENOENT') {
+      res.status(404).send('Markdown file not found.')  
+    } else {
+      res.status(500).send('An error occurred while reading the markdown file.')
+    }
+  }
+})
+
+router.get('/markdownTermsOfService', async function(req, res, next) {
+  try {
+    const markdownFilePath = path.join(__dirname, '../public/markdown/terms_of_service.md');
+    const data = await readFile(markdownFilePath, 'utf8')
+    res.setHeader('Content-Type', 'text/markdown');
+    res.send(data);
+  } catch (error) {
+    console.error('Error reading markdown file:', error);
+    if (error.code === 'ENOENT') {
+      res.status(404).send('Markdown file not found.')  
+    } else {
+      res.status(500).send('An error occurred while reading the markdown file.')
+    }
+  }
+})
+
 module.exports = router;

@@ -13,8 +13,19 @@ const GoogleStrategy = require('passport-google-oidc');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
-
 require('dotenv').config({path: '../config.env'});
+
+const GOOGLE_CLIENT_ID = 
+  process.env.NODE_ENV === "development"
+  ? process.env.GOOGLE_CLIENT_ID_DEV
+  : process.env.GOOGLE_CLIENT_ID_PROD;
+console.log(process.env.NODE_ENV);
+
+// got of these are needed to initialize the 0Auth2Client on the backend
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+
+
 
 // const cors = require('cors');
 
@@ -26,14 +37,25 @@ require('dotenv').config({path: '../config.env'});
 //   credentials: true
 // }));
 
+const handleDatabaseError = (operation, error) => {
+  console.error(`Database error during ${operation}:`, error.message);
+  return { success: false, message: `An error occurred while ${operation}. Please try again.`};
+}
+
+const handleMongoError = (error) => {
+  if (error.code === 11000) {
+    return "Dublicate key error. The email or username already exists.";
+  }
+  return "An unexpected database error occurred.";
+}
 
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'my_secret_key',
-};
+// const jwtOptions = {
+//   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+//   secretOrKey: 'my_secret_key',
+// };
 
 checkAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) { return next()}
@@ -107,6 +129,230 @@ recordRoutes.route('/add').get(checkAuthenticated, async function(req, response)
     var rough = dbo.client.db("calculus").collection("units").findOne({unitName: "derivatives"});
     response.json(rough);
 });
+
+
+// This is the backend route to Check Authentication based on the cookie set below.
+// Backend route to check if the user is authenticated
+recordRoutes.route('/checkAuth').get(async function(req, res) {
+  try {
+      const token = req.cookies.session_token;
+      if (!token) {
+          return res.status(401).json({ authenticated: false });
+      }
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // Optionally, you can return user data here
+      res.status(200).json({ authenticated: true, userId: decoded.userId });
+  } catch (err) {
+      res.status(401).json({ authenticated: false });
+  }
+});
+
+
+// These functions are the beginning of the login with Google process.
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new Error("Invalid email format.");
+  }
+};
+
+const isUsernameAvailable = async (username) => {
+  try {
+    const user = await dbo.client.db("theCircus")
+      .collection('ccUsers')
+      .findOne({ username });
+    return user === null;
+  } catch (err) {
+    console.error('Error checking username availability:', err);
+    throw new Error("Database error while checking username availability.");
+  }
+
+};
+
+const generateUsername = (email) => {
+  return email.split('@')[0].replace('.', '_');
+};
+
+const createUniqueUsername = async (email) => {
+  try {
+    let username = generateUsername(email);
+    let available = await isUsernameAvailable(username); 
+
+    let count = 0
+    while (!available) {
+      count++
+      username = username + count;
+      console.log("username in loop: " + username);
+      available = await isUsernameAvailable(username);
+    }
+    return username;
+  } catch {
+    console.error("Error creating unique username:", err);
+    throw new Error("Failed to generate a unique username.");
+  }
+};
+
+const findOrCreateUser = async (googlePayload, providerInfo) => {
+  // My MongoDB has to be configured as part of a replica set for this to work
+  const session = dbo.client.startSession();
+  session.startTransaction();
+
+  try {
+    const { sub: googleId, email, given_name, family_name, name, picture: avatar } = googlePayload;
+    const provider = providerInfo.provider;
+    const providerId = providerInfo.providerId;
+    console.log("provider: " + provider);
+    console.log("providerId: " + providerId);
+    let user = null;
+
+    if (provider && providerId) {
+    user = await dbo.client.db("theCircus")
+        .collection("ccUsers")
+        .findOne({
+          "authProviders.provider": provider,
+          "authProviders.providerId": providerId,
+         });
+    }
+    
+    if (!user) {
+      console.log("There is no user");
+      let username = await createUniqueUsername(email);
+
+      // Create a new user if none exists
+      // user =  {
+      //   _id: googleId,
+      //   email,
+      //   googleId,
+      //   password: null,
+      //   username: username,
+      //   given_name,
+      //   family_name,
+      //   name,
+      //   avatar,
+      //   createdAt: new Date(),
+      //   lastLogin: new Date(),
+      //   roles: {
+      //     student: true,
+      //     teacher: false,
+      //     schoolAdmin: false,
+      //     siteAtdmin: false,
+      //   },
+      //   classMemberships: [],
+      //   classOwnerships: [],
+      //   status: {
+      //     tokens: 0,
+      //     tickets: 0,
+      //   }
+      // }
+      user =  {
+        _id: new ObjectId().toString(),
+        email,
+        password: null,
+        username: username,
+        given_name,
+        family_name,
+        name,
+        authProviders: [
+          {
+            provider: provider,
+            providerId: providerId,
+          },
+        ],
+        avatar,
+        createdAt: new Date(),
+        lastLogin: new Date(),
+        roles: {
+          student: true,
+          teacher: false,
+          schoolAdmin: false,
+          siteAtdmin: false,
+        },
+        classMemberships: [],
+        classOwnerships: [],
+        status: {
+          tokens: 0,
+          tickets: 0,
+        }
+      }
+      await dbo.client.db("theCircus").collection("ccUsers").insertOne(user, { session });
+      console.log('New user created:', user);  
+    } else {
+      console.log("There is a user.")
+      // Update last login timestamp
+      await dbo.client.db("theCircus").collection("ccUsers").updateOne(
+        { 
+          "authProviders.provider": "google",
+          "authProviders.providerId": googleId
+         },
+        { $set: { lastLogin: new Date() } },
+        { session }
+      );
+      // we should probably also keep a login count here
+    }
+
+    await session.commitTransaction();
+    return user;
+  } catch (err) {
+    await session.abortTransaction();
+    console.error("Database Error in findOrCreateUser:", err.message);
+    throw new Error("Unable to process user login. Please try again.");
+  } finally {
+    session.endSession();
+  }
+};
+
+
+recordRoutes.route('/googleLogin').post(async function(req, res) {  
+    const { token } = req.body;
+    console.dir(token);
+  
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        // audience: process.env.GOOGLE_CLIENT_ID,
+        audience: GOOGLE_CLIENT_ID,
+      });
+  
+      const payload = ticket.getPayload();
+      console.log('User Payload:', payload);
+
+      try {
+        validateEmail(payload.email);
+        const user = await findOrCreateUser(payload, {provider: "google", providerId: payload.sub});
+        console.log("This is user after findOrCreateUser in records/googleLogin . . .");
+        console.dir(user);
+        // Generate JWT token for the user
+        // const sessionToken = jwt.sign(
+        //   { userId: payload.sub},
+        //   process.env.JWT_SECRET,
+        //   { expiresIn: '1h'}
+        // );
+        const sessionToken = jwt.sign(
+          { userId: user._id},
+          process.env.JWT_SECRET,
+          { expiresIn: '1h'}
+        );
+
+        // set the token in an HTTP-only, secure cookie
+        res.cookie('session_token', sessionToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'Strict',
+          maxAge: 3600000,
+        })
+
+        res.status(200).json({ success: true, message: 'Logged in successfully ', user: user});
+      } catch (err) {
+        console.error("User processing error:", err.message);
+        res.status(400).json({ success: false, message: err.message });
+      }
+    } catch (err) {
+      console.error("Token verification error:", err.message);
+      res.status(500).json({ success: false, message: "Internal server error during login." });
+    }
+});
+
+
 
 recordRoutes.route("/navLogout").post( checkAuthenticated, function(req, res) {
   try {
@@ -201,7 +447,8 @@ recordRoutes.route('/oauth2/redirect/google').get(passport.authenticate('google'
 
 
 passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
+  // clientID: process.env.GOOGLE_CLIENT_ID,
+  clientID: GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   // callbackURL: "http://localhost:5000/oauth2/redirect/google"
   callbackURL: "/oauth2/redirect/google"
@@ -476,37 +723,80 @@ recordRoutes.route('/metStandard/naturalExponentialLog').post(checkAuthenticated
   res.send({msg:msg, success: success});
 });
 
-recordRoutes.route('/metStandard/integration').post(checkAuthenticated, async function(req, res) {
-  const sessionData = req.body;
+// recordRoutes.route('/metStandard/integration').post(checkAuthenticated, async function(req, res) {
+//   const sessionData = req.body;
+//   let msg = '';
+//   let success = false;
+//   try {
+//     let updateSuccess = await dbo.client.db("employees")
+//     .collection("userData")
+//     .updateOne(
+//       {username: sessionData.userData.username},
+//       {
+//         $inc:{
+//           totalQuestionsAttempted: sessionData.userData.questionsAttempted,
+//           totalQuestionsCorrect: sessionData.userData.questionsCorrect
+//         },
+//         $addToSet: { "progress.calculus.integration.skillData":
+//                       sessionData.progress.calculus.integration.skillData
+//                     } 
+//       },
+//       {upsert: true}
+//     );
+//     if (updateSuccess.modifiedCount == 1) {
+//       msg ='Data was added to the progress array.';
+//     } else {
+//       msg = 'No data was added to the progress array';
+//     }
+//     success = true;
+//   } catch {
+//     msg = 'Error on attempt to updateOne';
+//   }
+//   res.send({msg:msg, success: success});
+// });
+
+
+// const action = {
+//   username:"mcnalj",
+//   actionType: "skillCompleted",
+//   timeStamp: new Date(),
+//   details: {
+//     topic: "indefiniteIntegralsSingleTerm",
+//     metStandard: true,
+//     questionsAttempted: 12,
+//     questionsCorrect: 10,
+//     questionsIncorrect: 2,
+//     questionsStreak: 5,
+//     datetimeStarted: new Date(),
+//     totalTime: 11700000,
+//   }
+// }
+recordRoutes.route('/metStandard/integration').post(async function(req, res) {
+  console.log("recording Integration Progress");
+  const action = req.body;
   let msg = '';
   let success = false;
   try {
-    let updateSuccess = await dbo.client.db("employees")
-    .collection("userData")
-    .updateOne(
-      {username: sessionData.userData.username},
-      {
-        $inc:{
-          totalQuestionsAttempted: sessionData.userData.questionsAttempted,
-          totalQuestionsCorrect: sessionData.userData.questionsCorrect
-        },
-        $addToSet: { "progress.calculus.integration.skillData":
-                      sessionData.progress.calculus.integration.skillData
-                    } 
-      },
-      {upsert: true}
-    );
-    if (updateSuccess.modifiedCount == 1) {
-      msg ='Data was added to the progress array.';
-    } else {
-      msg = 'No data was added to the progress array';
-    }
-    success = true;
+    const insertAction = await dbo.client.db("theCircus")
+      .collection("ccUserActions")
+      .insertOne(action);
+    
+    // console.info("Action successfully recorded for user:", action.username);
+    console.info("Action successfully recorded for user:", action.userId);
+    res.status(201).send({
+      success: true,
+      msg: "Action recorded successfully.",
+      data: insertAction.insertedId,
+    });
   } catch {
-    msg = 'Error on attempt to updateOne';
+    console.error("Database Insertion Error:", err.message);
+    res.status(500).send({
+      success: false,
+      msg: "Failed to record action. Please try again later."
+    });
   }
-  res.send({msg:msg, success: success});
 });
+
 
 recordRoutes.route('/metStandard/summerPrep').post(checkAuthenticated, async function(req, res) {
   const sessionData = req.body;

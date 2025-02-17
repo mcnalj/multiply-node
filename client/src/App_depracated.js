@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { config} from './components/constants';
+import React, { useEffect } from 'react';
+
+import { useState } from "react";
 import { useCookies } from 'react-cookie';
 import './App.scss';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Protected from './components/Protected';
 import Navigation from "./components/navbar/navbar.component.navbar";
 import Splash from './components/splash.component.js';
@@ -11,8 +12,6 @@ import Login from './components/auth/login.component.auth';
 import Register from './components/auth/register.component.auth';
 import LogOut from './components/auth/logout.component.auth';
 import LoginWithGoogle from './components/auth/loginWithGoogle.component.auth';
-
-import CalculusHome from './components/calculus/calculus.component.calculusHome.js';
 
 import TutorialTopics from './components/calculus/calculus.component.tutorialTopics.js';
 import QuizCategories from './components/quiz/quizCategories.component.quiz';
@@ -44,8 +43,6 @@ import PowerRuleTopics from './components/calculus/calculus.component.powerRuleT
 import PowerRuleSkills from './components/calculus/calculus.component.powerRuleSkills.js';
 
 import Markdown from './components/calculus/calculus.component.markdown';
-import PrivacyPolicy from './components/auth/component.auth.privacy';
-import TermsOfService from './components/auth/component.auth.termsofservice';
 
 import DerivativeRules from './components/flashcards/derivativeRules.component.flashcards';
 import FlippableCard from './components/flashcards/gptFlashcard.component.flashcards';
@@ -99,115 +96,54 @@ import EquationsOfLines from './components/summerPrep/equationsOfLines.component
 
 import LimitsGraphs from './components/limits/limitsGraphs.component.limits.js';
 
-var url = config.url.API_URL;
-
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [userId, setUserId] = useState("");
-  const [username, setUsername] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
-  
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-  useEffect(() => {
-    const fetchUserId = async () => {    
-      try {
-        const result = await fetch(`${url}/record/checkAuth`, {
-          method: 'GET',
-          credentials: 'include',
-        })
-        const answer = await result.json();
-        console.log(answer);
-        if (answer.authenticated) {
-          setIsAuthenticated(true);
-          setUserId(answer.userId);
-        } else {
-          setIsAuthenticated(false);
-          navigate("/loginWithGoogle");
-        }
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-        setIsAuthenticated(false);
-        navigate("/loginWithGoogle");
-      }
-    }
-
-    fetchUserId();
-  }, [navigate]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-        if (userId) {
-          try {
-            const response = await fetch(`${url}/users/fetchUsername?userId=${encodeURIComponent(userId)}`, {
-                method: 'GET',
-                credentials: 'include',
-            })
-            const data = await response.json();
-            console.log("This is from fetching username in App.js . . .")
-            console.log(data);
-            if (data.username) {
-                setUsername(data.username);
-                setAvatarUrl(data.avatar);
-                console.log("Just set usernanme in App.js to " + data.username )
-                setLoading(false);
-            } else {
-                // navigate("/loginWithGoogle");
-                setLoading(false);
-            }
-          } catch (error) {
-            console.error("Error checking authentication:", error);
-            // navigate("/loginWithGoogle");
-          } finally {
-            setLoading(false);
-          }
-        }
-    };
-      
-    fetchData();
-  }, [userId]);  
+  const [isSignedIn, setIsSignedIn] = useState(false)
+  const signin = () => {
+    setIsSignedIn(true)
+  }
+  const signout = () => {
+    setIsSignedIn(false)
+  }
+  const [cookies, setCookie, removeCookie] = useCookies(['cookies'])
+  const [username, setUsername] = useState(cookies.username);
+  var loggedIn = false;
+  if (username && username != 'undefined') {
+    loggedIn = true;
+  }
+  // const [username, setUsername] = useState("");
+  // const allCookies = new Cookies();
+  // var myCookie = allCookies.get('username');
+  // console.log(myCookie);
+  // setUsername(myCookie);
 
   // this is added to make login with google work
   const [userEmail, setUserEmail] = useState();
-  // if (loading) {
-  //   return <div>Loading . . . </div>
-  // }
   return (
     <div className="App text-center">
-      
-        <Navigation 
-          isAuthenticated={isAuthenticated}
-          username={username}
-          avatarUrl={avatarUrl}
-        />
+      <Navigation 
+        username={username}
+        loggedIn={loggedIn}
+      />
       <div className="appContent container-fluid m-0 p-0">
         <Routes>
           <Route exact path="/" element={<Splash />} />
           <Route path="/success" element={<Success />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/termsofservice" element={<TermsOfService />} />
-          <Route path="/calculusHome" element={<CalculusHome
-                                                  isAuthenticated={isAuthenticated}
-                                                  userId={userId}
-                                              />}
-          />
-
           <Route path="/login" element={<Login
-                                            // setIsAuthenticated={setIsAuthenticated}
-                                            // setUserId={setUserId} 
+                                            setUsername={setUsername}
+                                            setCookie={setCookie} 
                                         />} />
           <Route path="/register" element={<Register
-                                            // setUsername={setUsername}
-                                            // setCookie={setCookie} 
+                                            setUsername={setUsername}
+                                            setCookie={setCookie} 
                                           />} />
           <Route path="/logout" element={<LogOut
-                                            setIsAuthenticated={setIsAuthenticated}
-                                            setUserId={setUserId}
+                                            setUsername={setUsername}
+                                            removeCookie={removeCookie}
                                         /> } />
           
           <Route path="/categories"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isSignedIn={loggedIn}>
                     <QuizCategories />
                   </Protected>
                 }
@@ -229,331 +165,331 @@ function App() {
 
           <Route path="/multiply"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isSignedIn={loggedIn}>
                     <Multiplication />
                   </Protected>
                 }
           />
           <Route path="/calculus"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <Calculus userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <Calculus username={username}/>
                   </Protected>
                 }
           />
           <Route path="/exponentsTopics"
               element={
-                <Protected isAuthenticated={isAuthenticated}>
-                  <ExponentsTopics userId={userId}/>
+                <Protected isSignedIn={loggedIn}>
+                  <ExponentsTopics username={username}/>
                 </Protected>
               }
           />        
           <Route path="/exponents/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <Exponents userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <Exponents username={username}/>
                   </Protected>
                 }
           />
           <Route path="/exponents2/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <Exponents2 userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <Exponents2 username={username}/>
                   </Protected>
                 }
           />          
           <Route path="/exponentsVariety/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <ExponentsVariety userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <ExponentsVariety username={username}/>
                   </Protected>
                 }
           />                    
           <Route path="/derivatives/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <Derivatives userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <Derivatives username={username}/>
                   </Protected>
                 }
           />
           <Route path="/derivativesTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <DerivativesTopics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <DerivativesTopics username={username}/>
                   </Protected>
                 }
           />
 
           <Route path="/powerRuleTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <PowerRuleTopics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <PowerRuleTopics username={username}/>
                   </Protected>
                 }
           />
 
           <Route path="/powerRuleSkills/:skill"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <PowerRuleSkills userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <PowerRuleSkills username={username}/>
                   </Protected>
                 }
           />
           <Route path="/markdown"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <Markdown userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <Markdown username={username}/>
                   </Protected>
                 }
           />
           <Route path="/progressChoices"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <ProgressChoices userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <ProgressChoices username={username}/>
                   </Protected>
                 }
           />
           <Route path="/singleUsersProgress/:username"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <SingleUsersProgress userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <SingleUsersProgress username={username}/>
                   </Protected>
                 }
           />                    
           <Route path="/userProgress"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <UserProgress userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <UserProgress username={username}/>
                   </Protected>
                 }
           />
           <Route path="/classProgress"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <ClassProgress userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <ClassProgress username={username}/>
                   </Protected>
                 }
           />
         <Route path="/manageClasses"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <ManageClasses userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <ManageClasses username={username}/>
                   </Protected>
                 }
           />                    
           <Route path="/createClass"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <CreateClass userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <CreateClass username={username}/>
                   </Protected>
                 }
           />
           <Route path="/listClasses"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <ListClasses userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <ListClasses username={username}/>
                   </Protected>
                 }
           />
           <Route path="/viewClass/:classCode"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <ViewClass userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <ViewClass username={username}/>
                   </Protected>
                 }
           />
           <Route path="/createTargets"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <CreateTargets userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <CreateTargets username={username}/>
                   </Protected>
                 }
           />
           <Route path="/trigonometricTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <TrigonometricTopics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <TrigonometricTopics username={username}/>
                   </Protected>
                 }
           />          
           <Route path="/trigonometricFunctions/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <TrigonometricFunctions userId={userId} />
+                  <Protected isSignedIn={loggedIn}>
+                    <TrigonometricFunctions username={username} />
                   </Protected>
                 } 
           />                                                                                                            
           <Route path="/trigonometricDerivatives/:topic"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <TrigonometricDerivatives userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <TrigonometricDerivatives username={username} />
                     </Protected>
                   } 
           />
           <Route path="/naturalTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <NaturalTopics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <NaturalTopics username={username}/>
                   </Protected>
                 }
           />                    
           <Route path="/naturalDerivatives/:topic"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <NaturalDerivatives userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <NaturalDerivatives username={username} />
                     </Protected>
                   } 
           />
           <Route path="/integrationTopics"
                 element={
-                    <IntegrationTopicsDetails userId={userId}/>
+                    <IntegrationTopicsDetails username={username}/>
                 }
           />                    
           <Route path="/integration/:topic"
                 element={
                   
-                    <Integration userId={userId}/>
+                    <Integration username={username}/>
                   
                 }
           />                                        
           <Route path="/derivativeRules"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <DerivativeRules userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <DerivativeRules username={username} />
                     </Protected>
                   } 
           />
           <Route path="/gptFlashcard"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <FlippableCard userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <FlippableCard username={username} />
                     </Protected>
                   } 
           />
           <Route path="/gfgFlashcard"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <GFGFlippableCard userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <GFGFlippableCard username={username} />
                     </Protected>
                   } 
           /> 
           <Route path="/cardStack"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <CardStack userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <CardStack username={username} />
                     </Protected>
                   } 
           /> 
           <Route path="/cardSlide"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <CardSlide userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <CardSlide username={username} />
                     </Protected>
                   } 
           /> 
           <Route path="/quizTutorial"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                        <QuizTutorial userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                        <QuizTutorial username={username} />
                     </Protected>
                   }
           />
           <Route path="/tutorialTopics"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                        <TutorialTopics userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                        <TutorialTopics username={username} />
                     </Protected>
                   }
           />                              
           {/* <Route path="/derivativesStandards"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                        <DerivativesStandards userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                        <DerivativesStandards username={username} />
                     </Protected>
                   }
           />                               */}
           <Route path="/derivativeRulesStandards"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                        <DerivativeRulesStandards userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                        <DerivativeRulesStandards username={username} />
                     </Protected>
                   }
           />                                        
           <Route path="/standardsCategories"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                        <StandardsCategories userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                        <StandardsCategories username={username} />
                     </Protected>
                   }
           />
           <Route path="/standardsTopics/:category"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <StandardsTopics userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <StandardsTopics username={username} />
                    </Protected>
                   }
           />                                                                                                                                                                       
           <Route path="/standardsTracker/:categoryWord/:topic"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
-                      <StandardsTracker userId={userId} />
+                    <Protected isSignedIn={loggedIn}>
+                      <StandardsTracker username={username} />
                    </Protected>
                   }
           />    
           <Route path="/summerPrepTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <SummerPrepTopics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <SummerPrepTopics username={username}/>
                   </Protected>
                 }
           />
           <Route path="/multiplicationTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <MultiplicationTopics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <MultiplicationTopics username={username}/>
                   </Protected>
                 }
           />                      
           <Route path="/cubesAndSquares/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <CubesAndSquares userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <CubesAndSquares username={username}/>
                   </Protected>
                 }
           />            
           <Route path="/identifyingFunctions"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <IdentifyingFunctions userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <IdentifyingFunctions username={username}/>
                   </Protected>
                 }
           />
           <Route path="/identifyingFunctionsExtractAnswers"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <IdentifyingFunctionsExtractAnswers userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <IdentifyingFunctionsExtractAnswers username={username}/>
                   </Protected>
                 }
           />           
           <Route path="/plottingPoints/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <PlottingPoints userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <PlottingPoints username={username}/>
                   </Protected>
                 }
           />                  
 
          <Route path="/plottingPointsPolynomials"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <PlottingPointsPolynomials userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <PlottingPointsPolynomials username={username}/>
                   </Protected>
                 }
           />                                                                                                                                                                                                                                                                                                                                                     
          <Route path="/plottingPointsTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <PlottingPointsTopics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <PlottingPointsTopics username={username}/>
                   </Protected>
                 }
           />                                                                                                                                                                                                                                                                                                                                                     
@@ -561,64 +497,64 @@ function App() {
 
           <Route path="/graphingFunctions"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <GraphingFunctions userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <GraphingFunctions username={username}/>
                   </Protected>
                 }
           />
           <Route path="/factoringQuadratics/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <FactoringQuadratics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <FactoringQuadratics username={username}/>
                   </Protected>
                 }
           />
          <Route path="/factoringQuadraticsTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <FactoringQuadraticsTopics userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <FactoringQuadraticsTopics username={username}/>
                   </Protected>
                 }
           />                                                                                                                                                                                                                                                                                                                                                     
           <Route path="/exponentsSummer"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <ExponentsSummer userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <ExponentsSummer username={username}/>
                   </Protected>
                 }
           />  
           <Route path="/exponentsSummerGPT"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <ExponentsSummerGPT userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <ExponentsSummerGPT username={username}/>
                   </Protected>
                 }
           />            
           <Route path="/svgGraphs"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <SVGGraphs userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <SVGGraphs username={username}/>
                   </Protected>
                 }
           />                                                                                                                                                                             
           <Route path="/functionNotation"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <FunctionNotation userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <FunctionNotation username={username}/>
                   </Protected>
                 }
           />
           <Route path="/equationsOfLines"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <EquationsOfLines userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <EquationsOfLines username={username}/>
                   </Protected>
                 }
           />
           <Route path="/limitsGraphs"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
-                    <LimitsGraphs userId={userId}/>
+                  <Protected isSignedIn={loggedIn}>
+                    <LimitsGraphs username={username}/>
                   </Protected>
                 }
           />                                                                                                                                                       

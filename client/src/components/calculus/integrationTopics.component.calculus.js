@@ -1,10 +1,15 @@
 import React, {useEffect, useState} from "react";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { config} from '../constants';
+
+import { fetchStatusObjectDetails } from '../infrastructure/fetchStatus';
+import { fetchStatusDetails } from '../infrastructure/fetchStatus';
 var url = config.url.API_URL;
 
 export default function IntegrationTopics() {
+
+    // I think this is depracated and replaced by IntegrationTopicsDetails
     let backgroundColorObject = {
         indefiniteIntegralsSingleTerm: "info",
         indefiniteIntegralsBinomial: "info",
@@ -17,44 +22,66 @@ export default function IntegrationTopics() {
     }            
     
     const [backgroundColors, setBackgroundColors] = useState(backgroundColorObject);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate();
 
-    // I depracated this in favor of just copying what was working for derivatives
-    // useEffect(() => {
-    //     const fetchData = async (backgroundColorObject) => {
-    //         try {
-    //             const result = await fetch(`${url}/record/skillsCompleted`, {
-    //                 method: "POST",
-    //                 mode: 'cors',
-    //                 credentials: 'include',
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                 },
-    //             })
-    //             const resultData = await result.json()
-    //             const updatedBackgroundColors = { ...backgroundColorObject }
-    //             if (resultData) {  
-    //                 console.log(resultData.completedSkillsArrayIntegration); 
-    //                 for (var i = 0; i < resultData.completedSkillsArrayIntegration.length; i++) {
-    //                     if (backgroundColorObject[resultData.completedSkillsArrayIntegration[i]] == "info") {
-    //                         backgroundColorObject[resultData.completedSkillsArrayIntegration[i]] = "primary";
-    //                     }
-    //                 }
-    //             }
-    //             setBackgroundColors(updatedBackgroundColors);
-    //         } catch(error) {
-    //             console.error('Error fetching data:', error);
-    //         }
-    //     };
-    //     fetchData(backgroundColorObject);
-    // }, []);
+    useEffect(() => {
+        fetch(`${url}/record/checkAuth`, {
+            method: 'GET',
+            credentials: 'include',
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            if (data.authenticated) {
+                setIsAuthenticated(true);
+            } else {
+                setIsAuthenticated(false);
+                navigate("/loginWithGoogle");
+            }
+        })
+        .catch((error) => {
+            console.error("Error checking authentication:", error);
+            setIsAuthenticated(false);
+            navigate("/loginWithGoogle");
+        });
+    }, [navigate]);
     
     useEffect(() => {
-        let returnObj = fetchSkillsArray(backgroundColorObject);
-        setBackgroundColors(returnObj);
-    }, []);
+        if (isAuthenticated) {
+            let returnObj = fetchSkillsArray(backgroundColorObject);
+            setBackgroundColors(returnObj);
+        }
+    }, [isAuthenticated]);
+
+    // async function fetchSkillsArray(backgroundColorObject) {
+    //     const result = await fetch(`${url}/record/skillsCompleted`, {
+    //         method: "POST",
+    //         mode: 'cors',
+    //         credentials: 'include',
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //         },
+    //     })
+    //     .catch(error => {
+    //         console.error(error);
+    //         return;
+    //     });
+    //     let resultData = await result.json()
+    //     if (resultData) {
+    //         resultData.completedSkillsArrayIntegration?.forEach((skill) => {
+    //             if (backgroundColorObject[skill] == "info") {
+    //                 backgroundColorObject[skill] = "primary";
+    //             }
+    //         })
+    //         setBackgroundColors(backgroundColorObject)
+    //     }
+    //     return backgroundColorObject;
+    // }
+
 
     async function fetchSkillsArray(backgroundColorObject) {
-        const result = await fetch(`${url}/record/skillsCompleted`, {
+        const result = await fetch(`${url}/record/skillsCompletedDetails`, {
             method: "POST",
             mode: 'cors',
             credentials: 'include',
@@ -68,7 +95,7 @@ export default function IntegrationTopics() {
         });
         let resultData = await result.json()
         if (resultData) {
-            resultData.completedSkillsArrayIntegration.forEach((skill) => {
+            resultData.completedSkillsArrayIntegration?.forEach((skill) => {
                 if (backgroundColorObject[skill] == "info") {
                     backgroundColorObject[skill] = "primary";
                 }
@@ -76,6 +103,11 @@ export default function IntegrationTopics() {
             setBackgroundColors(backgroundColorObject)
         }
         return backgroundColorObject;
+    }
+    if (!isAuthenticated) {
+        return (
+            <div>Something went wrong</div>
+        );
     }
 
     return (

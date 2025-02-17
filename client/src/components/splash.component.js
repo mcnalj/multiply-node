@@ -1,42 +1,129 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
+import { GoogleLogin } from '@react-oauth/google';
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 import Button from 'react-bootstrap/Button'
+import '../App.scss';
+// import '../index.scss';
+import './splash.component.scss';
 
-export default class Splash extends Component {
-    render() {
+
+export default function Splash() {
+    
+  // these two are part of login with Google
+  const responseMessage = (response) => {
+    console.log(response);
+  };
+  const errorMessage = (error) => {
+    console.log(error);
+  };
+
+  // this is from useGoogleLogin
+  const [user, setUser] = useState([]);
+  const [profile, setProfile] = useState([]);
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: (error) => console.log('Login failed: ',error)
+  });
+
+  const logout = () => {
+    googleLogout();
+    setUser([]);
+    //setProfile([]);
+    setProfile(null);
+  };
+  const styleTitle = {
+    fontFamily: "Montserrat",
+    fontWeight: "600",
+    fontSize: '3.7rem',
+    textAlign: "left",
+    padding: "5%",
+    paddingBottom: "2%",
+    color: "var(--golden-yellow)",
+    textShadow: "2.5px 2.5px 0px #555"
+  }
+
+  const styleSubtitle = {
+    fontFamily: "Nunito",
+    fontWeight: "300",
+    textAlign: "left",
+    paddingLeft: "10%",
+    fontSize: "2rem"
+  }
+
+  const styleSubtitleGroup = {
+    paddingBottom: "0%"
+  }
+
+  const styleSVG = {
+    paddingTop: "9%",
+  }
+
+  const styleButtonGroup = {
+    paddingTop: "3%",
+    paddingBotton: "2%",
+  }
+
+  const buttonStyle = {
+    backgroundColor: "var(--golden-yellow)",
+    border: "2px solid black"
+  }
+  
         return (
-            <div className="col-12">
-                <h3 className="mt-3">Calculus Class</h3>
-                <div>
-                    <NavLink to="/login">
-                        <Button
-                            variant="primary"
-                            type="submit"
-                            id="submitBtn"
-                            size="lg"  
-                        >Login
-                        </Button>
-                    </NavLink>
-                    <br></br>
-                    <NavLink to="/register">
-                        <Button
-                            variant="primary"
-                            type="submit"
-                            id="submitBtn"
-                            size="lg"
-                        >Register
-                        </Button>
-                    </NavLink><br /><br />
+          <div id="pageBackground">
+            <div className="row">
+                <div className="col-12 col-md-8">
+                  <div>
+                    <p style={styleTitle}>Calculus Circus</p>
+                    <div className="subTitleGroup" style={styleSubtitleGroup}>
+                      <p style={styleSubtitle}>Make the computations easy.</p>
+                      <p style={styleSubtitle}>Learn the concepts deeply.</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                    {/* <NavLink to="/multiply">
-                        <button type="button" className="btn btn-lg btn-success">Practice Multiplication</button><br /><br />
-                    </NavLink>
-                    <NavLink to="/categories">
-                        <button type="button" className="btn btn-lg btn-success">Play Trivia</button>
-                    </NavLink> */}
+                <div className="col-12 col-md-4" style={styleSVG}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="30 0 370 400" width="300" height="300">
+                    {/* X and Y Axes */}
+                    <line x1="0" y1="300" x2="350" y2="300" stroke="#999" strokeWidth="2"/> {/* X-axis */}
+                    <line x1="50" y1="50" x2="50" y2="350" stroke="#999" strokeWidth="2"/> {/* Y-axis */}
+
+                    {/* Curvy Graph - Flipped and Shifted */}
+                    <path d="M 10,250 Q 60,350 170,180 Q 250,80 330,160" stroke="black" strokeWidth="5" fill="none"/>
+
+                    {/* Tangent Line near the maximum */}
+                    <line x1="110" y1="202" x2="300" y2="78" stroke="purple" strokeWidth="7"/>
+
+                    {/* Tangent Point */}
+                    <circle cx="210" cy="138" r="10" fill="purple"/>
+                  </svg>
                 </div>
             </div>
+            <div className="row d-flex justify-content-center buttonGroup" style={styleButtonGroup}>
+              <div className="col-12 d-flex justify-content-center">
+                <NavLink to="/loginWithGoogle">
+                  <Button className="px-5" id="customButton">Get Started!</Button>
+                </NavLink>
+              </div>
+            </div>
+            <div className="row p-4">
+                <div className="col-12 col-md-4">
+                  <NavLink to="/calculus">
+                    <p className="link-hover col-6 offset-3">Differentiation</p>
+                  </NavLink>
+                </div>
+                <div className="col-12 col-md-4">
+                  <NavLink to="/integrationTopics">
+                    <p className="link-hover col-5 offset-3">Integration</p>
+                  </NavLink>
+                </div>
+                <div className="col-12 col-md-4">
+                  <NavLink to="/exponentsTopics">
+                    <p className="link-hover col-5 offset-3">Exponents</p>
+                  </NavLink>
+                </div>
+            </div>
+          </div>
         );
-    }
 }

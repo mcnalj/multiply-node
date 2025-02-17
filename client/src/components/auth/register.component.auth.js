@@ -4,7 +4,8 @@ import './styles.component.auth.scss';
 import { config} from '../constants';
 var url = config.url.API_URL;
 
-export default function SignUp({setCookie, setUsername})  {
+// export default function SignUp({setCookie, setUsername})  {
+  export default function SignUp()  {
     const [form, setForm] = useState({
       firstName: "",
       lastName: "",
@@ -42,8 +43,9 @@ export default function SignUp({setCookie, setUsername})  {
       const answer = await result.json()
       if (answer.success) {
         // console.log(answer.passportData.username);
-        setCookie('username', answer.passportData.username);
-        setUsername(answer.passportData.username);
+        // depracated by login with google
+        // setCookie('username', answer.passportData.username);
+        // setUsername(answer.passportData.username);
         setForm({ firstName: "", lastName: "", email: "", username: "", password: "", classCode: ""});
         navigate("/summerPrepTopics"); // this looks for a route on the client
       } else {

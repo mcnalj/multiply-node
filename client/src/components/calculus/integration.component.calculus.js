@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, Link, NavLink, useNavigate } from "react-router-dom";
 import { ProgressBar, Button} from 'react-bootstrap';
 import { addStyles, StaticMathField } from 'react-mathquill'
 import '../../App.scss';
@@ -28,8 +28,6 @@ var url = config.url.API_URL;
 
 addStyles();
 
-const startTime = new Date();
-
 function setQuestionEngine(topicId) {
   let engineArray = questionTopics["integrals"];
   let engine = engineArray.find((engine) => engine.topicId === topicId)
@@ -41,29 +39,59 @@ function setQuestionEngine(topicId) {
   }
 }
 
-export default function Integration({username}) {
-
+export default function Integration({username, googleUser}) {
+  const startTime = useRef(new Date());
   const parameter = useParams()
+  const navigate = useNavigate();
   var initialTopic = parseInt(parameter.topic);
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    fetch(`${url}/record/checkAuth`, {
+        method: 'GET',
+        credentials: 'include',
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log(data);
+        if (data.authenticated) {
+            setIsAuthenticated(true);
+            setUserId(data.userId);
+        } else {
+            setIsAuthenticated(false);
+            navigate("/loginWithGoogle");
+        }
+    })
+    .catch((error) => {
+        console.error("Error checking authentication:", error);
+        setIsAuthenticated(false);
+        navigate("/loginWithGoogle");
+    });
+}, [navigate]);
+
   const [currentTopic, setCurrentTopic] = useState(initialTopic);
-  return (
+
+  return isAuthenticated ? (
     <>
       <Integrals
         currentTopic={currentTopic}
         setCurrentTopic={setCurrentTopic}
         questionTopics={questionTopics.integrals}
-        username={username}
+        // username={username}
+        userId={userId}
+        startTime={startTime}
       />
     </>
-  )
+  ) : null;
 }
 
-function Integrals({username, currentTopic, setCurrentTopic, questionTopics}) {
-
-  // const [absoluteValue, setAbsoluteValue] = useState(false);
+// function Integrals({username, currentTopic, setCurrentTopic, questionTopics, startTime}) {
+function Integrals({userId, currentTopic, setCurrentTopic, questionTopics, startTime}) {
+  const [errorMessage, setErrorMessage] = useState(null);
   let unit = "integrals";
-  let standard = 8;
+  let standard = 7;
   let absoluteValue = false;
   if (currentTopic === 3060 || currentTopic === 3070) {
     absoluteValue = true;
@@ -101,7 +129,7 @@ function Integrals({username, currentTopic, setCurrentTopic, questionTopics}) {
           questionsCorrect: 0,
           questionsIncorrect: 0,
           questionsStreak: 0,
-          questionsToMeet: 8,
+          questionsToMeet: 7,
           progressBar: 0,
           doneWithTopic: done,
           questionTopic: "Integrals",
@@ -128,68 +156,81 @@ function Integrals({username, currentTopic, setCurrentTopic, questionTopics}) {
         questionsIncorrect: liftedState.questionsIncorrect,
         questionsStreak: liftedState.questionsStreak,
         questionsToMeet: questionState.questionsToMeet,
-        // progressBar: Math.round((liftedState.questionsCorrect/questionState.questionsToMeet)*100),
         progressBar: liftedState.progressValue,
         doneWithTopic: done,
         questionTopic: questionState.questionTopic,
         questionPrompt: questionState.questionPrompt,
       });
   }
+
   async function done(liftedState){
-    let topicName = '';
-    const endTime = new Date()
-    const totalTime = endTime - startTime;
-    const currentTopicName = questionTopics.find((name) => name.topicId === currentTopic)
-    if (currentTopicName) {
-      topicName = currentTopicName.topicName;
-      if (topicName === "indefiniteIntegralsNaturalLog" || topicName === "indefiniteIntegralsNaturalLogBinomial") {
-        absoluteValue = true;
+    console.log("sending progress record");
+    try {
+      const endTime = new Date()
+      console.log("End Time: " + endTime);
+      const totalTime = endTime - startTime.current;
+      console.dir(startTime);
+      console.log(totalTime);
+      // Determine topic name;
+      const currentTopicObj = questionTopics.find((name) => name.topicId === currentTopic)
+      const topicName = currentTopicObj?.topicName || "errantName";
+
+      const actionDetails = {
+        topic: topicName,
+        "metStandard": true,
+        "questionsAttempted": liftedState.questionsAttempted,
+        "questionsCorrect": liftedState.questionsCorrect,
+        "questionsIncorrect": liftedState.questionsIncorrect,
+        "questionsStreak": liftedState.questionsStreak,
+        "datetimeStarted": startTime,
+        "totalTime": totalTime,
       }
-    }  else {
-      topicName = "errantName";
-    }
-    let sessionObj = {
-      "metStandard": true,
-      "questionsAttempted": liftedState.questionsAttempted,
-      "questionsCorrect": liftedState.questionsCorrect,
-      "questionsIncorrect": liftedState.questionsIncorrect,
-      "questionsStreak": liftedState.questionsStreak,
-      "datetimeStarted": startTime,
-      "totalTime": totalTime,
-    }
-    let sessionData = {
-      userData: {
-          username: username,
-          questionsAttempted: liftedState.questionsAttempted,
-          questionsCorrect: liftedState.questionsCorrect,
-      },
-      progress: {
-        calculus: {
-            integration: {
-                skillData: {
-                  skill: topicName,
-                  sessionsData: sessionObj
-                }
-            }
-        }        
+      console.log("userId before action: " + userId);
+      const action =
+      {
+        // username: username,
+        userId: userId,
+        actionType: "skillCompleted",
+        timeStamp: new Date(),
+        details: actionDetails,
+      }
+      console.log("User Id in Action before recording: " + action.userId);
+      const response = await fetch(`${url}/record/metStandard/integration`, {
+        method: "POST",
+        mode: 'cors',
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(action),
+      });
+
+      if (!response.ok) {
+        switch (response.status) {
+            case 400:
+                throw new Error("Invalid data sent to the server. Please check and try again.");
+            case 401:
+                throw new Error("You are not authorized to perform this action. Please log in again.");
+            case 500:
+                throw new Error("A server error occurred. Please try again later.");
+            default:
+                throw new Error(`Unexpected error: ${response.status} ${response.statusText}`);
+        }
+      }
+
+      const answer = await response.json();
+      console.log("Server response: ", answer);  
+    } catch(error) {
+      if (error.name === "TypeError") {
+        console.error("Newtwork error or issue with recording progress:", error);
+        setErrorMessage("We are unable to record your progress. Please check your internet connection.")
+
+      } else {
+        console.error("Error processing request:", error);
+        setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.")
       }
     }
-    // TODO - This is not saving any incorrect answers and might not have the total right.
-    const response = await fetch(`${url}/record/metStandard/integration`, {
-      method: "POST",
-      mode: 'cors',
-      credentials: 'include',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(sessionData),
-    })
-    .catch(error => {
-      window.alert(error);
-      return;
-    });
-    const answer = await response.json();
-  };
+  }
 
   return (
     <>
@@ -211,6 +252,11 @@ function Integrals({username, currentTopic, setCurrentTopic, questionTopics}) {
           />
         </div> 
       </div>
+      {errorMessage && (
+        <div className="alert alert-danger mt-3" role="alert">
+          {errorMessage}
+        </div>
+      )}
       <IntegrationAnswerForm
           questionState={questionState}  
       />

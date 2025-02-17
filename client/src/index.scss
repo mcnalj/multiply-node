@@ -1,4 +1,14 @@
-@import url('https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600,700,800');
+// @import url('https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600,700,800');
+ @import url('https://fonts.googleapis.com/css2?family=Carter+One&family=Poppins:wght@300;400;700&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;800&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Quicksand:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+
+
 * {
   box-sizing: border-box;
 }
@@ -7,8 +17,18 @@ body, html, .App, #root {
   height: 100%;
 }
 
-h1,h2,h3,h4,h5,h6,label,span {
-  // font-weight: 500;
-  font-family: 'Fira Sans', sans-serif;
-}
+// h1,h2,h3,h4,h5,h6,label,span {
+//   // font-weight: 500;
+//   font-family: 'Fira Sans', sans-serif;
+// }
+
+
+
+// h1, h3 {
+//   font-family: 'Carter One', cursive;
+// }
+
+// body, p, button, h2 {
+//   font-family: 'Poppins', sans-serif;
+// }
 

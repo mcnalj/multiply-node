@@ -1,6 +1,7 @@
 var express = require('express');
 var usersRoutes = express.Router();
 const dbo = require("../db/conn");
+const { ObjectId} = require('mongodb');
 
 checkAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) { return next()}
@@ -14,6 +15,38 @@ checkAuthenticated = (req, res, next) => {
 
 usersRoutes.route('/').get(function(req, res, next) {
    res.send('respond with a resource');
+});
+
+usersRoutes.route('/logout').post((req, res) => { 
+  res.clearCookie('session_token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite:'Strict',
+  });
+  res.status(200).json({message: "Logged out successfully"});
+});
+
+usersRoutes.route('/fetchUsername').get(async function(req, res, next) {
+  const { userId } = req.query;
+  console.log("User id is: " + userId);
+  if (!userId) {
+    return res.status(400).json({error: "User ID is required"});
+  }
+  if (!ObjectId.isValid(userId)) {
+    return res.status(400).json({ error: "Invalid user ID format"});
+  }
+  try {
+    const user = await dbo.client.db("theCircus")
+      .collection("ccUsers")
+      .findOne({_id: userId })
+      if (!user) {
+        return res.status(404).json({ error: "User not found"});
+      }
+      res.json({username: user.username, avatar:user.avatar});
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({error: "Server error"});
+  } 
 });
 
 usersRoutes.route("/userProgress").get(checkAuthenticated, async function (req, response) {
@@ -298,6 +331,139 @@ usersRoutes.route("/getProgress/calculus/:topic").post(checkAuthenticated, async
   } catch (error) {
     console.error("Error fetching progress:", error);
     response.status(500).json({ error: "Error fetching progress" });
+  }
+
+});
+
+usersRoutes.route("/getProgressDetails/calculus/:topic").post(async function (req, res) {
+  console.log("getting progress from getProgressDetails/calculus . . . .");
+  console.log(req.body);
+  const username = req.body.username;
+  const skills = req.body.skills;
+  const { topic } = req.params;
+
+  if (!username || !Array.isArray(skills) || skills.length === 0) {
+    return res.status(400).json({
+      success:false,
+      message: "Invalid request, Ensure 'username' and 'skills' are provided.",
+    });
+  }
+
+  try {
+    const pipeline = [
+      {
+        $match: {
+          username: username,
+          actionType: "skillCompleted",
+          "details.topic": { $in: skills },
+        },
+      },
+      {
+        $group: {
+          _id: "$details.topic",
+          details: { $push: "$details" },
+        },
+      },
+      {
+        $project: {
+          topic: "$_id",
+          details: 1,
+          _id: 0,
+        }
+      },
+    ];
+
+    const results = await dbo.client.db("theCircus")
+      .collection("ccUserActions")
+      .aggregate(pipeline).toArray();
+    console.log(results);
+    if (results.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No matching documents found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Documents retrieved successfully",
+      data: results,
+    });
+  } catch (error) {
+    console.error("Error querying the database:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while querying the database.",
+    });
+  }
+});
+
+usersRoutes.route("/getProgressIntegrationTopics/calculus/:topic").post(async function (req, res) {
+  console.log("getting progress from getProgressIntegrationTopics/calculus . . . .");
+  console.log(req.body);
+  // const username = req.body.username;
+  const userId = req.body.userId;
+  const skills = req.body.skills;
+  const { topic } = req.params;
+
+  // if (!username || !Array.isArray(skills) || skills.length === 0) {
+    if (!userId || !Array.isArray(skills) || skills.length === 0) {
+      console.log("not id or not array");
+    return res.status(400).json({
+      success:false,
+      message: "Invalid request, Ensure 'username' and 'skills' are provided.",
+    });
+  }
+
+  try {
+    console.log("trying fetch");
+    const pipeline = [
+      {
+        $match: {
+          // username: username,
+          userId: userId,
+          actionType: "skillCompleted",
+          "details.topic": { $in: skills },
+        },
+      },
+      {
+        $group: {
+          _id: "$details.topic",
+          details: { $push: "$details" },
+        },
+      },
+      {
+        $project: {
+          topic: "$_id",
+          details: 1,
+          _id: 0,
+        }
+      },
+    ];
+
+    const results = await dbo.client.db("theCircus")
+      .collection("ccUserActions")
+      .aggregate(pipeline).toArray();
+    console.log("got results");  
+    console.log("Results: " + results);
+    if (results.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No matching documents found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Documents retrieved successfully",
+      data: results,
+    });
+  } catch (error) {
+    console.error("Error querying the database:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while querying the database.",
+    });
   }
 });
 
@@ -667,7 +833,7 @@ usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function
   // currently the class code is hardcoded!
   const classUsers = await dbo.client.db("employees")
   .collection("users")
-  .find({'classMemberships': 'CALC23'})
+  .find({'classMemberships': {$in:['CALC24', 'CALC25']}})
   .project({'username':1, '_id': 0})
   .toArray();
   

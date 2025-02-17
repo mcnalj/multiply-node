@@ -26,10 +26,22 @@ app.use(function(req, res, next) {
   // this is required becuase it can't be * when using include.
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  // these two are to make GoogleLogin work:
+  // res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  // res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
   // This is required when credentials: include
   res.header("Access-Control-Allow-Credentials", true);
   next();
 })
+
+// added 12.23.24 ?? 
+app.options('*', cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
+
 
 app.use(cors({origin: "http://localhost:3000"}));
 app.use(cookieParser(credentials.cookieSecret));
