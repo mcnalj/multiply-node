@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { config} from './components/constants';
 import { useCookies } from 'react-cookie';
 import './App.scss';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Protected from './components/Protected';
 import Navigation from "./components/navbar/navbar.component.navbar";
 import Splash from './components/splash.component.js';
@@ -123,12 +123,12 @@ function App() {
           setUserId(answer.userId);
         } else {
           setIsAuthenticated(false);
-          navigate("/loginWithGoogle");
+          // navigate("/loginWithGoogle");
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
         setIsAuthenticated(false);
-        navigate("/loginWithGoogle");
+        // navigate("/loginWithGoogle");
       }
     }
 
@@ -167,6 +167,9 @@ function App() {
     fetchData();
   }, [userId]);  
 
+  const location = useLocation();
+  const hideNavOnRoutes = ["/", "/loginWithGoogle"];
+
   // this is added to make login with google work
   const [userEmail, setUserEmail] = useState();
   // if (loading) {
@@ -174,12 +177,13 @@ function App() {
   // }
   return (
     <div className="App text-center">
-      
+      {!hideNavOnRoutes.includes(location.pathname) && (      
         <Navigation 
           isAuthenticated={isAuthenticated}
           username={username}
           avatarUrl={avatarUrl}
         />
+      )}
       <div className="appContent container-fluid m-0 p-0">
         <Routes>
           <Route exact path="/" element={<Splash />} />
@@ -236,16 +240,12 @@ function App() {
           />
           <Route path="/calculus"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
                     <Calculus userId={userId}/>
-                  </Protected>
                 }
           />
           <Route path="/exponentsTopics"
               element={
-                <Protected isAuthenticated={isAuthenticated}>
                   <ExponentsTopics userId={userId}/>
-                </Protected>
               }
           />        
           <Route path="/exponents/:topic"
@@ -502,9 +502,7 @@ function App() {
           />    
           <Route path="/summerPrepTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
                     <SummerPrepTopics userId={userId}/>
-                  </Protected>
                 }
           />
           <Route path="/multiplicationTopics"

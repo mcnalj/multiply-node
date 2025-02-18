@@ -9,7 +9,7 @@ import { Navigate, createRoutesFromChildren} from 'react-router-dom'
 
 function Protected( {isAuthenticated, children}) {
     if (!isAuthenticated) {
-        return <Navigate to="/" replace />
+        return <Navigate to="/loginWithGoogle" replace />
     }
     return children
 }

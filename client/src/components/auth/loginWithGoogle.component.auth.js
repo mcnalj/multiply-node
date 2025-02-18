@@ -68,9 +68,32 @@ export default function LoginWithGoogle({setUserEmail}) {
         googleLogout();
     };
 
+    const styleTitle = {
+        fontFamily: "Montserrat",
+        fontWeight: "600",
+        fontSize: '4rem',
+        textAlign: "center",
+        paddingBottom: "5%",
+        color: "var(--golden-yellow)",
+        textShadow: "2.5px 2.5px 0px #555"
+      }
+
     return (
-        <div className="col-12 p-4">
-            <div>
+        <div className="col-12">
+            <div className="row">
+                <div className="col-12 d-flex justify-content-end p-5">
+                    <NavLink to="/">
+                        <Button
+                            variant="dark"
+                            type="submit"
+                            id="submitBtn"
+                            size="lg"
+                        >Home
+                        </Button>
+                    </NavLink><br /><br />
+                </div>
+            </div>
+            {/* <div>
                 <NavLink to="/login">
                     <Button
                         variant="primary"
@@ -92,14 +115,18 @@ export default function LoginWithGoogle({setUserEmail}) {
                 </NavLink><br /><br />
             </div>
             <h5>or</h5>
-            <br />
+            <br /> */}
             { status.message && (
-                <div className={`alert alert-${status.type}`} role="alert">
-                    { status.message }
+                <div className="row">
+                    <div className={`alert alert-${status.type}`} role="alert">
+                        { status.message }
+                    </div>
                 </div>
             )}
-            
-            <div>
+            <div className="row">
+                <p style={styleTitle}>Calculus Circus</p>
+            </div>
+            <div className="row">
                 <div className="d-flex justify-content-center">
                     {loading ? (
                         <div className="spinner-border" role="status">
@@ -111,11 +138,13 @@ export default function LoginWithGoogle({setUserEmail}) {
                             ? process.env.REACT_APP_GOOGLE_CLIENT_ID_DEV
                             : process.env.REACT_APP_GOOGLE_CLIENT_ID_PROD
                         }>
+                            <div style={{transform: "scale(2)", display: "inline-block", marginTop: "5%"}}>
                             <GoogleLogin 
                                 onSuccess={handleLoginSuccess}
                                 onError={handleLoginError}
                                 disabled={loading}
                             />
+                            </div>
                         </GoogleOAuthProvider>
                     )}
                 </div>                

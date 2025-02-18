@@ -10,36 +10,29 @@ export default function IntegrationTopicsDetails({username}) {
     const [userId, setUserId] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetch(`${url}/record/checkAuth`, {
-            method: 'GET',
-            credentials: 'include',
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-            if (data.authenticated) {
-                setIsAuthenticated(true);
-                setUserId(data.userId);
-            } else {
-                setIsAuthenticated(false);
-                navigate("/loginWithGoogle");
-            }
-        })
-        .catch((error) => {
-            console.error("Error checking authentication:", error);
-            setIsAuthenticated(false);
-            navigate("/loginWithGoogle");
-        });
-    }, [navigate]);
-    
     // useEffect(() => {
-    //     if (isAuthenticated) {
-    //         let returnObj = fetchSkillsArray(backgroundColorObject);
-    //         setBackgroundColors(returnObj);
-    //     }
-    // }, [isAuthenticated]);
-
+    //     fetch(`${url}/record/checkAuth`, {
+    //         method: 'GET',
+    //         credentials: 'include',
+    //     })
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //         console.log(data);
+    //         if (data.authenticated) {
+    //             setIsAuthenticated(true);
+    //             setUserId(data.userId);
+    //         } else {
+    //             setIsAuthenticated(false);
+    //             navigate("/loginWithGoogle");
+    //         }
+    //     })
+    //     .catch((error) => {
+    //         console.error("Error checking authentication:", error);
+    //         setIsAuthenticated(false);
+    //         navigate("/loginWithGoogle");
+    //     });
+    // }, [navigate]);
+    
     const topicsObjects = [
         {
             topicName: "indefiniteIntegralsSingleTerm", buttonText: "Single Term Integration", path: "/integration/3010"
