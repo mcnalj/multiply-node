@@ -5,33 +5,8 @@ import { config} from '../constants';
 
 var url = config.url.API_URL;
 
-export default function IntegrationTopicsDetails({username}) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [userId, setUserId] = useState('');
+export default function IntegrationTopicsDetails({userId}) {
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //     fetch(`${url}/record/checkAuth`, {
-    //         method: 'GET',
-    //         credentials: 'include',
-    //     })
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //         console.log(data);
-    //         if (data.authenticated) {
-    //             setIsAuthenticated(true);
-    //             setUserId(data.userId);
-    //         } else {
-    //             setIsAuthenticated(false);
-    //             navigate("/loginWithGoogle");
-    //         }
-    //     })
-    //     .catch((error) => {
-    //         console.error("Error checking authentication:", error);
-    //         setIsAuthenticated(false);
-    //         navigate("/loginWithGoogle");
-    //     });
-    // }, [navigate]);
     
     const topicsObjects = [
         {
@@ -72,7 +47,13 @@ export default function IntegrationTopicsDetails({username}) {
             <div>
                 <h1>Integration Topics</h1>
             </div>
-            <IntegrationProgressDetails userId={userId} username={username} topicsObjects={topicsObjects} section={section} unit={unit} backLink={backLink} backLinkText={backLinkText} />
+            <IntegrationProgressDetails
+                    userId={userId}
+                    topicsObjects={topicsObjects}
+                    section={section}
+                    unit={unit}
+                    backLink={backLink}
+                    backLinkText={backLinkText} />
         </>
     );
 }

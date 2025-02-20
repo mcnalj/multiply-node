@@ -15,7 +15,6 @@ export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, se
     const [incorrectIndex, setIncorrectIndex] = useState([]);
     const [matches, setMatches] = useState([]);
     const [isCompleted, setIsCompleted] = useState(false);
-    console.log(leftOptions);
     const handleLeftClick = (option, index) => {
       setCurrentLeft({option: option, index: index});
       checkMatch({option: option, index: index}, currentRight, index);
@@ -45,19 +44,18 @@ export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, se
                         metStandard: (prevState.questionsCorrect + 1) >= prevState.questionsToMeet ? true : false,
                     }));        
                     setIsFinished(true); // do we still need isFinished? bc we have quizProgress 
-                }, 2000); // this changes the JSX returned in the parent
+                }, 1500); // this changes the JSX returned in the parent
               }
           } else {
               setIncorrectIndex([left.index, right.index])
               setTimeout(()=> {
                   setIncorrectIndex([]);
-              }, 1800);
+              }, 1500);
           }
           setCurrentLeft({option: null, index: null});
           setCurrentRight({option: null, index: null});
           setClickedIndex(null);
         } else {
-          console.log("Setting clicked index: " + index);
           setClickedIndex(index);
         }
     };
@@ -101,9 +99,6 @@ export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, se
                     </div>
                 ))}
             </div>
-            <Link to="/summerPrepTopics">
-                <button type="button" className="btn btn-lg btn-success mt-2">BACK TO SUMMER TOPICS</button><br /><br />
-            </Link>
         </div>
     );
 };

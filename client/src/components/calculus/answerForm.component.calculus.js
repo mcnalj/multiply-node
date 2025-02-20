@@ -87,7 +87,6 @@ function AnswerForm(props) {
         let answerMessage = '';
         let pause = 1500;
         let answer = userObj.userAnswer.replace(/\s/g, '');
-        console.log("Actual Answer: " + answer);
         
         if (props.questionState.answerArrayLatex.includes(answer)) {
             // correct answer handling
@@ -234,25 +233,24 @@ function AnswerForm(props) {
         event.preventDefault();
 
         let stateToLift = {
-            questionsAttempted: props.questionState.questionsAttempted + 1,
-            questionsCorrect: props.questionState.questionsCorrect,
-            questionsStreak: props.questionState.questionsStreak,
-            questionsIncorrect: props.questionState.questionsIncorrect,
+            questionsAttempted: props.quizProgress.questionsAttempted + 1,
+            questionsCorrect: props.quizProgress.questionsCorrect,
+            questionsStreak: props.quizProgress.questionsStreak,
+            questionsIncorrect: props.quizProgress.questionsIncorrect,
             progressValue: 0,
         }
   
         let answerMessage = '';
         let pause = 1500;
         let answer = userObj.userAnswer.replace(/\s/g, '');
-        console.log("Actual Answer: " + answer);
         
-        if (props.questionState.answerArrayLatex.includes(answer)) {
+        if (props.questionObject.answerArrayLatex.includes(answer)) {
             // correct answer handling
             setBoxStyle({backgroundColor: "green", color:"white", borderWidth: "0px", borderColor: "gray"})
             stateToLift.questionsStreak += 1;
             stateToLift.questionsCorrect += 1;
             
-            const meetsStandard = stateToLift.questionsCorrect >= props.questionState.questionsToMeet
+            const meetsStandard = stateToLift.questionsCorrect >= props.quizProgress.questionsToMeet
             answerMessage = meetsStandard 
                 ? "Success! You met the standard. Go to the Next Topic . . ."
                 : stateToLift.questionsStreak < 4
@@ -267,18 +265,18 @@ function AnswerForm(props) {
             setBoxStyle({backgroundColor:"white", color: "red", borderWidth: "2px", borderColor: "red"})
             answerMessage = getRandomIncorrectMessage;
             
-            updateSituation({answerMessage: answerMessage, correctAnswer: props.questionState.answerArrayLatex[0]})
+            updateSituation({answerMessage: answerMessage, correctAnswer: props.questionObject.answerArrayLatex[0]})
             
             stateToLift.questionsIncorrect += 1;
             stateToLift.questionsStreak = 0
             pause = 4000;
         }
-        stateToLift.progressValue = Math.round((stateToLift.questionsCorrect/props.questionState.questionsToMeet)*100)
+        stateToLift.progressValue = Math.round((stateToLift.questionsCorrect/props.quizProgress.questionsToMeet)*100)
         // pause after grading
         setTimeout(function() {
             setBoxStyle({backgroundColor:"white", color: "black", borderWidth: "0px", borderColor: "gray"})        
-            if (stateToLift.questionsCorrect >= props.questionState.questionsToMeet) {
-                props.questionState.doneWithTopic(stateToLift);
+            if (stateToLift.questionsCorrect >= props.quizProgress.questionsToMeet) {
+                props.quizProgress.doneWithTopic(stateToLift);
                 stateToLift.questionsAttempted = 0;
                 stateToLift.questionsCorrect = 0;
                 stateToLift.questionsIncorrect = 0;
@@ -286,7 +284,7 @@ function AnswerForm(props) {
                 stateToLift.progressValue = 100;
             }
             updateSituation({answerMessage: '', userAnswer: '', correctAnswer: ''})
-            props.questionState.getNextQuestion(stateToLift);
+            props.quizProgress.getNextQuestion(stateToLift);
         }, pause) // end of setTimeout
     } // end of handleSubmit
   
@@ -301,7 +299,8 @@ function AnswerForm(props) {
           <form id="questionArea" onSubmit={handleSubmit} method="post" action="#">
             <div className="row">
               <div className="col-4 fs-2 text-end m-0 p-0">
-                  <p>∫ f'(x) = </p>
+                  {/* <p>∫ f'(x) = </p> */}
+                  <StaticMathField>{`\\int_\\quad^\\quad f(x)\\quad`}</StaticMathField>
               </div>
               <div className="col-5 m-0 p-0">
                   <EditableMathField

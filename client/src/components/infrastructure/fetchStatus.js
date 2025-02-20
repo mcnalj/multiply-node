@@ -255,9 +255,10 @@ export const fetchStatusObjectDetails = async (url, username, skillList, setButt
     }
 };
 
-export const fetchStatusIntegrationTopics = async (userId, url, username, topics, setQuizStatus, setError, section, unit) => {
+export const fetchStatusIntegrationTopics = async (userId, url, topics, setQuizStatus, setError, section, unit) => {
     // for some reason calculus has sessions data (plural) while summerPrep has sessionData (singular)
     console.log(topics);
+    console.log(userId);
     try {
         // const response = await fetch(`${url}/getProgressDetails/${section}/${unit}`, {
         const response = await fetch(`${url}/users/getProgressIntegrationTopics/calculus/integration`, {

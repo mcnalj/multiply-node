@@ -9,7 +9,6 @@ export default function Calculus({username}) {
         
     useEffect(() => {
         const sessionValue = cookies.username;
-        // console.log('Session value:' + sessionValue);
     }, [cookies]);
 
     return (

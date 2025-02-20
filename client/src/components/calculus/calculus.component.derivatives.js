@@ -232,7 +232,7 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       setTopics({topicId: unitTopics[0].topicId, topicsArray: unitTopics});
       let questionEngine = setQuestionEngine(currentTopic);
       let [questionLatex, answerLatex] = questionEngine();
-      console.log(questionLatex);
+
       questionLatex = 'f(x) = '+ questionLatex;
       setQuestionState(
         {

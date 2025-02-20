@@ -64,3 +64,56 @@ export async function recordProgress(sessionData, domain) {
         throw error;
     }
 }    
+
+export function setAction(liftedState, topicName, startTime, totalTime, userId) {
+    const actionDetails = {
+        topic: topicName,
+        "metStandard": true,
+        "questionsAttempted": liftedState.questionsAttempted,
+        "questionsCorrect": liftedState.questionsCorrect,
+        "questionsIncorrect": liftedState.questionsIncorrect,
+        "questionsStreak": liftedState.questionsStreak,
+        "datetimeStarted": startTime,
+        "totalTime": totalTime,
+    }
+    const action = {
+        userId: userId,
+        actionType: "skillCompleted",
+        timeStamp: new Date(),
+        details: actionDetails,
+    }
+    return action;
+}
+
+export async function recordAction(action) {
+    try {
+        const response = await fetch(`${url}/record/metStandard/integration`, {
+            method: "POST",
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(action),
+        });
+    
+        if (!response.ok) {
+            switch (response.status) {
+                case 400:
+                    throw new Error("Invalid data sent to the server. Please check and try again.");
+                case 401:
+                    throw new Error("You are not authorized to perform this action. Please log in again.");
+                case 500:
+                    throw new Error("A server error occurred. Please try again later.");
+                default:
+                    throw new Error(`Unexpected error: ${response.status} ${response.statusText}`);
+            }
+        }
+        const result = await response.json();
+        console.log("Here's the result of record action:" + result);
+        return result;
+    } catch(error){
+        console.error('Error recording progress:', error);
+        throw error;
+    }
+}

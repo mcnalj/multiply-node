@@ -19,7 +19,6 @@ const GOOGLE_CLIENT_ID =
   process.env.NODE_ENV === "development"
   ? process.env.GOOGLE_CLIENT_ID_DEV
   : process.env.GOOGLE_CLIENT_ID_PROD;
-console.log(process.env.NODE_ENV);
 
 // got of these are needed to initialize the 0Auth2Client on the backend
 const { OAuth2Client } = require('google-auth-library');
@@ -182,7 +181,6 @@ const createUniqueUsername = async (email) => {
     while (!available) {
       count++
       username = username + count;
-      console.log("username in loop: " + username);
       available = await isUsernameAvailable(username);
     }
     return username;
@@ -201,8 +199,6 @@ const findOrCreateUser = async (googlePayload, providerInfo) => {
     const { sub: googleId, email, given_name, family_name, name, picture: avatar } = googlePayload;
     const provider = providerInfo.provider;
     const providerId = providerInfo.providerId;
-    console.log("provider: " + provider);
-    console.log("providerId: " + providerId);
     let user = null;
 
     if (provider && providerId) {
@@ -215,7 +211,6 @@ const findOrCreateUser = async (googlePayload, providerInfo) => {
     }
     
     if (!user) {
-      console.log("There is no user");
       let username = await createUniqueUsername(email);
 
       // Create a new user if none exists
@@ -274,10 +269,8 @@ const findOrCreateUser = async (googlePayload, providerInfo) => {
           tickets: 0,
         }
       }
-      await dbo.client.db("theCircus").collection("ccUsers").insertOne(user, { session });
-      console.log('New user created:', user);  
+      await dbo.client.db("theCircus").collection("ccUsers").insertOne(user, { session }); 
     } else {
-      console.log("There is a user.")
       // Update last login timestamp
       await dbo.client.db("theCircus").collection("ccUsers").updateOne(
         { 
@@ -304,7 +297,6 @@ const findOrCreateUser = async (googlePayload, providerInfo) => {
 
 recordRoutes.route('/googleLogin').post(async function(req, res) {  
     const { token } = req.body;
-    console.dir(token);
   
     try {
       const ticket = await client.verifyIdToken({
@@ -314,13 +306,10 @@ recordRoutes.route('/googleLogin').post(async function(req, res) {
       });
   
       const payload = ticket.getPayload();
-      console.log('User Payload:', payload);
 
       try {
         validateEmail(payload.email);
         const user = await findOrCreateUser(payload, {provider: "google", providerId: payload.sub});
-        console.log("This is user after findOrCreateUser in records/googleLogin . . .");
-        console.dir(user);
         // Generate JWT token for the user
         // const sessionToken = jwt.sign(
         //   { userId: payload.sub},
@@ -330,7 +319,7 @@ recordRoutes.route('/googleLogin').post(async function(req, res) {
         const sessionToken = jwt.sign(
           { userId: user._id},
           process.env.JWT_SECRET,
-          { expiresIn: '1h'}
+          { expiresIn: '12h'}
         );
 
         // set the token in an HTTP-only, secure cookie
@@ -441,7 +430,6 @@ recordRoutes.route('/login-google').get(passport.authenticate('google', { scope:
 // this is according to Passport
 recordRoutes.route('/oauth2/redirect/google').get(passport.authenticate('google', { failureRedirect: '/login-user', failureMessage: true }),
   function(req, res) {
-    console.log("in the google redirect")
     res.redirect('/success');
 });
 
@@ -454,7 +442,6 @@ passport.use(new GoogleStrategy({
   callbackURL: "/oauth2/redirect/google"
 },
 async (issuer, profile, done) => {
-  console.log("In the passport google Strategy");
   // Find or create the user in your database
   let user = await dbo.client.db("employees").collection("users").findOne({ googleId: profile.id });
 
@@ -772,7 +759,6 @@ recordRoutes.route('/metStandard/naturalExponentialLog').post(checkAuthenticated
 //   }
 // }
 recordRoutes.route('/metStandard/integration').post(async function(req, res) {
-  console.log("recording Integration Progress");
   const action = req.body;
   let msg = '';
   let success = false;
@@ -1096,7 +1082,6 @@ recordRoutes.route('/finishedTutorial').post(checkAuthenticated, async function(
 });
 
 recordRoutes.route('/saveProgressUpdate').post(checkAuthenticated, async function(req, res) {
-  console.log("got to route");
   const updateData = req.body;
   let msg = '';
   let success = false;

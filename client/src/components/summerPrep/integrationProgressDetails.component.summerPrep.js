@@ -9,17 +9,16 @@ import { config} from '../constants';
 
 
 
-export function IntegrationProgressDetails({ userId, username, topicsObjects, section, unit, backLink, backLinkText }) {
+export function IntegrationProgressDetails({ userId, topicsObjects, section, unit, backLink, backLinkText }) {
     var url = config.url.API_URL;
     const [quizStatus, setQuizStatus] = useState({});
     const [error, setError] = useState(null);
-    console.log("topicsObjects: " + topicsObjects);
     const topics = topicsObjects.map(topic => topic.topicName);
     
     useEffect(() => {
         // fetchStatusDetails(url, username, topics, setQuizStatus, setError, section, unit);
-        fetchStatusIntegrationTopics(userId, url, username, topics, setQuizStatus, setError, section, unit);
-    }, [userId, username, section, unit]);
+        fetchStatusIntegrationTopics(userId, url, topics, setQuizStatus, setError, section, unit);
+    }, [userId, section, unit]);
 
     const buttonStyle = {
         position: 'relative',

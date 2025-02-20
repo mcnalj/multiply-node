@@ -175,8 +175,321 @@ const matchObjects = [
       rightLatex: `\\frac{5}{\\sqrt[3]{x^4}}`,
       level: 4
     },  
-  ]
+  ];
 
-  export {
-    matchObjects
+const matchObjectsIntegrals = [
+    {
+      leftLatex: `\\int_\\quad^\\quad 2x \\quad dx`,
+      rightLatex: `x^2+C`,
+      level: 1
+    },
+    {
+      leftLatex: `\\int_\\quad^\\quad 3x^2 \\quad dx`,
+      rightLatex: `x^3+C`,
+      level: 1
+    },
+    {
+      leftLatex: `\\int_\\quad^\\quad x \\quad dx`,
+      rightLatex: `\\frac{1}{2}x^2+C`,
+      level: 1
+    },
+    {
+      leftLatex: `\\int_\\quad^\\quad 2 \\quad dx`,
+      rightLatex: `2x+C`,
+      level: 1
+    },
+    {
+      leftLatex: `\\int_\\quad^\\quad 3x \\quad dx`,
+      rightLatex: `\\frac{3}{2}x^2+C`,
+      level: 1
+    },
+    {
+      leftLatex: `\\int_\\quad^\\quad 1 \\quad dx`,
+      rightLatex: `x+C`,
+      level: 1
+    },
+    {
+      leftLatex: `\\int_\\quad^\\quad x^2 \\quad dx`,
+      rightLatex: `\\frac{1}{3}x^3+C`,
+      level: 1
+    },
+    {
+      leftLatex: `\\int_\\quad^\\quad x^3 \\quad dx`,
+      rightLatex: `\\frac{1}{4}x^4+C`,
+      level: 1
+    },
+];
+
+const matchObjectsIntegrals2 = [
+  {
+    leftLatex: `\\int_\\quad^\\quad (x + 3) \\quad dx`,
+    rightLatex: `\\frac{1}{2}x^2+3x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad (3x + 2) \\quad dx`,
+    rightLatex: `\\frac{3}{2}x^2+2x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad (x^2 + 2x) \\quad dx`,
+    rightLatex: `\\frac{1}{3}x^3++x^2+C`,
+    level: 1
+  },    
+  {
+    leftLatex: `\\int_\\quad^\\quad x \\quad dx`,
+    rightLatex: `\\frac{1}{2}x^2+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 1 \\quad dx`,
+    rightLatex: `x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad x^2 \\quad dx`,
+    rightLatex: `\\frac{1}{3}x^3+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad x^3 \\quad dx`,
+    rightLatex: `\\frac{1}{4}x^4+C`,
+    level: 1
+  },
+];
+
+const matchObjectsIntegrals3 = [
+  {
+    leftLatex: `\\int_\\quad^\\quad (x^2 + x + 5) \\quad dx`,
+    rightLatex: `\\frac{1}{3}x^3+\\frac{1}{2}x^2+5x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad (3x^2 + 2x + 1) \\quad dx`,
+    rightLatex: `x^3+x^2+x+C`,
+    level: 1
+  },  
+  {
+    leftLatex: `\\int_\\quad^\\quad (3x + 2) \\quad dx`,
+    rightLatex: `\\frac{3}{2}x^2+2x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad x \\quad dx`,
+    rightLatex: `\\frac{1}{2}x^2+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 2 \\quad dx`,
+    rightLatex: `2x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad x^2 \\quad dx`,
+    rightLatex: `\\frac{1}{3}x^3+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad x^3 \\quad dx`,
+    rightLatex: `\\frac{1}{4}x^4+C`,
+    level: 1
   }
+];
+
+const matchObjectsIntegrals4 = [
+  {
+    leftLatex: `\\int_\\quad^\\quad \\cos x \\quad dx`,
+    rightLatex: `\\sin x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad -\\sin x \\quad dx`,
+    rightLatex: `\\cos x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\sec^2 x \\quad dx`,
+    rightLatex: `\\tan x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\sin x \\quad dx`,
+    rightLatex: `-\\cos x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad -\\cos x \\quad dx`,
+    rightLatex: `-\\sin x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad (\\sec x \\tan x) \\quad dx`,
+    rightLatex: `\\sec x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad -(\\csc x \\cot x) \\quad dx`,
+    rightLatex: `\\csc x+C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad -(\\sec x tan x) \\quad dx`,
+    rightLatex: `-\\sec x + C`,
+    level: 1
+  },
+];
+
+const matchObjectsIntegrals5 = [
+  {
+    leftLatex: `\\int_\\quad^\\quad e^x \\quad dx`,
+    rightLatex: `e^x + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\e^{2x} \\quad dx`,
+    rightLatex: `\\frac{1}{2}e^{2x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 2e^{2x} \\quad dx`,
+    rightLatex: `e^{2x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{1}{2}e^{2x} \\quad dx`,
+    rightLatex: `\\frac{1}{4}e^{2x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 4e^{2x} \\quad dx`,
+    rightLatex: `2e^{2x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 2e^x \\quad dx`,
+    rightLatex: `2e^x + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad -e^x \\quad dx`,
+    rightLatex: `-e^x + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad e^{-x} \\quad dx`,
+    rightLatex: `-e^{-x} + C`,
+    level: 1
+  },
+];
+
+const matchObjectsIntegrals6 = [
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{1}{x} \\quad dx`,
+    rightLatex: `\\ln |x| + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{1}{x^2} \\quad dx`,
+    rightLatex: `-\\frac{1}{x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{3}{x} \\quad dx`,
+    rightLatex: `3 \\ln |x| + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{5}{x} \\quad dx`,
+    rightLatex: `5 \\ln |x| + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 2e^{2x} \\quad dx`,
+    rightLatex: `e^{2x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 4e^{2x} \\quad dx`,
+    rightLatex: `2e^{2x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 2e^x \\quad dx`,
+    rightLatex: `2e^x + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad -e^x \\quad dx`,
+    rightLatex: `-e^x + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad e^{-x} \\quad dx`,
+    rightLatex: `-e^{-x} + C`,
+    level: 1
+  },
+];
+
+const matchObjectsIntegrals7 = [
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{2}{2x + 3} \\quad dx`,
+    rightLatex: `\\ln |2x + 3| + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{5}{5x + 1} \\quad dx`,
+    rightLatex: `-\\frac{1}{5x + 1} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{2x}{x^2 + 7} \\quad dx`,
+    rightLatex: `\\ln |x^2 + 7| + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{3x^2 + 2}{x^3 + 2x} \\quad dx`,
+    rightLatex: `\\ln |x^3 + 2x| + C`,
+    level: 1
+  },      
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{1}{x} \\quad dx`,
+    rightLatex: `\\ln |x| + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{1}{x^2} \\quad dx`,
+    rightLatex: `-\\frac{1}{x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad \\frac{4}{x} \\quad dx`,
+    rightLatex: `4 \\ln |x| + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 4e^{2x} \\quad dx`,
+    rightLatex: `2e^{2x} + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad 2e^x \\quad dx`,
+    rightLatex: `2e^x + C`,
+    level: 1
+  },
+  {
+    leftLatex: `\\int_\\quad^\\quad e^{-x} \\quad dx`,
+    rightLatex: `-e^{-x} + C`,
+    level: 1
+  },
+];
+
+export {
+  matchObjects,
+  matchObjectsIntegrals,
+  matchObjectsIntegrals2,
+  matchObjectsIntegrals3,
+  matchObjectsIntegrals4,
+  matchObjectsIntegrals5,
+  matchObjectsIntegrals6,
+  matchObjectsIntegrals7
+}

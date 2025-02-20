@@ -9,7 +9,7 @@ import './multipleChoiceButtons.component.answerComponent.scss';
 
 addStyles();
 
-export default function MultipleChoiceButtons({questionObject, handleIncrement, setQuizProgress, setAnswerMessage, startTime}) {
+export default function MultipleChoiceButtons({questionObject, handleIncrement, setQuizProgress, quizProgress, setAnswerMessage, startTime}) {
     const [buttonClass, setButtonClass] = useState({button0: '', button1: '', button2: '', button3: ''});
 
     function updateQuizProgress(isCorrect) {
@@ -35,11 +35,22 @@ export default function MultipleChoiceButtons({questionObject, handleIncrement, 
         // updateQuizProgress(isCorrect);
         
         setTimeout(function() {
+            handleIncrement(
+                {
+                    questionsAttempted: quizProgress.questionsAttempted + 1,
+                    questionsCorrect: isCorrect ? quizProgress.questionsCorrect + 1 : quizProgress.questionsCorrect,
+                    questionsIncorrect: isCorrect ? quizProgress.questionsIncorrect : quizProgress.questionsIncorrect + 1,
+                    questionsStreak: isCorrect ? quizProgress.questionsStreak + 1 : 0,
+                    progressBar: Math.round(((quizProgress.questionsCorrect + (isCorrect ? 1 : 0))/quizProgress.questionsToMeet)*100),
+                    metStandard: (quizProgress.questionsCorrect + (isCorrect ? 1 : 0)) >= quizProgress.questionsToMeet         
+                }
+            );
+            
             updateQuizProgress(isCorrect);
-            handleIncrement();
+            
             setAnswerMessage('');
             setButtonClass({ [buttonClicked]: '' });    
-        }, 1500);
+        }, 1000);
     }
     
     return (

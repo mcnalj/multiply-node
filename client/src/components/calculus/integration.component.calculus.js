@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, NavLink, useNavigate } from "react-router-dom";
-import { ProgressBar, Button} from 'react-bootstrap';
+import { ProgressBar, Button, Container, Row, Col} from 'react-bootstrap';
 import { addStyles, StaticMathField } from 'react-mathquill'
+
 import '../../App.scss';
 import '../../index.scss';
 import './calculus.component.derivatives.scss';
@@ -23,6 +24,43 @@ import {
   questionTopics
 } from '../infrastructure/question-topics.js';
 
+import {
+  setAction,
+  recordAction
+} from '../infrastructure/recordProgress.js';
+
+import {
+  matchObjectsIntegrals,
+  matchObjectsIntegrals2,
+  matchObjectsIntegrals3,
+  matchObjectsIntegrals4,
+  matchObjectsIntegrals5,
+  matchObjectsIntegrals6,
+  matchObjectsIntegrals7,
+} from './answerComponents/matchObjects.js';
+
+import {
+  MatchingComponent
+} from './answerComponents/matchingComponent.component.answerComponents.js'; 
+
+import {
+  populateQuestionArray,
+  setOptions
+} from './answerComponents/matchingParentUtilityFunctions.js'; 
+
+import {
+  multipleChoiceQuestionsIntegration,
+  multipleChoiceQuestionsIntegration2,
+  multipleChoiceQuestionsIntegration3,
+  multipleChoiceQuestionsIntegration4,
+  multipleChoiceQuestionsIntegration5,
+  multipleChoiceQuestionsIntegration6,
+  multipleChoiceQuestionsIntegration7,
+  shuffleArray
+} from '../questionBank/multipleChoiceQuestions.js';
+
+import MultipleChoiceButtons from './answerComponents/multipleChoiceButtons.component.answerComponent.js';
+
 import { config } from '../constants.js';
 var url = config.url.API_URL;
 
@@ -39,103 +77,181 @@ function setQuestionEngine(topicId) {
   }
 }
 
-export default function Integration({username, googleUser}) {
+export default function Integration({userId}) {
   const startTime = useRef(new Date());
   const parameter = useParams()
   const navigate = useNavigate();
+
   var initialTopic = parseInt(parameter.topic);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userId, setUserId] = useState("");
+  let matchObjects = [];
+  let multipleChoiceQuestions = [];
+  if (initialTopic === 3010) {
+    matchObjects = matchObjectsIntegrals;
+    multipleChoiceQuestions = multipleChoiceQuestionsIntegration;
+  }
+  else if (initialTopic === 3020) {
+    matchObjects = matchObjectsIntegrals2; 
+    multipleChoiceQuestions = multipleChoiceQuestionsIntegration2; 
+  }
+  else if (initialTopic === 3030) {
+    matchObjects = matchObjectsIntegrals3;
+    multipleChoiceQuestions = multipleChoiceQuestionsIntegration3;
+  }
+  else if (initialTopic === 3040) {
+    matchObjects = matchObjectsIntegrals4;
+    multipleChoiceQuestions = multipleChoiceQuestionsIntegration4;
+  }
+  else if (initialTopic === 3050) {
+    matchObjects = matchObjectsIntegrals5;
+    multipleChoiceQuestions = multipleChoiceQuestionsIntegration5;
+  }
+  else if (initialTopic === 3060) {
+    matchObjects = matchObjectsIntegrals6;
+    multipleChoiceQuestions = multipleChoiceQuestionsIntegration6;
+  }
+  else if (initialTopic === 3070) {
+    matchObjects = matchObjectsIntegrals7;
+    multipleChoiceQuestions = multipleChoiceQuestionsIntegration7;
+  }
 
-  useEffect(() => {
-    fetch(`${url}/record/checkAuth`, {
-        method: 'GET',
-        credentials: 'include',
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        console.log(data);
-        if (data.authenticated) {
-            setIsAuthenticated(true);
-            setUserId(data.userId);
-        } else {
-            setIsAuthenticated(false);
-            navigate("/loginWithGoogle");
-        }
-    })
-    .catch((error) => {
-        console.error("Error checking authentication:", error);
-        setIsAuthenticated(false);
-        navigate("/loginWithGoogle");
-    });
-}, [navigate]);
+  const [multipleChoiceQuestionsArray, setMultipleChoiceQuestionsArray] = useState(shuffleArray([...multipleChoiceQuestions]));
+  const [matchObjectsState, setMatchObjects] = useState(matchObjects);
 
   const [currentTopic, setCurrentTopic] = useState(initialTopic);
 
-  return isAuthenticated ? (
+  useEffect(() => {
+    setMultipleChoiceQuestionsArray(shuffleArray([...multipleChoiceQuestions]));
+  }, [multipleChoiceQuestions]);
+
+  return (
     <>
       <Integrals
         currentTopic={currentTopic}
         setCurrentTopic={setCurrentTopic}
         questionTopics={questionTopics.integrals}
-        // username={username}
         userId={userId}
         startTime={startTime}
+        matchObjectsIntegrals={matchObjectsState}
+        populateQuestionArray={populateQuestionArray}
+        setOptions={setOptions}
+        multipleChoiceQuestionsArray={multipleChoiceQuestionsArray}
+        MultipleChoiceButtons={MultipleChoiceButtons}
       />
     </>
-  ) : null;
+  );
 }
 
-// function Integrals({username, currentTopic, setCurrentTopic, questionTopics, startTime}) {
-function Integrals({userId, currentTopic, setCurrentTopic, questionTopics, startTime}) {
+function Integrals({userId, currentTopic, setCurrentTopic, questionTopics, startTime, matchObjectsIntegrals, populateQuestionArray, setOptions, multipleChoiceQuestionsArray, MultipleChoiceButtons}) {
   const [errorMessage, setErrorMessage] = useState(null);
+  const navigate = useNavigate();
+
+  // this is for the matchingComponent
+  const [leftOptions, setLeftOptions] = useState([]);
+  const [rightOptions, setRightOptions] = useState([]);
+  const [isFinished, setIsFinished] = useState(false);
+
+  // this is for the multipleChoiceComponent
+  const [multipleChoiceQuestionIndex, setMultipleChoiceQuestionIndex] = useState(0)
+  const [multipleChoiceQuestionObject, setMultipleChoiceQuestionObject] = useState({
+    questionData: '',
+    answersArray: []
+  })
+
+  const [answerMessage, setAnswerMessage] = useState('');
+
+  useEffect(() => {
+    getMultipleChoiceQuestion();
+  }, [multipleChoiceQuestionIndex, multipleChoiceQuestionsArray]);
+
+  function getMultipleChoiceQuestion() {
+    if (multipleChoiceQuestionsArray.length > 0) {
+      const tempMultipleChoiceQuestionObject = multipleChoiceQuestionsArray[multipleChoiceQuestionIndex];
+      const answersArray = shuffleArray(Object.values(tempMultipleChoiceQuestionObject.answers));
+
+      setMultipleChoiceQuestionObject({
+          questionData: tempMultipleChoiceQuestionObject,
+          answersArray: answersArray
+      });
+    }
+  }
+
   let unit = "integrals";
-  let standard = 7;
+  let standard = 10;
   let absoluteValue = false;
   if (currentTopic === 3060 || currentTopic === 3070) {
     absoluteValue = true;
   }
 
   let questionEngine = setQuestionEngine(currentTopic);
-  const [questionState, setQuestionState] = useState({
+
+  const [questionObject, setQuestionObject] = useState({
     questionEngine: questionEngine,
     questionLatex: '',
     answerArrayLatex: [],
-    getNextQuestion: next,
+    questionTopic: '',
+    questionPrompt: '',
+  })
+
+  const [quizProgress, setQuizProgress] = useState({
     questionsAttempted: 0,
     questionsCorrect: 0,
     questionsIncorrect: 0,
     questionsStreak: 0,
     questionsToMeet: standard,
     progressBar: 0,
+    metStandard: false,
+    getNextQuestion: next,
     doneWithTopic: done,
-    questionTopic: '',
-    questionPrompt: '',
-  });
+  })
 
+  function handleIncrementFromMultipleChoice(liftedState) {
+    if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet-1) {
+        done(liftedState);
+    } else {
+        nextMultipleChoice();
+    }    
+  }
+
+  function nextMultipleChoice() {
+      if (multipleChoiceQuestionIndex === multipleChoiceQuestionsArray.length - 1) {
+          setMultipleChoiceQuestionIndex(0);
+      } else {
+          setMultipleChoiceQuestionIndex(prevIndex => prevIndex + 1);
+      }
+  }
+  
   useEffect(() => {
-    async function getTopics(unitName) {
+    async function getTopics() {
       let questionEngine = setQuestionEngine(currentTopic);
       let [questionLatex, answerArrayLatex] = questionEngine();
-      questionLatex = "f'(x) = " + questionLatex;
-      setQuestionState(
-        {
-          questionEngine: questionEngine,
-          questionLatex: questionLatex,
-          answerArrayLatex: answerArrayLatex,
-          getNextQuestion: next,
-          questionsAttempted: 0,
-          questionsCorrect: 0,
-          questionsIncorrect: 0,
-          questionsStreak: 0,
-          questionsToMeet: 7,
-          progressBar: 0,
-          doneWithTopic: done,
-          questionTopic: "Integrals",
-          questionPrompt: "f'(x)",
-        }
-      )
+      questionLatex = "f(x) = " + questionLatex;
+
+      setQuestionObject({
+        questionEngine: questionEngine,
+        questionLatex: questionLatex,
+        answerArrayLatex: answerArrayLatex,
+        questionTopic: "Integrals",
+        questionPrompt: "f(x)",
+      });
+
+      setQuizProgress({
+        questionsAttempted: 0,
+        questionsCorrect: 0,
+        questionsIncorrect: 0,
+        questionsStreak: 0,
+        questionsToMeet: standard,
+        progressBar: 0,
+        metStandard: false,
+        getNextQuestion: next,
+        doneWithTopic: done,
+      })
+
+      const randomizedQuestionArray = populateQuestionArray(matchObjectsIntegrals, 5, true, false, false, false);
+      const options = setOptions(randomizedQuestionArray);
+      setLeftOptions(options.leftOptions);
+      setRightOptions(options.rightOptions);
+
     }
     getTopics(unit);
     return;
@@ -145,36 +261,37 @@ function Integrals({userId, currentTopic, setCurrentTopic, questionTopics, start
       let questionEngine = setQuestionEngine(currentTopic);
       
       let [questionLatex, answerArrayLatex] = questionEngine();
-      questionLatex = "f'(x) = " + questionLatex;
-      setQuestionState({
+      questionLatex = "f(x) = " + questionLatex;
+      setQuestionObject({
         questionEngine: questionEngine,
         questionLatex: questionLatex,
         answerArrayLatex: answerArrayLatex,
-        getNextQuestion: next,
+        questionTopic: questionObject.questionTopic,
+        questionPrompt: questionObject.questionPrompt,
+      })
+
+      setQuizProgress({
         questionsAttempted: liftedState.questionsAttempted,
         questionsCorrect: liftedState.questionsCorrect,
         questionsIncorrect: liftedState.questionsIncorrect,
         questionsStreak: liftedState.questionsStreak,
-        questionsToMeet: questionState.questionsToMeet,
+        questionsToMeet: quizProgress.questionsToMeet,
         progressBar: liftedState.progressValue,
+        metStandard: false,
+        getNextQuestion: next,
         doneWithTopic: done,
-        questionTopic: questionState.questionTopic,
-        questionPrompt: questionState.questionPrompt,
       });
   }
 
   async function done(liftedState){
-    console.log("sending progress record");
     try {
       const endTime = new Date()
-      console.log("End Time: " + endTime);
       const totalTime = endTime - startTime.current;
-      console.dir(startTime);
-      console.log(totalTime);
       // Determine topic name;
       const currentTopicObj = questionTopics.find((name) => name.topicId === currentTopic)
       const topicName = currentTopicObj?.topicName || "errantName";
 
+      // I kept this so we can us the success Page, but revise.
       const actionDetails = {
         topic: topicName,
         "metStandard": true,
@@ -185,41 +302,12 @@ function Integrals({userId, currentTopic, setCurrentTopic, questionTopics, start
         "datetimeStarted": startTime,
         "totalTime": totalTime,
       }
-      console.log("userId before action: " + userId);
-      const action =
-      {
-        // username: username,
-        userId: userId,
-        actionType: "skillCompleted",
-        timeStamp: new Date(),
-        details: actionDetails,
-      }
-      console.log("User Id in Action before recording: " + action.userId);
-      const response = await fetch(`${url}/record/metStandard/integration`, {
-        method: "POST",
-        mode: 'cors',
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(action),
-      });
 
-      if (!response.ok) {
-        switch (response.status) {
-            case 400:
-                throw new Error("Invalid data sent to the server. Please check and try again.");
-            case 401:
-                throw new Error("You are not authorized to perform this action. Please log in again.");
-            case 500:
-                throw new Error("A server error occurred. Please try again later.");
-            default:
-                throw new Error(`Unexpected error: ${response.status} ${response.statusText}`);
-        }
-      }
+      const action = setAction(liftedState, topicName, startTime, totalTime, userId);
+      const result = await recordAction(action);
 
-      const answer = await response.json();
-      console.log("Server response: ", answer);  
+      // when me navigate back by clicking more of the same, we get "There was an error calculating statistics." Why?
+      navigate("/skillComplete", {state: actionDetails}); 
     } catch(error) {
       if (error.name === "TypeError") {
         console.error("Newtwork error or issue with recording progress:", error);
@@ -233,40 +321,87 @@ function Integrals({userId, currentTopic, setCurrentTopic, questionTopics, start
   }
 
   return (
-    <>
-      <div className="row">
-        <div className="col-12">
-          <ProgressBar variant="primary" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={questionState.progressBar} label={`${questionState.progressBar}%`} max='100'/>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-2">
+    <div>
+        {
+    quizProgress.questionsCorrect === 5 ? (
+        <>
+            <div className="row">
+                <p className="col-12 text-center fs-5">
+                  Match an expression in the opposite column.
+                </p>
+            </div>
+            <MatchingComponent
+                matchObjects={matchObjectsIntegrals}
+                leftOptions={leftOptions}
+                rightOptions={rightOptions}
+                setQuizProgress={setQuizProgress}
+                quizProgress={quizProgress}
+                setIsFinished={setIsFinished}
+            />
+            {/* <Link to="/integrationTopics">
+              <button type="button" className="btn btn-lg btn-success mt-3">OTHER TOPICS</button><br /><br />
+            </Link> */}
+        </>
+    ) : quizProgress.questionsCorrect < 2 || quizProgress.questionsCorrect > 7 ? (
+      <div>
+          <div className="row">
+            <div className="col-12">
+                <ProgressBar variant="primary" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
+            </div>
+          </div>
+          <p className="fs-5">Evaluate the integral.</p>
+          <div>
+              <p className="fs-2">
+                  <StaticMathField>{multipleChoiceQuestionObject.questionData.question}</StaticMathField>
+              </p>
+          </div>
 
-        </div>
-        <div className="col-8 mt-2 fs-2">
-            <StaticMathField>{ questionState.questionLatex }</StaticMathField>
-        </div>
-        <div className="col-2">
-          <ModalComponent
-            currentTopic={currentTopic}
+          <MultipleChoiceButtons
+              questionObject={multipleChoiceQuestionObject}
+              handleIncrement={handleIncrementFromMultipleChoice}
+              setQuizProgress={setQuizProgress}
+              quizProgress={quizProgress}
+              setAnswerMessage={setAnswerMessage}
+              startTime={startTime}
           />
-        </div> 
       </div>
-      {errorMessage && (
-        <div className="alert alert-danger mt-3" role="alert">
-          {errorMessage}
+    ) : (  
+      <>
+        <div className="row">
+          <div className="col-12">
+            <ProgressBar variant="primary" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
+          </div>
         </div>
-      )}
-      <IntegrationAnswerForm
-          questionState={questionState}  
-      />
+        <div className="row">      
+          <div className="col-12 d-flex justify-content-end">
+            <ModalComponent
+              currentTopic={currentTopic}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12 text-center" style={{fontSize: '2em'}}>
+              <StaticMathField>{ questionObject.questionLatex }</StaticMathField>
+          </div>
+        </div>
+        {errorMessage && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {errorMessage}
+          </div>    
+        )}
+        <IntegrationAnswerForm
+            questionObject={questionObject}
+            quizProgress={quizProgress}  
+        />
+      </>
+    )}      
       <Link to="/integrationTopics">
         <button type="button" className="btn btn-lg btn-success mt-3">OTHER TOPICS</button><br /><br />
       </Link>
       <AbsoluteValueInstructions
           absoluteValue={absoluteValue}
       />
-    </>
+    </div>
   );
 }
 

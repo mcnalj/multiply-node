@@ -28,7 +28,6 @@ usersRoutes.route('/logout').post((req, res) => {
 
 usersRoutes.route('/fetchUsername').get(async function(req, res, next) {
   const { userId } = req.query;
-  console.log("User id is: " + userId);
   if (!userId) {
     return res.status(400).json({error: "User ID is required"});
   }
@@ -336,8 +335,6 @@ usersRoutes.route("/getProgress/calculus/:topic").post(checkAuthenticated, async
 });
 
 usersRoutes.route("/getProgressDetails/calculus/:topic").post(async function (req, res) {
-  console.log("getting progress from getProgressDetails/calculus . . . .");
-  console.log(req.body);
   const username = req.body.username;
   const skills = req.body.skills;
   const { topic } = req.params;
@@ -376,7 +373,6 @@ usersRoutes.route("/getProgressDetails/calculus/:topic").post(async function (re
     const results = await dbo.client.db("theCircus")
       .collection("ccUserActions")
       .aggregate(pipeline).toArray();
-    console.log(results);
     if (results.length === 0) {
       return res.status(404).json({
         success: false,
@@ -399,8 +395,6 @@ usersRoutes.route("/getProgressDetails/calculus/:topic").post(async function (re
 });
 
 usersRoutes.route("/getProgressIntegrationTopics/calculus/:topic").post(async function (req, res) {
-  console.log("getting progress from getProgressIntegrationTopics/calculus . . . .");
-  console.log(req.body);
   // const username = req.body.username;
   const userId = req.body.userId;
   const skills = req.body.skills;
@@ -408,15 +402,13 @@ usersRoutes.route("/getProgressIntegrationTopics/calculus/:topic").post(async fu
 
   // if (!username || !Array.isArray(skills) || skills.length === 0) {
     if (!userId || !Array.isArray(skills) || skills.length === 0) {
-      console.log("not id or not array");
     return res.status(400).json({
       success:false,
-      message: "Invalid request, Ensure 'username' and 'skills' are provided.",
+      message: "Invalid request, Ensure 'userId' and 'skills' are provided.",
     });
   }
 
   try {
-    console.log("trying fetch");
     const pipeline = [
       {
         $match: {
@@ -443,9 +435,7 @@ usersRoutes.route("/getProgressIntegrationTopics/calculus/:topic").post(async fu
 
     const results = await dbo.client.db("theCircus")
       .collection("ccUserActions")
-      .aggregate(pipeline).toArray();
-    console.log("got results");  
-    console.log("Results: " + results);
+      .aggregate(pipeline).toArray(); 
     if (results.length === 0) {
       return res.status(404).json({
         success: false,

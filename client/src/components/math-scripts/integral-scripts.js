@@ -6,7 +6,7 @@ import {
 function constantAntiderivative(minCoefficient=1, maxCoefficient=9) {
   let answerLatexArray = [];
   let coefficient = getRandomIntInclusive(minCoefficient, maxCoefficient);
-  let questionLatex = `${coefficient} dx`;
+  let questionLatex = `${coefficient} \\quad dx`;
   let answerLatex = `${coefficient}x+C`;
   let explore = /\d1x/.test(answerLatex)
     if (!explore) {
@@ -21,7 +21,7 @@ function xTermAntiderivative(minCoefficient = 1, maxCoefficient = 9) {
   let questionLatex = ``;
   let coefficient = getRandomIntInclusive(minCoefficient, maxCoefficient);
   if (coefficient > 1) {
-    questionLatex = `${coefficient}x dx`;
+    questionLatex = `${coefficient}x \\quad dx`;
   } else {
     questionLatex = `x dx`;
   }
@@ -42,7 +42,7 @@ function singleTermAntiderivative(minExponent=2, maxExponent=8) {
   let answerLatexArray = []
   let exponent = getRandomIntInclusive(minExponent, maxExponent);
   let increasedExponent = exponent + 1;
-  let questionLatex = `x^${exponent} dx`;
+  let questionLatex = `x^${exponent} \\quad dx`;
   let answerLatex = `\\frac{1}{${increasedExponent}}x^${increasedExponent}+C`;
   answerLatexArray.push(answerLatex);
   return [questionLatex, answerLatexArray];
@@ -53,7 +53,7 @@ function singleTermAntiderivativeWithCoefficients(minCoefficient = 2, maxCoeffic
   let exponent = getRandomIntInclusive(minExponent, maxExponent);
   let coefficient = getRandomIntInclusive(minCoefficient, maxCoefficient);
   let increasedExponent = exponent + 1;
-  let questionLatex = `${coefficient}x^${exponent} dx`;
+  let questionLatex = `${coefficient}x^${exponent}\\quad dx`;
   let answerLatex = ``;
   if (coefficient === increasedExponent) {
     answerLatex = `x^${increasedExponent}+C`;  
@@ -105,7 +105,7 @@ function binomialAntiderivative() {
     term2Latex = term2Latex.slice(0, -3);
     answerLatexArrayTwo[0] = answerLatexArrayTwo[0].slice(0,-2);
   }
-  let questionLatex = '(' + term1Latex + '+' + term2Latex + ') dx';
+  let questionLatex = '(' + term1Latex + '+' + term2Latex + ') \\quad dx';
   let answerLatex = answerLatexArrayOne[0] + '+' + answerLatexArrayTwo[0] + '+C';
   answerLatexArray.push(answerLatex);
   return [questionLatex, answerLatexArray];
@@ -135,7 +135,7 @@ function polynomialAntiderivative() {
   [term3Latex, answerLatexArrayThree] = constantAntiderivative(1, 9);
   term3Latex = term3Latex.slice(0, -3);
   answerLatexArrayThree[0]= answerLatexArrayThree[0].slice(0, -2); 
-  let questionLatex = '(' + term1Latex + '+' + term2Latex + '+' + term3Latex + ') dx';
+  let questionLatex = '(' + term1Latex + '+' + term2Latex + '+' + term3Latex + ') \\quad dx';
   let answerLatex = answerLatexArrayOne[0] + '+' + answerLatexArrayTwo[0] + '+' + answerLatexArrayThree[0] + '+C';
   answerLatexArray.push(answerLatex);
   return [questionLatex, answerLatexArray];
@@ -155,29 +155,29 @@ function trigonometricIntegrals(minCoefficient=1, maxCoefficient=9) {
   let isNegative = false;
   let pick = getRandomIntInclusive(1, 100);
   if (pick < 30) {
-    trigBase = "\\sin x dx";
+    trigBase = "\\sin x \\quad dx";
     answerBase = "\\cos x";
     answerBase2 = "\\cosx";
     isNegative = true;
   } else if (pick < 60) {
-    trigBase = "\\cos x dx";
+    trigBase = "\\cos x \\quad dx";
     answerBase = "\\sin x";
     answerBase2 = "\\sinx";
   } else if (pick < 70) {
-    trigBase = "\\sec^2 x dx";
+    trigBase = "\\sec^2 x \\quad dx";
     answerBase = "\\tan x";
     answerBase2 = "\\tanx";
   } else if (pick < 80) {
-    trigBase = "\\csc^2 x dx";
+    trigBase = "\\csc^2 x \\quad dx";
     answerBase = "\\cot x";
     answerBase2 = "\\cotx";
     isNegative = true;
   } else if (pick < 90) {
-    trigBase = "\\sec x \\tan x dx";
+    trigBase = "\\sec x \\tan x \\quad dx";
     answerBase = "\\sec x";
     answerBase2 = "\\secx";
   } else {
-    trigBase = "\\csc x \\cot x dx";
+    trigBase = "\\csc x \\cot x \\quad dx";
     answerBase = "\\csc x";
     answerBase2 = "\\cscx";
     isNegative = true
@@ -246,7 +246,7 @@ function trigonometricIntegrals(minCoefficient=1, maxCoefficient=9) {
   let pick = getRandomIntInclusive(1,6);
   if (pick === 1) {
     let exponentCoefficient = getRandomIntInclusive(2, 9);
-    questionLatex = `${exponentCoefficient}e^{${exponentCoefficient}x} dx`;
+    questionLatex = `${exponentCoefficient}e^{${exponentCoefficient}x} \\quad dx`;
     answerLatex = `e^{${exponentCoefficient}x}+C`;
   } else if (pick === 2){
     let coefficient = getRandomIntInclusive(2,9);
@@ -256,16 +256,16 @@ function trigonometricIntegrals(minCoefficient=1, maxCoefficient=9) {
       exponentCoefficient = getRandomIntInclusive(2, 9);
       integralCoefficient = coefficient*exponentCoefficient;
     }
-    questionLatex = `${integralCoefficient}e^{${exponentCoefficient}x} dx`;
+    questionLatex = `${integralCoefficient}e^{${exponentCoefficient}x} \\quad dx`;
     answerLatex = `${coefficient}e^{${exponentCoefficient}x}+C`;
   } else if (pick === 3) {
     // no coefficient, just an exponent
     let exponent = getRandomIntInclusive(2, 6)
     let integralExponent = exponent - 1;
     if (integralExponent > 1) {
-      questionLatex = `${exponent}x^{${integralExponent}}e^{x^${exponent}} dx`;  
+      questionLatex = `${exponent}x^{${integralExponent}}e^{x^${exponent}} \\quad dx`;  
     } else {
-      questionLatex = `${exponent}xe^{x^${exponent}} dx`;
+      questionLatex = `${exponent}xe^{x^${exponent}} \\quad dx`;
     }
     answerLatex = `e^{x^${exponent}}+C`    
   } else if (pick === 4) {
@@ -278,9 +278,9 @@ function trigonometricIntegrals(minCoefficient=1, maxCoefficient=9) {
     let integralExponent = exponent - 1;
     let integralCoefficient = exponent * exponentCoefficient;
     if (integralExponent > 1) {
-      questionLatex = `${integralCoefficient}x^${integralExponent}e^{${exponentCoefficient}x^${exponent}} dx`;  
+      questionLatex = `${integralCoefficient}x^${integralExponent}e^{${exponentCoefficient}x^${exponent}} \\quad dx`;  
     } else {
-      questionLatex = `${integralCoefficient}xe^{${exponentCoefficient}x^${exponent}} dx`;
+      questionLatex = `${integralCoefficient}xe^{${exponentCoefficient}x^${exponent}} \\quad dx`;
     }
     answerLatex = `e^{${exponentCoefficient}x^${exponent}}+C`;
   } else if (pick === 5) {
@@ -294,9 +294,9 @@ function trigonometricIntegrals(minCoefficient=1, maxCoefficient=9) {
     }
     let integralExponent = exponent - 1;
     if (integralExponent > 1) {
-      questionLatex = `${integralCoefficient}x^{${integralExponent}}e^{x^${exponent}} dx`;  
+      questionLatex = `${integralCoefficient}x^{${integralExponent}}e^{x^${exponent}} \\quad dx`;  
     } else {
-      questionLatex = `${integralCoefficient}xe^{x^${exponent}} dx`;
+      questionLatex = `${integralCoefficient}xe^{x^${exponent}} \\quad dx`;
     }
     answerLatex = `${coefficient}e^{x^${exponent}}+C`
   } else if (pick === 6) {
@@ -311,9 +311,9 @@ function trigonometricIntegrals(minCoefficient=1, maxCoefficient=9) {
     }
     let integralExponent = exponent - 1;
     if (integralExponent > 1) {
-      questionLatex = `${integralCoefficient}x^{${integralExponent}}e^{${exponentCoefficient}x^{${exponent}}} dx`;  
+      questionLatex = `${integralCoefficient}x^{${integralExponent}}e^{${exponentCoefficient}x^{${exponent}}} \\quad dx`;  
     } else {
-      questionLatex = `${integralCoefficient}xe^{${exponentCoefficient}x^{${exponent}}} dx`;
+      questionLatex = `${integralCoefficient}xe^{${exponentCoefficient}x^{${exponent}}} \\quad dx`;
     }
     answerLatex = `${coefficient}e^{${exponentCoefficient}x^${exponent}}+C`    
   }
@@ -328,10 +328,10 @@ function naturalLogIntegrals() {
   let coefficient = getRandomIntInclusive(2, 9);
   let pick = getRandomIntInclusive(1, 100);
   if (pick < 85) {
-    questionLatex = `\\frac{${coefficient}}{x} dx`;
+    questionLatex = `\\frac{${coefficient}}{x} \\quad dx`;
     answerLatex =`${coefficient}\\ln\\midx\\mid+C`
   } else {
-    questionLatex = `\\frac{1}{x} dx`;
+    questionLatex = `\\frac{1}{x} \\quad dx`;
     answerLatex =`\\ln\\midx\\mid+C`
   }
   answerLatexArray.push(answerLatex);
@@ -350,18 +350,18 @@ function indefiniteIntegralsNaturalLogBinomial() {
   let pick = getRandomIntInclusive(1, 5);
   if (pick === 1) {
     // do I want a lot of these
-    questionLatex = `\\frac{${coefficient}}{x + ${term2}} dx`;
+    questionLatex = `\\frac{${coefficient}}{x + ${term2}} \\quad dx`;
     answerLatex =`${coefficient}\\ln\\midx+${term2}\\mid+C`
   } else if (pick === 2) {
-    questionLatex = `\\frac{${coefficient}}{${coefficient}x + ${term2}} dx`
+    questionLatex = `\\frac{${coefficient}}{${coefficient}x + ${term2}} \\quad dx`
     answerLatex =`\\ln\\mid${coefficient}x+${term2}\\mid+C`
   } else if (pick === 3) {
     let exponent = getRandomIntInclusive(2, 5);
     let derivativeExponent = exponent - 1;
     if (derivativeExponent === 1) {
-      questionLatex = `\\frac{${exponent}x}{x^${exponent} + ${term2}} dx`;
+      questionLatex = `\\frac{${exponent}x}{x^${exponent} + ${term2}} \\quad dx`;
     } else {
-      questionLatex = `\\frac{${exponent}x^${derivativeExponent}}{x^${exponent} + ${term2}} dx`;
+      questionLatex = `\\frac{${exponent}x^${derivativeExponent}}{x^${exponent} + ${term2}} \\quad dx`;
     }
     answerLatex = `\\ln\\midx^${exponent}+${term2}\\mid+C`
   } else if (pick === 4) {
@@ -369,13 +369,13 @@ function indefiniteIntegralsNaturalLogBinomial() {
     let derivativeExponent = exponent - 1;
     let topCoefficient = exponent * coefficient;
     if (derivativeExponent === 1) {
-      questionLatex = `\\frac{${topCoefficient}x}{${coefficient}x^${exponent} + ${term2}} dx`
+      questionLatex = `\\frac{${topCoefficient}x}{${coefficient}x^${exponent} + ${term2}} \\quad dx`
     } else {
-      questionLatex = `\\frac{${topCoefficient}x^${derivativeExponent}}{${coefficient}x^${exponent} + ${term2}} dx`
+      questionLatex = `\\frac{${topCoefficient}x^${derivativeExponent}}{${coefficient}x^${exponent} + ${term2}} \\quad dx`
     }
     answerLatex = `\\ln\\mid${coefficient}x^${exponent}+${term2}\\mid+C`
   } else if (pick === 5) {
-    questionLatex = `\\frac{1}{x} dx`;
+    questionLatex = `\\frac{1}{x} \\quad dx`;
     answerLatex =`\\ln\\midx\\mid+C`
   } 
   answerLatexArray.push(answerLatex);

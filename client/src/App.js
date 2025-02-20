@@ -40,6 +40,8 @@ import ExponentsVariety from './components/calculus/calculus.component.exponents
 import Derivatives from './components/calculus/calculus.component.derivatives';
 import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
 
+import SkillComplete from './components/calculus/calculus.component.skillComplete'
+
 import PowerRuleTopics from './components/calculus/calculus.component.powerRuleTopics.js';
 import PowerRuleSkills from './components/calculus/calculus.component.powerRuleSkills.js';
 
@@ -117,7 +119,6 @@ function App() {
           credentials: 'include',
         })
         const answer = await result.json();
-        console.log(answer);
         if (answer.authenticated) {
           setIsAuthenticated(true);
           setUserId(answer.userId);
@@ -144,12 +145,9 @@ function App() {
                 credentials: 'include',
             })
             const data = await response.json();
-            console.log("This is from fetching username in App.js . . .")
-            console.log(data);
             if (data.username) {
                 setUsername(data.username);
                 setAvatarUrl(data.avatar);
-                console.log("Just set usernanme in App.js to " + data.username )
                 setLoading(false);
             } else {
                 // navigate("/loginWithGoogle");
@@ -299,6 +297,15 @@ function App() {
                   </Protected>
                 }
           />
+
+          <Route path="/skillComplete"
+                element={
+                  <Protected isAuthenticated={isAuthenticated}>
+                    <SkillComplete userId={userId}/>
+                  </Protected>
+                }
+          />
+
           <Route path="/markdown"
                 element={
                   <Protected isAuthenticated={isAuthenticated}>

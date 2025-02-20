@@ -90,16 +90,16 @@ export default function ExponentsVariety({username}) {
     });
 
     function handleIncrementFromMultipleChoice() {
-      if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet - 1) {
-          done();
-      } else {
-          nextMultipleChoice();
-      }    
-  }
+        if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet - 1) {
+            done();
+        } else {
+            nextMultipleChoice();
+        }    
+    }
 
-  function nextMultipleChoice() {
-      setMultipleChoiceQuestionIndex(prevIndex => prevIndex + 1);
-  }
+    function nextMultipleChoice() {
+        setMultipleChoiceQuestionIndex(prevIndex => prevIndex + 1);
+    }
 
     function setFunction(typeOfExponent) {
       // typeOfExponent can be positive, negative, fractional
@@ -438,6 +438,7 @@ export default function ExponentsVariety({username}) {
                         questionObject={multipleChoiceQuestionObject}
                         handleIncrement={handleIncrementFromMultipleChoice}
                         setQuizProgress={setQuizProgress}
+                        quizProgress={quizProgress}
                         setAnswerMessage={setAnswerMessage}
                         startTime={startTime}
                     />
