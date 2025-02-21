@@ -9,8 +9,7 @@ import { config } from '../constants.js';
 var url = config.url.API_URL;
 
 export default function LoginWithGoogle({setUserEmail}) {
-    // added this back 1/22
-    // const [user, setUser] = useState(null);
+
     const [status, setStatus] = useState({ message: "", type: ""});
     const [loading, setLoading] = useState(false);
 

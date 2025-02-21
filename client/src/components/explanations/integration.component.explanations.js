@@ -14,7 +14,7 @@ export default function IndefiniteIntegralsSingleTerm({show, handleClose}){
         <Modal.Title>Evaluating Indefinite Integrals</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>To find and integral, reverse the Power Rule: increase the exponent by one and divide by the new exponent.</p>
+        <p>To find an integral, reverse the Power Rule: increase the exponent by one and divide by the new exponent.</p>
         <div className="row">
           <p><StaticMathField className="col-4 offset-4 text-center">{`\\int x^n dx = \\frac{1}{n}x^{n+1} + C`}</StaticMathField></p>
         </div>

@@ -346,7 +346,7 @@ const matchObjectsIntegrals5 = [
     level: 1
   },
   {
-    leftLatex: `\\int_\\quad^\\quad \\e^{2x} \\quad dx`,
+    leftLatex: `\\int_\\quad^\\quad e^{2x} \\quad dx`,
     rightLatex: `\\frac{1}{2}e^{2x} + C`,
     level: 1
   },

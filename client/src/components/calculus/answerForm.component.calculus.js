@@ -40,6 +40,8 @@ function AnswerForm(props) {
 
     const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
     
+    const [isDisabled, setIsDisabled] = useState(false);
+
     function updateSituation(value) {
         // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
         let pattern = `\\frac{1}{\\left\(\\right\)}`;
@@ -66,15 +68,19 @@ function AnswerForm(props) {
     }
 
     const handleKeyDown = event => {
+      if (isDisabled){
+        event.preventDefault();
+        return;
+      }
       if (event.key === 'Enter') {
         event.preventDefault();
-        // did adding return here do anything?
-        return handleSubmit(event);
+        handleSubmit(event);
       }
     }
   
     function handleSubmit(event) {
         event.preventDefault();
+        setIsDisabled(true);
 
         let stateToLift = {
             questionsAttempted: props.questionState.questionsAttempted + 1,
@@ -129,6 +135,7 @@ function AnswerForm(props) {
             }
             updateSituation({answerMessage: '', userAnswer: '', correctAnswer: ''})
             props.questionState.getNextQuestion(stateToLift);
+            setIsDisabled(false);
         }, pause) // end of setTimeout
     } // end of handleSubmit
   
@@ -158,6 +165,7 @@ function AnswerForm(props) {
                     onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
                     mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
                     onKeyDown={handleKeyDown}
+                    disabled={isDisabled}
                   />
               </div>
             </div>
@@ -167,6 +175,7 @@ function AnswerForm(props) {
                   variant="primary"
                   type="submit"
                   size="lg" 
+                  disabled={isDisabled}
                 >
                   SUBMIT
                 </Button>
@@ -194,8 +203,10 @@ function AnswerForm(props) {
       answerMessage: ''
     });
 
-    
     const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
+
+    const [isDisabled, setIsDisabled] = useState(false);
+
     function updateSituation(value) {
         // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
         let pattern = `\\frac{1}{\\left\(\\right\)}`;
@@ -222,15 +233,21 @@ function AnswerForm(props) {
     }
 
     const handleKeyDown = event => {
+      if (isDisabled){
+        event.preventDefault();
+        return;
+      }
       if (event.key === 'Enter') {
         event.preventDefault();
         // did adding return here do anything?
-        return handleSubmit(event);
+        // return handleSubmit(event);
+        handleSubmit(event);
       }
     }
   
     function handleSubmit(event) {
         event.preventDefault();
+        setIsDisabled(true);
 
         let stateToLift = {
             questionsAttempted: props.quizProgress.questionsAttempted + 1,
@@ -269,7 +286,7 @@ function AnswerForm(props) {
             
             stateToLift.questionsIncorrect += 1;
             stateToLift.questionsStreak = 0
-            pause = 4000;
+            pause = 2500;
         }
         stateToLift.progressValue = Math.round((stateToLift.questionsCorrect/props.quizProgress.questionsToMeet)*100)
         // pause after grading
@@ -285,6 +302,7 @@ function AnswerForm(props) {
             }
             updateSituation({answerMessage: '', userAnswer: '', correctAnswer: ''})
             props.quizProgress.getNextQuestion(stateToLift);
+            setIsDisabled(false);
         }, pause) // end of setTimeout
     } // end of handleSubmit
   
@@ -315,6 +333,7 @@ function AnswerForm(props) {
                     onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
                     mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
                     onKeyDown={handleKeyDown}
+                    disabled={isDisabled}
                   />
               </div>
             </div>
@@ -324,6 +343,7 @@ function AnswerForm(props) {
                   variant="primary"
                   type="submit"
                   size="lg" 
+                  disabled={isDisabled}
                 >
                   SUBMIT
                 </Button>

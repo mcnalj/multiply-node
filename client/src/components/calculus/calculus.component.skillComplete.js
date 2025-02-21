@@ -43,11 +43,17 @@ export default function SkillComplete({userId}) {
 
     const styleStatBox = {
         backgroundColor: "#E7E7E7",
-        fontSize: "1.5rem",
+        fontSize: "clamp(1.3rem, 3vw, 2.5rem)",
         fontFamily: "Nunito",
-        padding: "5%",
+        padding: "1%",
         borderRadius: "10%", 
         color: "purple",  
+    }
+
+    const styleLabel = {
+        paddingTop: "4%",
+        paddingBottom: "0%",
+        marginBottom: "-10%",
     }
 
     const styleStatistic = {
@@ -55,7 +61,7 @@ export default function SkillComplete({userId}) {
         color: "#E7E7E7",
         margin: "5%",
         borderRadius: "10%",
-        paddingTop: "5%",
+        paddingTop: "7%",
     }
 
     return (
@@ -68,7 +74,7 @@ export default function SkillComplete({userId}) {
             <div className="row" style={{padding: "2%"}}>
                 <div className="col-4">
                     <div className="statBox" style={styleStatBox}>
-                        <div className="row statLabel">
+                        <div className="row" style={styleLabel}>
                             <p>SCORE</p>
                         </div>
                         <div className="row statistic" style={styleStatistic}>
@@ -78,7 +84,7 @@ export default function SkillComplete({userId}) {
                 </div>
                 <div className="col-4">
                     <div className="statBox" style={styleStatBox}>
-                        <div className="row statLabel">
+                        <div className="row" style={styleLabel}>
                             <p>STREAK</p>
                         </div>
                         <div className="row statistic" style={styleStatistic}>
@@ -88,7 +94,7 @@ export default function SkillComplete({userId}) {
                 </div>
                 <div className="col-4 ">
                     <div className="statBox" style={styleStatBox}>
-                        <div className="row statLabel">
+                        <div className="row" style={styleLabel}>
                             <p>SPEED</p>
                         </div>
                         <div className="row statistic" style={styleStatistic}>
@@ -105,7 +111,7 @@ export default function SkillComplete({userId}) {
                         type="submit"
                         size="lg" 
                     >
-                        BACK TO MORE OF THE SAME
+                        MORE OF THE SAME
                     </Button>
                 </NavLink>
                 <br></br>

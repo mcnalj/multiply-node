@@ -10,6 +10,7 @@ import './multipleChoiceButtons.component.answerComponent.scss';
 addStyles();
 
 export default function MultipleChoiceButtons({questionObject, handleIncrement, setQuizProgress, quizProgress, setAnswerMessage, startTime}) {
+    const [isDisabled, setIsDisabled] = useState(false);
     const [buttonClass, setButtonClass] = useState({button0: '', button1: '', button2: '', button3: ''});
 
     function updateQuizProgress(isCorrect) {
@@ -27,12 +28,19 @@ export default function MultipleChoiceButtons({questionObject, handleIncrement, 
     };
     
     function handleButtonClick(value) {
+        if (isDisabled) return; // Prevent multiple clicks
+        setIsDisabled(true);
+
         const isCorrect = value === questionObject.questionData.answers.correctAnswer;
         const buttonClicked = "button" + questionObject.answersArray.indexOf(value);
     
         setAnswerMessage(isCorrect ? "Correct!" : "Incorrect!");
-        setButtonClass({[buttonClicked]: isCorrect ? 'matched' : 'incorrect'});
-        // updateQuizProgress(isCorrect);
+        // setButtonClass({[buttonClicked]: isCorrect ? 'matched' : 'incorrect'});
+        
+        setButtonClass(prevState => ({
+            ...prevState,
+            [buttonClicked]: isCorrect ? 'matched' : 'incorrect'
+        }));
         
         setTimeout(function() {
             handleIncrement(
@@ -49,7 +57,8 @@ export default function MultipleChoiceButtons({questionObject, handleIncrement, 
             updateQuizProgress(isCorrect);
             
             setAnswerMessage('');
-            setButtonClass({ [buttonClicked]: '' });    
+            setButtonClass({ [buttonClicked]: '' }); 
+            setIsDisabled(false);   
         }, 1000);
     }
     
@@ -57,11 +66,12 @@ export default function MultipleChoiceButtons({questionObject, handleIncrement, 
         <div className="matching p-2">
             <div className="row">
                 {questionObject.answersArray.map((answer, index) => (
-                    <div className="col-6 text-center mt-2" key={index}>
+                    <div className="col-10 offset-1 col-md-6 offset-md-0 text-center mt-3" key={index}>
                         <Button
                             onClick={() =>handleButtonClick(answer)}
                             variant="outline-light"
                             className={`col-12 fs-3 p-1 box ${buttonClass[`button${index}`]}`}
+                            // disabled={isDisabled}
                         >        
                             <StaticMathField>{answer}</StaticMathField>
                         </Button>

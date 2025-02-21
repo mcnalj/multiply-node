@@ -64,7 +64,7 @@ export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, se
         const clicked = isLeft ? clickedIndex === index : clickedIndex === index;
         const matched = matches.includes(index);
         const incorrect = incorrectIndex.includes(index);
-        return `col-12 fs-3 p-1 box ${clicked ? 'clicked' : ''} ${matched ? 'matched' : ''} ${incorrect ? 'incorrect' : ''}`;
+        return `col-12 p-1 box ${clicked ? 'clicked' : ''} ${matched ? 'matched' : ''} ${incorrect ? 'incorrect' : ''}`;
     };
 
     return (
@@ -83,6 +83,7 @@ export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, se
                                 onClick={() => handleLeftClick(leftOptions[index], index+'left')}
                                 variant="outline-light"
                                 className={getButtonClass(index+'left', true)}
+                                style={{ fontSize: 'clamp(1.2rem, 3vw, 1.6rem)' }}
                             >
                                 <StaticMathField>{leftOptions[index]}</StaticMathField>
                             </Button>
@@ -92,6 +93,7 @@ export function MatchingComponent ({ matchObjects, leftOptions, rightOptions, se
                                 onClick={() => handleRightClick(rightOptions[index], index+'right')}
                                 variant="outline-light"
                                 className={getButtonClass(index+'right', false)}
+                                style={{ fontSize: 'clamp(1.2rem, 3vw, 1.6rem)' }}
                             >
                                 <StaticMathField>{rightOptions[index]}</StaticMathField>
                             </Button>

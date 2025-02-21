@@ -11,7 +11,7 @@ import {
 addStyles();
 // This is a component that allows the user to type in an answer to a question.
 
-// This is currently live with caculus.component.exponents2.js
+// This is currently live with caculus.component.exponents2.js and integrationComponent
 // TODO figure out what other components could be refactored to use it.
 // TODO see if the parent could use this and the matching seamlessly.
 
@@ -53,6 +53,8 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
   
     const [userAnswer, setUserAnswer] = useState('');
     const [answerMessage, setAnswerMessage] = useState('');
+
+    const [isDisabled, setIsDisabled] = useState(false);
   
     const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
   
@@ -75,7 +77,11 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
       }
   }
   
-    const handleKeyDown = event => {
+    const handleKeyDown = (event) => {
+      if (isDisabled) {
+        event.preventDefault();
+        return;
+      }
       if (event.key === 'Enter') {
         event.preventDefault();
         handleSubmit(event);
@@ -91,9 +97,10 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
     function handleSubmit(event) {
   
       event.preventDefault();
+      setIsDisabled(true);
   
       const CORRECT_PAUSE = 1500;
-      const INCORRECT_PAUSE = 4000;
+      const INCORRECT_PAUSE = 2000;
       const MEETS_STANDARD_PAUSE = 3000;
       const MIN_STREAK = 4;
       const DEFAULT_INPUT_BOX_STYLE = {backgroundColor:"white", color: "black", borderWidth: "0px", borderColor: "gray"}
@@ -154,12 +161,13 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
             }
           } else {
             updateProgress(false, 0);
-            // Turn this back on if you want an new question after a wrong answer.
+            // Turn this back on if you want a new question after a wrong answer.
             // quizProgress.getNextQuestion(topic);
   
           }
           setUserAnswer('');
           setAnswerMessage('');
+          setIsDisabled(false);
       }, pause) // end of setTimeout
     } // end of handleSubmit    
   
@@ -179,6 +187,7 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
                       onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
                       mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
                       onKeyDown={handleKeyDown}
+                      disabled={isDisabled}
                   />
           </div>     
           <p className="col-12 text-center mt-3">{answerMessage}</p>
@@ -188,6 +197,7 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
               id="submitBtn"
               size="lg"
               className="col-6 offset-3" 
+              disabled={isDisabled}
             >
               SUBMIT
             </Button>
@@ -209,6 +219,8 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
   
     const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
   
+    const [isDisabled, setIsDisabled] = useState(false);
+
     function updateSituation(value) {
       // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
       let pattern = `\\frac{1}{\\left\(\\right\)}`;
@@ -229,6 +241,10 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
   }
   
     const handleKeyDown = event => {
+      if (isDisabled) {
+        event.preventDefault();
+        return;
+      }
       if (event.key === 'Enter') {
         event.preventDefault();
         handleSubmit(event);
@@ -244,6 +260,7 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
     function handleSubmit(event) {
   
       event.preventDefault();
+      setIsDisabled(true);
   
       const CORRECT_PAUSE = 1500;
       const INCORRECT_PAUSE = 4000;
@@ -314,6 +331,7 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
           }
           setUserAnswer('');
           setAnswerMessage('');
+          setIsDisabled(false);
       }, pause) // end of setTimeout
     } // end of handleSubmit    
   
@@ -335,6 +353,7 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
                     onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
                     mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
                     onKeyDown={handleKeyDown}
+                    disabled={isDisabled}
                 />
               </p>
             </div>
@@ -345,7 +364,8 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
               type="submit"
               id="submitBtn"
               size="lg"
-              className="col-6 offset-3" 
+              className="col-6 offset-3"
+              disabled={isDisabled} 
             >
               SUBMIT
             </Button>
