@@ -44,7 +44,7 @@ export default function QuizBaseQuestions() {
         {
             questionId: 2,
             stem:"When the function is increasing, its derivative is positive. When the function is decreasing, the derivative is neagative.",
-            question: `On what interval(s) if f(x) increasing?`,
+            question: `On what interval(s) is f(x) increasing?`,
             latex1: "whatever",
             imageFile: tutorial_graph_svg,
             randomizableAnswers: true,

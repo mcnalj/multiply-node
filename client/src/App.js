@@ -21,6 +21,8 @@ import GetQuestions from './components/quiz/quizBase.component.quiz';
 import QuizBaseImages from './components/quiz/quizBaseImages.component.quiz';
 import QuizTutorial from './components/quiz/quizTutorial.component.quiz';
 
+import QuizHumanities from './components/quiz/quiz.component.humanitiesQuiz';
+
 import MyComponent from './components/sandbox/fetch.component';
 import Dropdown from './components/sandbox/dropdown';
 import Create from './components/sandbox/create.component';
@@ -218,6 +220,9 @@ function App() {
           <Route path="/getQuestions/:categoryId" element={<GetQuestions /> } />
           <Route path="/quizBaseImages" element={<QuizBaseImages /> } />
           {/* <Route path="/quizTutorial" element={<QuizTutorial /> } /> */}
+
+          <Route path="/quizHumanities" element={<QuizHumanities /> } />
+          <Route path="/mocktrialquiz" element={<QuizHumanities /> } />
           
           <Route path="/fetch" element={<MyComponent />} />
           <Route path="/dropdown" element={<Dropdown /> } />
