@@ -61,6 +61,8 @@ import UserProgress from './components/userInfo/userInfo.component.progress';
 import ClassProgress from './components/userInfo/userInfo.component.classProgress';
 import ProgressChoices from './components/userInfo/userInfo.component.progressChoices';
 import SingleUsersProgress from './components/userInfo/userInfo.component.singleUsersProgress';
+import UsersCC from './components/userInfo/userInfo.component.usersCC.js';
+import UserActionsCC from './components/userInfo/userInfo.component.userActionsCC.js';
 
 import ManageClasses from './components/auth/manageClasses.component.auth';
 import CreateClass from './components/auth/createClass.component.auth';
@@ -332,6 +334,16 @@ function App() {
                   </Protected>
                 }
           />                    
+          <Route path="/usersCC"
+                element={
+                    <UsersCC userId={userId}/>
+                }
+          />
+          <Route path="/userActionsCC"
+                element={
+                    <UserActionsCC userId={userId}/>
+                }
+          />
           <Route path="/userProgress"
                 element={
                   <Protected isAuthenticated={isAuthenticated}>

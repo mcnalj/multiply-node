@@ -6,7 +6,8 @@ import Image from 'react-bootstrap/Image'
 import './quiz.component.humanitiesQuiz.scss';
 
 import {
-    rule400s
+    rule400s,
+    rule600s,
 } from './assets/questions/mockTrialQuestions.js';
 
 export default function QuizHumanities() {
@@ -23,9 +24,9 @@ export default function QuizHumanities() {
     const [questionsAttempted, setQuestionsAttempted] = useState(0);
 
     useEffect(() => {
-        const sortedQuestions = sortQuestions(rule400s);
+        const sortedQuestions = sortQuestions(rule600s);
         setQuestions(sortedQuestions);
-    }, [rule400s]);
+    }, [rule600s]);
     
     useEffect(() => {
         if (questions.length === 0) return;

@@ -957,4 +957,43 @@ usersRoutes.route("/singleClassProgress").get(checkAuthenticated, async function
   }
 });
 
+usersRoutes.route("/usersCC").get(async function (req, response) {
+  console.log("fetching users at route /usersCC");
+  try {
+    // const users = await dbo.client.db("theCircus")
+    //   .collection("ccUsers")
+    //   .find({}).toArray();
+
+    const users = await dbo.client.db("theCircus")
+    .collection("ccUsers")
+    .aggregate([
+      {
+        $lookup: {
+          from: "ccUserActions",
+          localField: "_id",
+          foreignField: "userId",
+          as: "actions",
+          pipeline: [
+            { $sort: { timeStamp: -1 } }
+          ]
+        }
+      }
+    ])
+    .toArray();
+
+      return response.status(200).json({
+        success: true,
+        count: users.length,
+        data: users,
+      });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    }); 
+  }
+});
+
 module.exports = usersRoutes;
