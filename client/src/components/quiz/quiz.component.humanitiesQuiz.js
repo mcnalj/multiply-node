@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button'
 import Image from 'react-bootstrap/Image'
@@ -8,10 +8,23 @@ import './quiz.component.humanitiesQuiz.scss';
 import {
     rule400s,
     rule600s,
+    rule800s,
 } from './assets/questions/mockTrialQuestions.js';
 
 export default function QuizHumanities() {
-    
+    const category = useParams()
+    const categoryId = category.categoryId;
+    let questionBank = rule400s;
+    if (categoryId == 600) {
+        questionBank = rule600s;
+    } else if (categoryId == 800) {
+        questionBank = rule800s;
+    } else if (categoryId == 1000) {
+        const mix = [...rule400s, ...rule600s, ...rule800s];
+        const sortedMix = sortQuestions(mix);
+        const mixQuestions = sortedMix.slice(0, 10);
+        questionBank = mixQuestions;
+    }
     
 
     const [questions, setQuestions] = useState([]);
@@ -24,9 +37,9 @@ export default function QuizHumanities() {
     const [questionsAttempted, setQuestionsAttempted] = useState(0);
 
     useEffect(() => {
-        const sortedQuestions = sortQuestions(rule600s);
+        const sortedQuestions = sortQuestions(questionBank);
         setQuestions(sortedQuestions);
-    }, [rule600s]);
+    }, []);
     
     useEffect(() => {
         if (questions.length === 0) return;
@@ -122,8 +135,8 @@ export default function QuizHumanities() {
                     <Button variant="primary" type="submit" onClick={nextQuestion}>Next</Button>
                 </div>
                 <br /><br />
-                <NavLink to="/tutorialTopics">
-                    <Button type="button" variant="info" size="lg">Back to Tutorials and Quizzes</Button>
+                <NavLink to="/quizHumanitiesTopics">
+                    <Button type="button" variant="info" size="lg">Back Quiz Topics</Button>
                 </NavLink>
                 </>
                 ) : (

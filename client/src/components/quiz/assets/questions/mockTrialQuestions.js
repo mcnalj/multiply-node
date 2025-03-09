@@ -318,3 +318,97 @@ export const rule600s = [
         distractor4: null
     },
 ]
+
+export const rule800s = [
+    {
+        questionId: 1,
+        stem:"Article VIII - Hearsay",
+        question: `Which of the following is considered to be a statement?`,
+        imageFile: null,
+        randomizableAnswers: false,
+        correctAnswerPosition: 3,
+        correctAnswer: "all of the above are statements",
+        distractor1: "an oral assertion",
+        distractor2: "a written assertion",
+        distractor3: "nonverbal conduct if the person intended it as an assertion",
+        distractor4: null
+    },
+    {
+        questionId: 2,
+        stem:"Article VIII - Hearsay",
+        question: `The "Declarant" is _____________`,
+        imageFile: null,
+        randomizableAnswers: true,
+        correctAnswerPosition: null,
+        correctAnswer: "the person who made the statement.",
+        distractor1: "the person on the witness stand.",
+        distractor2: "the opposing party.",
+        distractor3: "the person who heard the statement.",
+        distractor4: null
+    },
+    {
+        questionId: 3,
+        stem:"Article VIII - Hearsay",
+        question: `If a statement is not offerred to prove the truth of the matter asserted, . . .`,
+        imageFile: null,
+        randomizableAnswers: true,
+        correctAnswerPosition: null,
+        correctAnswer: "then it is not hearsay.",
+        distractor1: "then it is always irrelevant.",
+        distractor2: "then is is allowed as an exception to the prohibition of hearsay.",
+        distractor3: "then it is a subsequent remedial measure.",
+        distractor4: null
+    },
+    {
+        questionId: 4,
+        stem:"Article VIII - Hearsay",
+        question: `A prior inconsistent statement by someone who is subject to cross-examination . . .`,
+        imageFile: null,
+        randomizableAnswers: true,
+        correctAnswerPosition: null,
+        correctAnswer: "is not hearsay.",
+        distractor1: "is not admissible to prove the truth of the matter asserted.",
+        distractor2: "is inadmissible hearsay.",
+        distractor3: "is proof of a lack of foundation.",
+        distractor4: null
+    },
+    {
+        questionId: 5,
+        stem:"Article VIII - Hearsay",
+        question: `If a witness's prior statement identifies a person the declarant perceived earlier, . . .`,
+        imageFile: null,
+        randomizableAnswers: true,
+        correctAnswerPosition: null,
+        correctAnswer: "it is not hearsay.",
+        distractor1: "it is inadmissible hearsay.",
+        distractor2: "it is a presence sense impression exception to the prohibition of hearsay.",
+        distractor3: "it is grounds for impeachment.",
+        distractor4: null
+    },
+    {
+        questionId: 6,
+        stem:"Article VIII - Hearsay",
+        question: `An Opposing Party's Statement is ______________.`,
+        imageFile: null,
+        randomizableAnswers: true,
+        correctAnswerPosition: null,
+        correctAnswer: "generally not hearsay",
+        distractor1: "an admissible exception to the prohibition of hearsay",
+        distractor2: "any statement by any witness on the opposing party",
+        distractor3: "only hearsay if it was made during and in furthance of a conspiracy",
+        distractor4: null
+    },
+    {
+        questionId: 7,
+        stem:"Article VIII - Hearsay",
+        question: `Hearsay is generally _____________.`,
+        imageFile: null,
+        randomizableAnswers: false,
+        correctAnswerPosition: 0,
+        correctAnswer: "inadmissible, but there are exceptions",
+        distractor1: "never admissible",
+        distractor2: "always admissible if the statement is true",
+        distractor3: "always inadmissible if it has the potentital to bias the jury against the defendant",
+        distractor4: null
+    },
+]

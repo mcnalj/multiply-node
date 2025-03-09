@@ -22,6 +22,7 @@ import QuizBaseImages from './components/quiz/quizBaseImages.component.quiz';
 import QuizTutorial from './components/quiz/quizTutorial.component.quiz';
 
 import QuizHumanities from './components/quiz/quiz.component.humanitiesQuiz';
+import QuizHumanitiesTopics from './components/quiz/quiz.component.humanitiesQuizTopics';
 
 import MyComponent from './components/sandbox/fetch.component';
 import Dropdown from './components/sandbox/dropdown';
@@ -223,7 +224,8 @@ function App() {
           <Route path="/quizBaseImages" element={<QuizBaseImages /> } />
           {/* <Route path="/quizTutorial" element={<QuizTutorial /> } /> */}
 
-          <Route path="/quizHumanities" element={<QuizHumanities /> } />
+          <Route path="/quizHumanities/:categoryId" element={<QuizHumanities /> } />
+          <Route path="/quizHumanitiesTopics" element={<QuizHumanitiesTopics /> } />
           <Route path="/mocktrialquiz" element={<QuizHumanities /> } />
           
           <Route path="/fetch" element={<MyComponent />} />
