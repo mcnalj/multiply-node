@@ -9,6 +9,7 @@ import {
     rule400s,
     rule600s,
     rule800s,
+    rule850s,
 } from './assets/questions/mockTrialQuestions.js';
 
 export default function QuizHumanities() {
@@ -19,8 +20,10 @@ export default function QuizHumanities() {
         questionBank = rule600s;
     } else if (categoryId == 800) {
         questionBank = rule800s;
+    } else if (categoryId == 850) {
+        questionBank = rule850s;
     } else if (categoryId == 1000) {
-        const mix = [...rule400s, ...rule600s, ...rule800s];
+        const mix = [...rule400s, ...rule600s, ...rule800s, ...rule850s];
         const sortedMix = sortQuestions(mix);
         const mixQuestions = sortedMix.slice(0, 10);
         questionBank = mixQuestions;

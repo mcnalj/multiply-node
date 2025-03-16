@@ -26,6 +26,7 @@ export default function QuizHumanitiesTopics() {
         ['Relevance', 400],
         ['Witnesses', 600],
         ['Hearsay', 800],
+        ['Hearsay Exceptions', 850],
         ['Mix', 1000],
     ]
     if (clicked) {

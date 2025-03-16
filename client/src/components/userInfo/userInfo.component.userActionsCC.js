@@ -16,29 +16,34 @@ export default function UserActionsCC({userId, userDataObj})  {
     return (
         <div>
             <h2>{user.name}'s Actions</h2>
-            <button onClick={() => navigate(-1)}>Go Back</button>
+            <Button onClick={() => navigate(-1)}>Go Back</Button>
             <ul>
                 {user.actions.length > 0 ? (
                     user.actions.map((action, index) => {
-                        let tempTime = action.details.totalTime / 1000;
-                        let tempMin = 0;
-                        let tempSec = 0;
-                        let textMin = "0";
-                        let textSec ="00";
-                        tempMin = Math.lower(tempTime / 60);
-                        if (tempMin > 59) {
-                            if (tempMin > 9) {
-                                textMin = tempMin.toString();
-                            } else {
-                                textMin = "0" + tempMin.toString();
+                        let tempTime = Math.floor(action.details.totalTime / 1000);
+                        let tempMin = Math.floor(tempTime / 60);
+                        let tempSec = tempTime % 60;
+                        let textTime = `${tempMin}:${tempSec.toString().padStart(2, "0")}`;
+
+
+                        const words = action.details.topic.split(/(?=[A-Z])/)
+                        words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+                        const topicString = words.join(" ");
+                        const topicTime = new Date(action.timeStamp).toLocaleString(undefined,
+                            {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
                             }
-                        } else {
-                            textMin = tempMin.toString();
-                        }
+                        )
+
+
 
                         return (
                         <li key={index}>
-                            <strong>{action.details.topic}</strong> - {new Date(action.timeStamp).toLocaleString()}
+                            <strong>{topicString}</strong> ({textTime}) - {topicTime}
                         </li>
                     )})
                 ) : (
