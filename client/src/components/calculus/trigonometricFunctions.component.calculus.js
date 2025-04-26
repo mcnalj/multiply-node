@@ -96,7 +96,8 @@ function UnitCircle({username, pointChoice, hideTriangle}) {
     if (!hideTriangle) {
   return (
         <div className="row m-0 p-0">
-            <div className="col-12 m-0 p-0">
+            {/* <div className="col-12 m-0 p-0"> */}
+            <div className="mx-auto" style={{ maxWidth: "500px", width: "100%"}} >
                 <svg
                     viewBox={`0 0 ${svgWidth} ${svgHeight}`}
                     width="100%"

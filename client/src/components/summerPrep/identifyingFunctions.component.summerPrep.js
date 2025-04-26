@@ -29,6 +29,11 @@ import {
     recordProgress
 } from '../infrastructure/recordProgress.js';
 
+import {
+    setAction,
+    recordAction
+  } from '../infrastructure/recordProgress.js';
+
 addStyles();
 
 const sineFunction = 
@@ -130,7 +135,7 @@ const absoluteValueFunction =
     const shuffledGraphDataArray = shuffleArray([...graphDataArray]);
 
 
-export default function IdentifyingFunctions({username}) {
+export default function IdentifyingFunctions({userId}) {
 
     const [graphIndex, setGraphIndex] = useState(0);
     const [questionObject, setQuestionObject] = useState({
@@ -150,6 +155,8 @@ export default function IdentifyingFunctions({username}) {
     const [answerMessage, setAnswerMessage] = useState('');
     const [buttonClass, setButtonClass] = useState({button0: '', button1: '', button2: '', button3: ''});
     const [isFinished, setIsFinished] = useState(false);
+
+    const [errorMessage, setErrorMessage] = useState(null);
 
     useEffect(() => {
         const graphQuestionObject = shuffledGraphDataArray[graphIndex];
@@ -172,15 +179,38 @@ export default function IdentifyingFunctions({username}) {
     async function done() {
         try {
             const endTime = new Date();
-            const totalTime = endTime - startTime;
-            const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "functions", "identifyingFunctions", username);
-            const result = await recordProgress(sessionData, "summerPrep");
+            const totalTime = endTime - startTime.current;
+            const section = "summerPrep";
+            const unit = "functions";
+            let topicName = "identifyingFunctions";
+
+            const actionDetails = {
+            section: section,
+            unit: unit,
+            topic: topicName,
+            "metStandard": true,
+            "questionsAttempted": quizProgress.questionsAttempted,
+            "questionsCorrect": quizProgress.questionsCorrect,
+            "questionsIncorrect": quizProgress.questionsIncorrect,
+            "questionsStreak": quizProgress.questionsStreak,
+            "datetimeStarted": startTime.current,
+            "totalTime": totalTime,
+            }
+    
+            const action = setAction("skillCompleted", actionDetails, userId)
+            const result = await recordAction(action);
             // what should we do with this result?
             setGraphIndex(0);
             setIsFinished(true);
         } catch (error) {
-            console.error("Failed to record progress: ", error);
-            // Show a message to the user
+            if (error.name === "TypeError") {
+                console.error("Newtwork error or issue with recording progress:", error);
+                setErrorMessage("We are unable to record your progress. Please check your internet connection.")
+          
+              } else {
+                console.error("Error processing request:", error);
+                setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.")
+              }
         }
     }
 
@@ -243,6 +273,11 @@ export default function IdentifyingFunctions({username}) {
             <div>
                 <p>{answerMessage}</p>
             </div>
+            {errorMessage && (
+              <div className="alert alert-danger mt-3" role="alert">
+                {errorMessage}
+              </div>    
+            )}
             <div className="matching p-2">
                 <div className="row">
                     <div className="col-6 text-center mt-2">

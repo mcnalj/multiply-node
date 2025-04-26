@@ -1,9 +1,9 @@
 import React from 'react';
-import { TopicsProgress } from './topicsProgress.component.summerPrep';
+import { TopicsProgressDetails } from './topicsProgressDetails.component.summerPrep';
 
-export default function PlottingPointsTopics({username}) {
+export default function PlottingPointsTopics({userId}) {
 
-    const topics = [
+    const topicsObjects = [
         {
             topicName: "functionNotation", buttonText: "Function Notation", path: "/functionNotation"
         },
@@ -37,7 +37,14 @@ export default function PlottingPointsTopics({username}) {
             <div>
                 <h1>Functions Topics</h1>
             </div>
-            <TopicsProgress username={username} topics={topics} section={section} unit={unit} backLink={backLink} backLinkText={backLinkText} />
+            <TopicsProgressDetails
+                userId={userId}
+                topicsObjects={topicsObjects}
+                section={section}
+                unit={unit}
+                backLink={backLink}
+                backLinkText={backLinkText}
+            />
         </>
     );
 }

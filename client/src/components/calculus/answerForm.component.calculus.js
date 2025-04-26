@@ -67,6 +67,27 @@ function AnswerForm(props) {
         }
     }
 
+  //   function updateSituation(value) {
+  //     let newAnswer = value.userAnswer;
+  //     // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
+  //     let pattern = `\\frac{1}{\\left\(\\right\)}`;
+  //     // This is a regex that removes MathQuill's default big parens \left and \right.
+  //     let regex = /\\left\(\\right\)/g;
+  //     if ( pattern === newAnswer) {
+  //       newAnswer = `\\frac{1}{()}`;
+  //     } else if ( regex.test(newAnswer)) {
+  //       let cleanedAnswer = newAnswer.replace(/\\left\(\s*\\right\)/g, "()");
+  //       newAnswer = cleanedAnswer;
+  //     }
+      
+  //     setUserAnswer((prev) => {
+  //       if (prev.userAnswer !== newAnswer) {
+  //         return {...prev, userAnswer: newAnswer };
+  //       }
+  //       return prev;
+  //     });
+  // }    
+
     const handleKeyDown = event => {
       if (isDisabled){
         event.preventDefault();
@@ -160,8 +181,8 @@ function AnswerForm(props) {
                     style={boxStyle}
                     aria-describedby="answer input"
                     latex={userObj.userAnswer}
-                    // value={userObj.userAnswer} // does nothing?
-                    placeholder={userObj.userAnswer} //does nothing?
+                    // value={userObj.userAnswer} // does nothing because EditableMathField uses latex instead
+                    // placeholder={userObj.userAnswer} //does nothing, use a default latex value instead
                     onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
                     mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
                     onKeyDown={handleKeyDown}
@@ -206,32 +227,51 @@ function AnswerForm(props) {
     const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray"})
 
     const [isDisabled, setIsDisabled] = useState(false);
-
     function updateSituation(value) {
-        // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
-        let pattern = `\\frac{1}{\\left\(\\right\)}`;
-        // This is a regex that removes MathQuill's default big parens \left and \right.
-        let regex = /\\left\(\\right\)/g;
-        if ( pattern == value.userAnswer) {
-          let replacedString = `\\frac{1}{()}`;
+      // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
+      let pattern = `\\frac{1}{\\left\(\\right\)}`;
+      // This is a regex that removes MathQuill's default big parens \left and \right.
+      let regex = /\\left\(\\right\)/g;
+      if ( pattern == value.userAnswer) {
+        let replacedString = `\\frac{1}{()}`;
+        return setUserAnswer((prev) => {
+            return {...prev, ...{userAnswer: replacedString}}
+        })          
+      }
+      if ( regex.test(value.userAnswer)) {
+        let beginning = regex.lastIndex - 13
+        let trimmedString = value.userAnswer.slice(0, beginning);
+        let replacedString = trimmedString + "()";
+        return setUserAnswer((prev) => {
+            return {...prev, ...{userAnswer: replacedString}}
+        })
+      } else {
           return setUserAnswer((prev) => {
-              return {...prev, ...{userAnswer: replacedString}}
-          })          
-        }
-        if ( regex.test(value.userAnswer)) {
-          let beginning = regex.lastIndex - 13
-          let trimmedString = value.userAnswer.slice(0, beginning);
-          let replacedString = trimmedString + "()";
-          return setUserAnswer((prev) => {
-              return {...prev, ...{userAnswer: replacedString}}
+              return {...prev, ...value}
           })
-        } else {
-            return setUserAnswer((prev) => {
-                return {...prev, ...value}
-            })
-        }
-    }
-
+      }
+  }
+//The are changes ChatGPT recommended to avoid unnecessary re-renders and potential lag.
+  //   function updateSituation(value) {
+  //     let newAnswer = value.userAnswer;
+  //     // This is the pattern when you're trying to do 1/(ln3). Does it affect anything else?
+  //     let pattern = `\\frac{1}{\\left\(\\right\)}`;
+  //     // This is a regex that removes MathQuill's default big parens \left and \right.
+  //     let regex = /\\left\(\\right\)/g;
+  //     if ( pattern === newAnswer) {
+  //       newAnswer = `\\frac{1}{()}`;
+  //     } else if ( regex.test(newAnswer)) {
+  //       let cleanedAnswer = newAnswer.replace(/\\left\(\s*\\right\)/g, "()");
+  //       newAnswer = cleanedAnswer;
+  //     }
+      
+  //     setUserAnswer((prev) => {
+  //       if (prev.userAnswer !== newAnswer) {
+  //         return {...prev, userAnswer: newAnswer };
+  //       }
+  //       return prev;
+  //     });
+  // }    
     const handleKeyDown = event => {
       if (isDisabled){
         event.preventDefault();
@@ -244,7 +284,30 @@ function AnswerForm(props) {
         handleSubmit(event);
       }
     }
-  
+
+    function plusC() {
+      setUserAnswer((prev) => {
+        let currentLatex = prev.userAnswer || "";
+        if (!currentLatex.includes("+C")) {
+          return { ...prev, userAnswer: currentLatex + "+C"};
+        }
+        return prev;
+      });
+      if (mathFieldRef.current) {
+        setTimeout(() => mathFieldRef.current.focus(), 0);
+      }
+    }
+
+    function appendLatex(latex) {
+      setUserAnswer((prev) => ({
+        ...prev,
+        userAnswer: (prev.userAnswer || "") + latex,
+      }));
+      if (mathFieldRef.current) {
+        setTimeout(() => mathFieldRef.current.focus(), 0);
+      }
+    }
+
     function handleSubmit(event) {
         event.preventDefault();
         setIsDisabled(true);
@@ -318,7 +381,7 @@ function AnswerForm(props) {
             <div className="row">
               <div className="col-4 fs-2 text-end m-0 p-0">
                   {/* <p>∫ f'(x) = </p> */}
-                  <StaticMathField>{`\\int_\\quad^\\quad f(x)\\quad`}</StaticMathField>
+                  <StaticMathField>{`\\int_\\quad^\\quad f(x)\\quad=` }</StaticMathField>
               </div>
               <div className="col-5 m-0 p-0">
                   <EditableMathField
@@ -336,6 +399,42 @@ function AnswerForm(props) {
                     disabled={isDisabled}
                   />
               </div>
+              <div className="col-3 p-2">
+                <div className="row">
+                  <div className="col-12 d-flex gap-2 mb-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={plusC}
+                  >
+                    <StaticMathField>{`+C`}</StaticMathField>
+                  </Button>
+                  </div>
+                </div>
+                {
+                  [
+                    ["x", "x^2", "x^3"],
+                    ["x^4", "x^5", "x^6"],
+                    ["x^7", "x^8", "x^9"]
+                  ].map((row, rowIndex)=> (
+                    <div className="row" key={rowIndex}>
+                      <div className="col-12 d-flex gap-2 mb-2">
+                        {row.map((value, colIndex) => (
+                          <Button
+                            key={`${rowIndex}-${colIndex}`}
+                            variant="primary"
+                            size="sm"
+                            onClick={() => appendLatex(value)}
+                          >
+                            <StaticMathField>{value}</StaticMathField>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                }
+            </div>
+
             </div>
             <div className="row">
               <div className="col-12 mt-4">

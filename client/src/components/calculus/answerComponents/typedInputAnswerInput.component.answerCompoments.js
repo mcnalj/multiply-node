@@ -155,7 +155,7 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
           if (isCorrect) {
             updateProgress(true, quizProgress.questionsStreak + 1);
             if (quizProgress.questionsCorrect + 1 >= quizProgress.questionsToMeet) {
-                quizProgress.doneWithTopic();
+              quizProgress.doneWithTopic();
             } else {
               quizProgress.getNextQuestion(topic);
             }
@@ -313,7 +313,6 @@ export function TypedInputAnswerForm({questionObject, quizProgress, setQuizProgr
       } else {
           handleIncorrectAnswer();
       }
-  
       setTimeout(function() {
           setBoxStyle(DEFAULT_INPUT_BOX_STYLE)        
           if (isCorrect) {

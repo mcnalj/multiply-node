@@ -17,11 +17,18 @@ import {
     recordProgress
 } from '../infrastructure/recordProgress.js';
 
+import {
+    setAction,
+    recordAction
+} from '../infrastructure/recordProgress.js';
+
+
 addStyles();
 
-export default function FactoringQuadratics({username}) {
+export default function FactoringQuadratics({userId}) {
     const parameter = useParams()
     const topic = parameter.topic;
+    const [errorMessage, setErrorMessage] = useState(null);    
 
     function getDifferenceOfSquares() {
         let factor1 = getRandomIntInclusive(1, 9);
@@ -122,10 +129,32 @@ export default function FactoringQuadratics({username}) {
     async function done(liftedState, startTime){
         try {
             const endTime = new Date();
-            const totalTime = endTime - startTime;
-            const sessionData = setSessionData(liftedState, startTime, totalTime, "summerPrep", "quadratics", topic, username);
-            // we are going to need to pass url information if we're not in summerPrep
-            const result = await recordProgress(sessionData, "summerPrep");
+            const totalTime = endTime - startTime.current;
+            const section = "summerPrep";
+            const unit = "quadratics";
+            let topicName = topic;
+
+            const actionDetails = {
+            section: section,
+            unit: unit,
+            topic: topicName,
+            "metStandard": true,
+            "questionsAttempted": liftedState.questionsAttempted,
+            "questionsCorrect": liftedState.questionsCorrect,
+            "questionsIncorrect": liftedState.questionsIncorrect,
+            "questionsStreak": liftedState.questionsStreak,
+            "datetimeStarted": startTime.current,
+            "totalTime": totalTime,
+            }
+    
+            const action = setAction("skillCompleted", actionDetails, userId)
+            const result = await recordAction(action);            
+
+
+
+            // const sessionData = setSessionData(liftedState, startTime, totalTime, "summerPrep", "quadratics", topic, username);
+            // // we are going to need to pass url information if we're not in summerPrep
+            // const result = await recordProgress(sessionData, "summerPrep");
             // what should we do with this result?
             let quadraticParameters = getQuadraticParameters();
             let functionLatex = setFunction(quadraticParameters);
@@ -147,8 +176,14 @@ export default function FactoringQuadratics({username}) {
               }
             );
         } catch (error) {
-            console.error("Failed to record progress: ", error);
-            // Show a message to the user
+            if (error.name === "TypeError") {
+                console.error("Newtwork error or issue with recording progress:", error);
+                setErrorMessage("We are unable to record your progress. Please check your internet connection.")
+          
+            } else {
+                console.error("Error processing request:", error);
+                setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.")
+            }
         }
     }
     if (questionObject.metStandard) {
@@ -184,6 +219,11 @@ export default function FactoringQuadratics({username}) {
               questionObj={questionObject}
               startTime={startTime}
           />
+        {errorMessage && (
+            <div className="alert alert-danger mt-3" role="alert">
+                {errorMessage}
+            </div>    
+        )}          
           <Link to="/factoringQuadraticsTopics">
             <button type="button" className="btn btn-lg btn-success mt-3">BACK TO QUADRATICS TOPICS</button><br /><br />
           </Link>

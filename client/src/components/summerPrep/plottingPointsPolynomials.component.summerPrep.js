@@ -31,9 +31,14 @@ import {
     recordProgress
 } from '../infrastructure/recordProgress.js';
 
+import {
+  setAction,
+  recordAction
+} from '../infrastructure/recordProgress.js';
+
 addStyles();
 
-export default function PlottingPointsPolynomials({username}) {
+export default function PlottingPointsPolynomials({userId}) {
 //   const parameter = useParams()
 //   const topic = parameter.topic;
     const topic = "Polynomials";
@@ -43,6 +48,8 @@ export default function PlottingPointsPolynomials({username}) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isChecking, setIsChecking] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState(null);
 
 const polynomialArray = [
   {
@@ -275,18 +282,39 @@ const polynomialArray = [
   async function done() { 
     try {
         const endTime = new Date();
-        const totalTime = endTime - startTime;
+        const totalTime = endTime - startTime.current;
+        const section = "summerPrep";
+        const unit = "functions";
         let topicName = "plottingPoints" + topic;
-        const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "functions", topicName, username);
-        // we are going to need to pass url information if we're not in summerPrep
-        const result = await recordProgress(sessionData, "summerPrep");
-        // what should we do with this result?
+
+        const actionDetails = {
+          section: section,
+          unit: unit,
+          topic: topicName,
+          "metStandard": true,
+          "questionsAttempted": quizProgress.questionsAttempted,
+          "questionsCorrect": quizProgress.questionsCorrect,
+          "questionsIncorrect": quizProgress.questionsIncorrect,
+          "questionsStreak": quizProgress.questionsStreak,
+          "datetimeStarted": startTime.current,
+          "totalTime": totalTime,
+        }
+  
+        const action = setAction("skillCompleted", actionDetails, userId)
+        const result = await recordAction(action);
+
         setQuestionIndex(prevState => (
           prevState + 1
         ));
     } catch (error) {
-        console.error("Failed to record progress: ", error);
-        // Show a message to the user
+      if (error.name === "TypeError") {
+        console.error("Newtwork error or issue with recording progress:", error);
+        setErrorMessage("We are unable to record your progress. Please check your internet connection.")
+  
+      } else {
+        console.error("Error processing request:", error);
+        setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.")
+      }
     }
   }
 
@@ -466,6 +494,11 @@ const polynomialArray = [
             {isChecking ? 'CONTINUE' : 'SUBMIT'}
         </Button>
       </form>
+      {errorMessage && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {errorMessage}
+          </div>    
+      )}
     <div className="svg-container">
         <svg 
           viewBox="-12 -12 24 24"

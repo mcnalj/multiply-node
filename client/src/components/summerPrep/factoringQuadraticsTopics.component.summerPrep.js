@@ -1,8 +1,8 @@
 import React from 'react';
-import { TopicsProgress } from './topicsProgress.component.summerPrep';
+import { TopicsProgressDetails } from './topicsProgressDetails.component.summerPrep';
 
-export default function FactoringQuadraticsTopics({ username }) {
-    const topics = [
+export default function FactoringQuadraticsTopics({ userId }) {
+    const topicsObjects = [
         {
             topicName: "differenceOfSquares", buttonText: "Difference of Squares", path: "/factoringQuadratics/differenceOfSquares"
         },
@@ -15,16 +15,22 @@ export default function FactoringQuadraticsTopics({ username }) {
     
     const unit = "quadratics";
     
-    const backLink = "/plottingPointsTopics";
+    const backLink = "/summerPrepTopics";
     
-    const backLinkText = "Back to Functions Topics";
+    const backLinkText = "Back to Summer Prep";
 
     return (
         <>
             <div>
                 <h1>Quadratics Topics</h1>
             </div>
-            <TopicsProgress username={username} topics={topics} section={section} unit={unit} backLink={backLink} backLinkText={backLinkText} />
+            <TopicsProgressDetails
+                userId={userId}
+                topicsObjects={topicsObjects}
+                section={section}
+                unit={unit}
+                backLink={backLink}
+                backLinkText={backLinkText} />
         </>
     );
 }

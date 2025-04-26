@@ -46,10 +46,14 @@ import {
 
 import MultipleChoiceButtons from './answerComponents/multipleChoiceButtons.component.answerComponent.js';
 
+import {
+  setAction,
+  recordAction
+} from '../infrastructure/recordProgress.js';
 
 addStyles();
 
-export default function ExponentsVariety({username}) {
+export default function ExponentsVariety({userId}) {
 
     // These are for the matching component
     const [isFinished, setIsFinished] = useState(false);
@@ -65,6 +69,7 @@ export default function ExponentsVariety({username}) {
     const [multipleChoiceQuestionsArray, setMultipleChoiceQuestionsArray] = useState(shuffleArray([...multipleChoiceQuestions]));
         
     const [answerMessage, setAnswerMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState(null);
 
     // These are for the typed input component
     const parameter = useParams()
@@ -320,19 +325,55 @@ export default function ExponentsVariety({username}) {
     
     // This function needs to know what the topic is.
     // This changes if it's not "summerPrep", "calculus"
+    // async function done(){
+    //     try {
+    //         const endTime = new Date()
+    //         const totalTime = endTime - startTime;
+    //         const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "exponents", topic, username); 
+    //         const result = await recordProgress(sessionData, "summerPrep");
+    //         // What should we do with this result?
+    //         // console.log(result.msg);      
+    //     } catch (error) {
+    //         console.error("Failed to record progress: ", error);
+    //         // Show a message to the user
+    //     }
+    // };
+
     async function done(){
-        try {
-            const endTime = new Date()
-            const totalTime = endTime - startTime;
-            const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "exponents", topic, username); 
-            const result = await recordProgress(sessionData, "summerPrep");
-            // What should we do with this result?
-            // console.log(result.msg);      
-        } catch (error) {
-            console.error("Failed to record progress: ", error);
-            // Show a message to the user
+      try {
+          const endTime = new Date()
+          const totalTime = endTime - startTime.current;
+          const section = "summerPrep";
+          const unit = "exponents";
+          const topicName = topic;
+
+          const actionDetails = {
+            section: section,
+            unit: unit,
+            topic: topicName,
+            "metStandard": true,
+            "questionsAttempted": quizProgress.questionsAttempted,
+            "questionsCorrect": quizProgress.questionsCorrect,
+            "questionsIncorrect": quizProgress.questionsIncorrect,
+            "questionsStreak": quizProgress.questionsStreak,
+            "datetimeStarted": startTime.current,
+            "totalTime": totalTime,
+          }
+
+          const action = setAction("skillCompleted", actionDetails, userId)
+          const result = await recordAction(action);
+          // What should we do with this result?  
+      } catch (error) {
+        if (error.name === "TypeError") {
+          console.error("Newtwork error or issue with recording progress:", error);
+          setErrorMessage("We are unable to record your progress. Please check your internet connection.")
+    
+        } else {
+          console.error("Error processing request:", error);
+          setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.")
         }
-    };
+      }
+  };
 
     const navigate = useNavigate()
 
@@ -466,6 +507,11 @@ export default function ExponentsVariety({username}) {
           </>
             ) 
         }
+        {errorMessage && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {errorMessage}
+          </div>    
+        )}
         <div>
             <p className="fs-3">{answerMessage}</p>
         </div>

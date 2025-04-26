@@ -47,7 +47,7 @@ export default function LoginWithGoogle({setUserEmail}) {
                 setUserEmail(data.user.email);
                 // This is where I should be setting the global userId and setting info for navBar
                 // (or I guess I should do it when I'm doing the backend verification); in record/googleLogin
-                navigate("/integrationTopics");
+                navigate("/calculus");
             })
             .catch((err) => {
                 setLoading(false);

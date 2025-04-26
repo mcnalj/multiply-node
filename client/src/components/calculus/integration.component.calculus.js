@@ -293,17 +293,20 @@ function Integrals({userId, currentTopic, setCurrentTopic, questionTopics, start
 
       // I kept this so we can us the success Page, but revise.
       const actionDetails = {
+        section: "summerPrep",
+        unit: "multiplication",
         topic: topicName,
         "metStandard": true,
         "questionsAttempted": liftedState.questionsAttempted,
         "questionsCorrect": liftedState.questionsCorrect,
         "questionsIncorrect": liftedState.questionsIncorrect,
         "questionsStreak": liftedState.questionsStreak,
-        "datetimeStarted": startTime,
+        "datetimeStarted": startTime.current,
         "totalTime": totalTime,
       }
 
-      const action = setAction(liftedState, topicName, startTime, totalTime, userId);
+
+      const action = setAction("skillCompleted", actionDetails, userId);
       const result = await recordAction(action);
 
       // when me navigate back by clicking more of the same, we get "There was an error calculating statistics." Why?

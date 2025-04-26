@@ -1,8 +1,11 @@
 import React from 'react';
-import { TopicsProgress } from '../summerPrep/topicsProgress.component.summerPrep';
+import { TopicsProgressDetails } from '../summerPrep/topicsProgressDetails.component.summerPrep';
+import { config} from '../constants';
 
-export default function ExponentsTopics({username}) {
-    const topics = [
+var url = config.url.API_URL;
+
+export default function ExponentsTopics({userId}) {
+    const topicsObjects = [
         {
             topicName: "positive", buttonText: "Simple Exponents", path: "/exponentsVariety/positive"         
         },
@@ -19,7 +22,7 @@ export default function ExponentsTopics({username}) {
             topicName: "mixed", buttonText: "Mix of All Types", path: "/exponentsVariety/mixed"
         },        
     ];
-    
+
     const section = "summerPrep";
     
     const unit = "exponents";
@@ -33,7 +36,13 @@ export default function ExponentsTopics({username}) {
             <div>
                 <h1>Exponents Topics</h1>
             </div>
-            <TopicsProgress username={username} topics={topics} section={section} unit={unit} backLink={backLink} backLinkText={backLinkText} />
+            <TopicsProgressDetails
+                userId={userId}
+                topicsObjects={topicsObjects}
+                section={section}
+                unit={unit}
+                backLink={backLink}
+                backLinkText={backLinkText} />
         </>
     );
 }

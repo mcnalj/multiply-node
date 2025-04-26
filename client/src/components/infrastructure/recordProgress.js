@@ -65,20 +65,10 @@ export async function recordProgress(sessionData, domain) {
     }
 }    
 
-export function setAction(liftedState, topicName, startTime, totalTime, userId) {
-    const actionDetails = {
-        topic: topicName,
-        "metStandard": true,
-        "questionsAttempted": liftedState.questionsAttempted,
-        "questionsCorrect": liftedState.questionsCorrect,
-        "questionsIncorrect": liftedState.questionsIncorrect,
-        "questionsStreak": liftedState.questionsStreak,
-        "datetimeStarted": startTime,
-        "totalTime": totalTime,
-    }
+export function setAction(actionType, actionDetails, userId) {
     const action = {
         userId: userId,
-        actionType: "skillCompleted",
+        actionType: actionType,
         timeStamp: new Date(),
         details: actionDetails,
     }

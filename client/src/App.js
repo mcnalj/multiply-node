@@ -58,6 +58,7 @@ import GFGFlippableCard from './components/flashcards/gfgFlashcard.component.fla
 import CardStack from './components/flashcards/cardStack.component.flashcard';
 import CardSlide from './components/flashcards/cardSlide.component.flashcard';
 
+import UserSkillsCompleted from './components/userInfo/userInfo.component.userSkillsCompleted.js';
 import UserProgress from './components/userInfo/userInfo.component.progress';
 import ClassProgress from './components/userInfo/userInfo.component.classProgress';
 import ProgressChoices from './components/userInfo/userInfo.component.progressChoices';
@@ -330,6 +331,13 @@ function App() {
                   </Protected>
                 }
           />
+          <Route path="/userSkillsCompleted"
+                element={
+                  // <Protected isAuthenticated={isAuthenticated}>
+                    <UserSkillsCompleted userId={userId}/>
+                  // </Protected>
+                }
+          />                              
           <Route path="/singleUsersProgress/:username"
                 element={
                   <Protected isAuthenticated={isAuthenticated}>

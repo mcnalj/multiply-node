@@ -261,7 +261,7 @@ export const fetchStatusIntegrationTopics = async (userId, url, topics, setQuizS
     console.log(userId);
     try {
         // const response = await fetch(`${url}/getProgressDetails/${section}/${unit}`, {
-        const response = await fetch(`${url}/users/getProgressIntegrationTopics/calculus/integration`, {
+        const response = await fetch(`${url}/users/getProgressIntegrationTopics/calculus/${unit}`, {
             method: "POST",
             mode: 'cors',
             credentials: 'include',
@@ -281,7 +281,7 @@ export const fetchStatusIntegrationTopics = async (userId, url, topics, setQuizS
         }
 
         // this is to account for the fact that calculus has sessionsData and summerPrep has sessionData
-        if (section === "calculus") {
+        // if (section === "calculus") {
             console.log("Section:" + section);
             if (data) {
                 console.log(data);
@@ -314,22 +314,22 @@ export const fetchStatusIntegrationTopics = async (userId, url, topics, setQuizS
                 });
            }
            
-        } else {
-            if (data) {
-                Object.keys(data).forEach(skill => {
-                    if (data[skill]?.length > 0) {
-                        let tempStatus = "inProgress";
-                        for (let i = 0; i < data[skill].length; i++) {
-                            if (data[skill][i].sessionData?.metStandard) {
-                                tempStatus = "metStandard";
-                                break; // Stop checking further if the standard is met
-                            }
-                        }
-                        quizStatus[skill] = tempStatus;
-                    }
-                });
-            }
-        }
+        // } else {
+        //     if (data) {
+        //         Object.keys(data).forEach(skill => {
+        //             if (data[skill]?.length > 0) {
+        //                 let tempStatus = "inProgress";
+        //                 for (let i = 0; i < data[skill].length; i++) {
+        //                     if (data[skill][i].sessionData?.metStandard) {
+        //                         tempStatus = "metStandard";
+        //                         break; // Stop checking further if the standard is met
+        //                     }
+        //                 }
+        //                 quizStatus[skill] = tempStatus;
+        //             }
+        //         });
+        //     }
+        // }
         
         setQuizStatus(quizStatus);
 

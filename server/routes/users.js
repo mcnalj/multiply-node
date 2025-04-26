@@ -457,6 +457,73 @@ usersRoutes.route("/getProgressIntegrationTopics/calculus/:topic").post(async fu
   }
 });
 
+usersRoutes.route("/getSkillsCompleted/:section").post(async function (req, res) {
+  // const username = req.body.username;
+  const userId = req.body.userId;
+  // const skills = req.body.skills;
+  const unit = "exponents";
+  const { section } = req.params;
+
+  // if (!username || !Array.isArray(skills) || skills.length === 0) {
+    // if (!userId || !Array.isArray(skills) || skills.length === 0) {
+      if (!userId ) {
+    return res.status(400).json({
+      success:false,
+      message: "Invalid request, Ensure 'userId' and 'skills' are provided.",
+    });
+  }
+
+  try {
+    const pipeline = [
+      {
+        $match: {
+          userId: userId,
+          actionType: "skillCompleted",
+          "details.section": section,
+          "details.unit": unit,
+        },
+      },
+      {
+        $group: {
+          _id: "$details.topic",
+          details: { $push: "$details" },
+        },
+      },
+      {
+        $project: {
+          topic: "$_id",
+          details: 1,
+          _id: 0,
+        }
+      },
+    ];
+
+    const results = await dbo.client.db("theCircus")
+      .collection("ccUserActions")
+      .aggregate(pipeline).toArray(); 
+    if (results.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No matching documents found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Documents retrieved successfully",
+      data: results,
+    });
+    console.dir(data);
+  } catch (error) {
+    console.error("Error querying the database:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while querying the database.",
+    });
+  }
+});
+
+
 
 usersRoutes.route("/classProgress").get(checkAuthenticated, async function (req, response) {
   const user = req.session.passport.user.username;

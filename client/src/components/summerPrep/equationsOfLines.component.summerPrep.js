@@ -23,9 +23,14 @@ import {
     getRandomIncorrectMessage,
   } from '../infrastructure/messages.js';
 
+import {
+    setAction,
+    recordAction
+} from '../infrastructure/recordProgress.js';  
+
 addStyles();
 
-export default function EquationsOfLines({username}) {
+export default function EquationsOfLines({userId}) {
 
     const [questionObject, setQuestionObject] = useState({
         yIntercept: 0,
@@ -43,6 +48,8 @@ export default function EquationsOfLines({username}) {
         getNextQuestion: next,
         doneWithTopic: done     
     })
+
+    const [errorMessage, setErrorMessage] = useState(null);    
 
     // function getNewLine() {
     //     const slopeArray = [-3, -2, -1, -0.5, -0.33, -0.25, 0, 0.25, 0.33, 0.5, 1, 2, 3];
@@ -111,8 +118,10 @@ export default function EquationsOfLines({username}) {
 
     // this is chat GPTs simplified version of the function above
     function getNewLine() {
-      const slopeArray = [-3, -2, -1, -0.5, -0.33, -0.25, 0, 0.25, 0.33, 0.5, 1, 2, 3];
-      const slopeAnswersArray = ['-3', '-2', '-1', '-\\frac{1}{2}', '-\\frac{1}{3}', '-\\frac{1}{4}', '0', '\\frac{1}{4}', '\\frac{1}{3}', '\\frac{1}{2}', '1', '2', '3'];
+      // const slopeArray = [-3, -2, -1, -0.5, -0.33, -0.25, 0, 0.25, 0.33, 0.5, 1, 2, 3];
+      const slopeArray = [-3, -2, -1, -0.5, -0.33, -0.25, 0.25, 0.33, 0.5, 1, 2, 3];
+      // const slopeAnswersArray = ['-3', '-2', '-1', '-\\frac{1}{2}', '-\\frac{1}{3}', '-\\frac{1}{4}', '0', '\\frac{1}{4}', '\\frac{1}{3}', '\\frac{1}{2}', '1', '2', '3'];
+      const slopeAnswersArray = ['-3', '-2', '-1', '-\\frac{1}{2}', '-\\frac{1}{3}', '-\\frac{1}{4}', '\\frac{1}{4}', '\\frac{1}{3}', '\\frac{1}{2}', '1', '2', '3'];
       const slope = slopeArray[Math.floor(Math.random() * slopeArray.length)];
       const slopeAnswersIndex = slopeArray.indexOf(slope);
       const yIntercept = getRandomIntInclusive(-5, 5);
@@ -160,14 +169,37 @@ export default function EquationsOfLines({username}) {
     async function done(){
         try {
             const endTime = new Date();
-            const totalTime = endTime - startTime;
-            const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "functions", "equationsOfLines", username);
-            const result = await recordProgress(sessionData, "summerPrep");
+            const totalTime = endTime - startTime.current;
+            const section = "summerPrep";
+            const unit = "functions";
+            let topicName = "equationsOfLines";
+    
+            const actionDetails = {
+              section: section,
+              unit: unit,
+              topic: topicName,
+              "metStandard": true,
+              "questionsAttempted": quizProgress.questionsAttempted,
+              "questionsCorrect": quizProgress.questionsCorrect,
+              "questionsIncorrect": quizProgress.questionsIncorrect,
+              "questionsStreak": quizProgress.questionsStreak,
+              "datetimeStarted": startTime.current,
+              "totalTime": totalTime,
+            }
+      
+            const action = setAction("skillCompleted", actionDetails, userId)
+            const result = await recordAction(action);
             // what should we do with this result?
             getNewLine();
         } catch (error) {
-            console.error("Failed to record progress: ", error);
-            // Show a message to the user
+          if (error.name === "TypeError") {
+            console.error("Newtwork error or issue with recording progress:", error);
+            setErrorMessage("We are unable to record your progress. Please check your internet connection.")
+      
+          } else {
+            console.error("Error processing request:", error);
+            setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.")
+          }
         }
     }
     if (quizProgress.questionsCorrect >= quizProgress.questionsToMeet) {   
@@ -178,6 +210,8 @@ export default function EquationsOfLines({username}) {
                       <h1>Great job!</h1>
                       <p>You completed the Equations of Lines practice.</p>
                       <p>Keep up the hard work!</p>
+                      <Link to="/plottingPointsTopics" className="btn btn-primary">Functions Topics</Link>
+                      <br></br><br></br>
                       <Link to="/summerPrepTopics" className="btn btn-primary">Summer Prep Topics</Link>
                   </div>
               </div>
@@ -186,34 +220,39 @@ export default function EquationsOfLines({username}) {
   } else {
 
     return (
-        <div className="col-12">
-            <div className="progressBar col-12">
-              <ProgressBar now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
-            </div>
-            <div>
-                <StraightLineGraph
-                    yIntercept={questionObject.yIntercept}
-                    slope={questionObject.slope}
-                />
-            </div>
-          <div className="row">
-              <p className="col-12 text-center fs-5">
-                Write an equation for the blue line in the form: 
-                <StaticMathField>{`y - y_1 = m (x - x_1)`}</StaticMathField>
-              </p>
-          </div>
-          <EquationOfLineAnswerForm
-              questionObject={questionObject}
-              quizProgress={quizProgress}
-              setQuizProgress={setQuizProgress}
-              startTime={startTime}
-          />
-          <Link to="/plottingPointsTopics">
-            <button type="button" className="btn btn-lg btn-success mt-3">Back to Functions Topics</button><br /><br />
-          </Link>
+      <div className="col-12">
+        <div className="progressBar col-12">
+          <ProgressBar now={quizProgress.progressBar} label={`${quizProgress.progressBar}%`} max='100'/>
         </div>
-      )
-}
+        <div>
+            <StraightLineGraph
+                yIntercept={questionObject.yIntercept}
+                slope={questionObject.slope}
+            />
+        </div>
+        <div className="row">
+            <p className="col-12 text-center fs-5">
+              Write an equation for the blue line in the form: 
+              <StaticMathField>{`y - y_1 = m (x - x_1)`}</StaticMathField>
+            </p>
+        </div>
+        <EquationOfLineAnswerForm
+            questionObject={questionObject}
+            quizProgress={quizProgress}
+            setQuizProgress={setQuizProgress}
+            startTime={startTime}
+        />
+        {errorMessage && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {errorMessage}
+          </div>    
+        )}
+        <Link to="/plottingPointsTopics">
+          <button type="button" className="btn btn-lg btn-success mt-3">Back to Functions Topics</button><br /><br />
+        </Link>
+      </div>
+    )
+  }
 }
 
 function EquationOfLineAnswerForm({questionObject, quizProgress, setQuizProgress, startTime}) {
@@ -276,7 +315,10 @@ function EquationOfLineAnswerForm({questionObject, quizProgress, setQuizProgress
 
         let answerMessage = '';
         let pause = CORRECT_PAUSE;
-        let answer = userObj.userAnswer.replace(/\s/g, '');
+        let answer = userObj.userAnswer
+          .replace(/\\ /g, '')
+          .replace(/\s+/g, '')
+          .replace(/\u00a0/g, '');
 
         const updateProgress = (correct, streak) => {
           setQuizProgress(prevState => ({
@@ -312,8 +354,12 @@ function EquationOfLineAnswerForm({questionObject, quizProgress, setQuizProgress
         
         if (questionObject.answersArray.includes(answer)) {
             handleCorrectAnswer();
+            console.log(answer);
+            console.log(questionObject.answersArray);
         } else {
             handleIncorrectAnswer();
+            console.log(answer);
+            console.log(questionObject.answersArray);
         }
         
         // pause after grading

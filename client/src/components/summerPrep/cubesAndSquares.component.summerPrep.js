@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { ProgressBar } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 
@@ -10,10 +10,18 @@ import {
   TypedInputAnswerFormCubesAndSquares
 } from '../calculus/answerComponents/typedInputAnswerInput.component.answerCompoments.js';
 
-export default function CubesAndSquares({username}){
+import {
+  setAction,
+  recordAction
+} from '../infrastructure/recordProgress.js';
+
+export default function CubesAndSquares({userId}){
   
   const parameter = useParams()
   const tempTopic = parameter.topic;
+  const navigate = useNavigate();
+
+  const [errorMessage, setErrorMessage] = useState(null);
   const [topic, setTopic] = useState(tempTopic);
 
   function getTitle(topic) {
@@ -60,6 +68,8 @@ export default function CubesAndSquares({username}){
       doneWithTopic: done     
   })
 
+  const quizProgressRef = useRef(quizProgress);
+
 const startTime = useRef(new Date());
 var initialTime = 180;
 
@@ -77,24 +87,69 @@ useEffect(() => {
     getNextQuestion();
 }, [questionArray, questionIndex]);
 
+useEffect(() => {
+  quizProgressRef.current = quizProgress;
+}, [quizProgress]);
+
+
 function next(){
     setQuestionIndex(prevState => (
         prevState + 1
     ));
 }
 
+// async function done(){
+//     try {
+//         setIsFinished(true);
+//         const endTime = new Date();
+//         const totalTime = endTime - startTime;
+//         const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "multiplication", topic, username);
+//         const result = await recordProgress(sessionData, "summerPrep");
+//         // what should we do with this result?
+//     } catch (error) {
+//         console.error("Failed to record progress: ", error);
+//         // Show a message to the user
+//     }
+// }
+
 async function done(){
-    try {
-        setIsFinished(true);
-        const endTime = new Date();
-        const totalTime = endTime - startTime;
-        const sessionData = setSessionData(quizProgress, startTime, totalTime, "summerPrep", "multiplication", topic, username);
-        const result = await recordProgress(sessionData, "summerPrep");
-        // what should we do with this result?
-    } catch (error) {
-        console.error("Failed to record progress: ", error);
-        // Show a message to the user
+  try {
+      setIsFinished(true);
+      const endTime = new Date();
+      const totalTime = endTime - startTime.current;
+      const section = "summerPrep";
+      const unit = "multiplication";
+      const topicName = topic;
+
+      const actionDetails = {
+        section: section,
+        unit: unit,
+        topic: topicName,
+        "metStandard": true,
+        "questionsAttempted": quizProgressRef.current.questionsAttempted,
+        "questionsCorrect": quizProgressRef.current.questionsCorrect,
+        "questionsIncorrect": quizProgressRef.current.questionsIncorrect,
+        "questionsStreak": quizProgressRef.current.questionsStreak,
+        "datetimeStarted": startTime.current,
+        "totalTime": totalTime,
+      }
+
+      const action = setAction("skillCompleted", actionDetails, userId)
+      const result = await recordAction(action);
+      // what should we do with this result?
+
+      // navigate("/skillComplete", {state: actionDetails});
+
+  } catch (error) {
+    if (error.name === "TypeError") {
+      console.error("Newtwork error or issue with recording progress:", error);
+      setErrorMessage("We are unable to record your progress. Please check your internet connection.")
+
+    } else {
+      console.error("Error processing request:", error);
+      setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.")
     }
+  }
 }
 
 function loadQuestionArray(topic) {
@@ -211,6 +266,11 @@ if (isFinished) {
         <div className="pt-3">
           <h3>{title} </h3> 
         </div>
+        {errorMessage && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {errorMessage}
+          </div>    
+        )}
         <CirclesPage
           questionObject={questionObject}
           quizProgress={quizProgress}

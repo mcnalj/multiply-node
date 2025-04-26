@@ -21,6 +21,11 @@ import {
   FunctionCoordinates
 } from '../explanations/summerPrep.component.explanations.js'
 
+import {
+  setAction,
+  recordAction
+} from '../infrastructure/recordProgress.js';
+
 addStyles();
 
 const questionArray = [
@@ -170,11 +175,12 @@ const questionArray = [
 },
 ]; // 24 questions
 
-export default function FunctionNotation({username}) {
+export default function FunctionNotation({userId}) {
 
     const [coordinates, setCoordinates] = useState(null);
     const [questionIndex, setQuestionIndex] = useState(0);
 
+    const [errorMessage, setErrorMessage] = useState(null);
 
     function shuffleArray(array) {
       for(let i = array.length -1; i > 0; i--) {
@@ -244,15 +250,39 @@ function next() {
 async function done() {
     try {
       const endTime = new Date()
-      const totalTime = endTime - startTime;
-      const sessionData = setSessionData(quizProgress,startTime, totalTime, "summerPrep", "functions", "functionNotation", username);
-      const result = await recordProgress(sessionData, "summerPrep");
+      const totalTime = endTime - startTime.current;
+      const section = "summerPrep";
+      const unit = "functions";
+      const topicName = "functionNotation";
+
+      const actionDetails = {
+        section: section,
+        unit: unit,
+        topic: topicName,
+        "metStandard": true,
+        "questionsAttempted": quizProgress.questionsAttempted,
+        "questionsCorrect": quizProgress.questionsCorrect,
+        "questionsIncorrect": quizProgress.questionsIncorrect,
+        "questionsStreak": quizProgress.questionsStreak,
+        "datetimeStarted": startTime.current,
+        "totalTime": totalTime,
+      }
+
+      const action = setAction("skillCompleted", actionDetails, userId)
+      const result = await recordAction(action);
       // what should we do with this result?
+      
       setQuestionIndex(0);
       setIsFinished(true);
     } catch (error) {
-      console.error("Failed to record progress: ", error);
-      // Show a message to the user      
+      if (error.name === "TypeError") {
+        console.error("Newtwork error or issue with recording progress:", error);
+        setErrorMessage("We are unable to record your progress. Please check your internet connection.")
+  
+      } else {
+        console.error("Error processing request:", error);
+        setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.")
+      }
     }
   }
 
@@ -303,6 +333,8 @@ async function done() {
         <div className="row">
             <div className="col-12">
                 <p className="fs-2">Solid Work with function notation and plotting points!</p>
+                <Link to="/plottingPointsTopics" className="btn btn-primary">Functions Topics</Link>
+                <br></br><br></br>
                 <Link to="/summerPrepTopics" className="btn btn-primary">Summer Prep Topics</Link>
             </div>
         </div>
@@ -416,6 +448,11 @@ async function done() {
         </Button>
         <p className="fs-4 mt-1">{answerMessage}</p>
       </form>
+      {errorMessage && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {errorMessage}
+          </div>    
+      )}
       <Link to="/plottingPointsTopics">
             <button type="button" className="btn btn-lg btn-success">Back to Function Topics</button><br /><br />
       </Link>     

@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { TopicsProgress } from './topicsProgress.component.summerPrep';
+import { TopicsProgressDetails } from './topicsProgressDetails.component.summerPrep';
 
-export default function MultiplicationTopics({ username }) {
-    const topics = [
+export default function MultiplicationTopics({ userId }) {
+    const topicsObjects = [
         {
             topicName: "squares", buttonText: "Squares", path: "/cubesAndSquares/squares"         
         },
@@ -28,7 +28,13 @@ export default function MultiplicationTopics({ username }) {
             <div>
                 <h1>Multiplication Topics</h1>
             </div>
-            <TopicsProgress username={username} topics={topics} section={section} unit={unit} backLink={backLink} backLinkText={backLinkText} />
+            <TopicsProgressDetails
+                userId={userId}
+                topicsObjects={topicsObjects}
+                section={section}
+                unit={unit}
+                backLink={backLink}
+                backLinkText={backLinkText} />
         </>
     );
 }
