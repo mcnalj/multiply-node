@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { IntegrationProgressDetails } from '../summerPrep/integrationProgressDetails.component.summerPrep';
+import { IntegrationProgressDetails } from '../summerPrep/summerPrep.component.integrationProgressDetails';
 import { useNavigate } from 'react-router-dom';
 import { config} from '../constants';
 

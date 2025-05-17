@@ -5,12 +5,12 @@ import Modal from 'react-bootstrap/Modal';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
 import '../../App.scss';
 import '../../index.scss';
-import './calculus.component.derivatives.scss';
+import './derivatives.component.derivatives.scss';
 
 import NaturalExponential from '../explanations/naturalExponentialLog.component.explanations.js'
 import { NaturalLog, NaturalLogBinomials, ExponentialBaseA, LogBaseA  } from '../explanations/naturalExponentialLog.component.explanations.js'
 
-import { AnswerForm } from './answerForm.component.calculus.js';
+import { AnswerForm } from '../calculus/calculus.component.answerForm.js';
 import {
   naturalExponential,
   complexNaturalExponential,

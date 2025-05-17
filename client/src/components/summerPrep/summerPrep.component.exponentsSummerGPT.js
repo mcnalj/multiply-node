@@ -5,11 +5,11 @@ import { Link } from "react-router-dom";
 
 import '../../App.scss';
 import '../../index.scss';
-import './exponentsSummer.component.summerPrep.scss';
+import './summerPrep.component.exponentsSummer.scss';
 
 import {
   MatchingComponent
-} from '../calculus/answerComponents/matchingComponent.component.answerComponents.js';
+} from '../infrastructure/answerComponents/matchingComponent.component.answerComponents.js';
 
 // import confetti from 'canvas-confetti';
 

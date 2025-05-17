@@ -5,7 +5,7 @@ import { addStyles, StaticMathField } from 'react-mathquill'
 
 import '../../App.scss';
 import '../../index.scss';
-import './exponentsSummer.component.summerPrep.scss';
+import './summerPrep.component.exponentsSummer.scss';
 
 import {
     getRandomIntInclusive,

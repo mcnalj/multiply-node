@@ -4,7 +4,7 @@ import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField, MathQuill } from 'react-mathquill'
 import '../../App.scss';
 import '../../index.scss';
-import './calculus.component.derivatives.scss';
+import './derivatives.component.derivatives.scss';
 import {
   rewriteNegativeExponents,
   rewriteFractionalExponents,

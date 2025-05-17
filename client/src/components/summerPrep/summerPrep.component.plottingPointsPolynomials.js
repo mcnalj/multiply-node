@@ -3,7 +3,7 @@ import { Link, NavLink, useParams } from "react-router-dom";
 import { ProgressBar, Button } from 'react-bootstrap';
 import { addStyles, StaticMathField } from 'react-mathquill';
 
-import './plottingPoints.component.summerPrep.scss';
+import './summerPrep.component.plottingPoints.scss';
 
 import {
   streakMessages,

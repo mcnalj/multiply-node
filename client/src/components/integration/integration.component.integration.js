@@ -5,7 +5,7 @@ import { addStyles, StaticMathField } from 'react-mathquill'
 
 import '../../App.scss';
 import '../../index.scss';
-import './calculus.component.derivatives.scss';
+import './integration.component.integration.scss';
 
 import IndefiniteIntegralSingleTerm from '../explanations/integration.component.explanations.js'
 import { 
@@ -18,7 +18,7 @@ import {
     DefiniteIntegrals }
 from '../explanations/integration.component.explanations.js'
 
-import { IntegrationAnswerForm } from './answerForm.component.calculus.js';
+import { IntegrationAnswerForm } from './integration.component.answerForm.js';
 
 import {
   questionTopics
@@ -37,16 +37,16 @@ import {
   matchObjectsIntegrals5,
   matchObjectsIntegrals6,
   matchObjectsIntegrals7,
-} from './answerComponents/matchObjects.js';
+} from '../infrastructure/answerComponents/matchObjects.js';
 
 import {
   MatchingComponent
-} from './answerComponents/matchingComponent.component.answerComponents.js'; 
+} from '../infrastructure/answerComponents/matchingComponent.component.answerComponents.js';
 
 import {
   populateQuestionArray,
   setOptions
-} from './answerComponents/matchingParentUtilityFunctions.js'; 
+} from '../infrastructure/answerComponents/matchingParentUtilityFunctions.js';
 
 import {
   multipleChoiceQuestionsIntegration,
@@ -59,7 +59,7 @@ import {
   shuffleArray
 } from '../questionBank/multipleChoiceQuestions.js';
 
-import MultipleChoiceButtons from './answerComponents/multipleChoiceButtons.component.answerComponent.js';
+import MultipleChoiceButtons from '../infrastructure/answerComponents/multipleChoiceButtons.component.answerComponent.js';
 
 import { config } from '../constants.js';
 var url = config.url.API_URL;

@@ -4,11 +4,11 @@ import { ProgressBar } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 
 import { recordProgress, setSessionData } from '../infrastructure/recordProgress.js';
-import './cubesAndSquares.component.summerPrep.scss';
+import './summerPrep.component.cubesAndSquares.scss';
 
 import {
   TypedInputAnswerFormCubesAndSquares
-} from '../calculus/answerComponents/typedInputAnswerInput.component.answerCompoments.js';
+} from '../infrastructure/answerComponents/typedInputAnswerInput.component.answerCompoments.js';
 
 import {
   setAction,

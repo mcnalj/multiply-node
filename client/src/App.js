@@ -40,14 +40,14 @@ import ExponentsTopics from './components/calculus/calculus.component.exponentsT
 import Exponents from './components/calculus/calculus.component.exponents';
 import Exponents2 from './components/calculus/calculus.component.exponents2';
 import ExponentsVariety from './components/calculus/calculus.component.exponentsVariety';
-import Derivatives from './components/calculus/calculus.component.derivatives';
-import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
+import Derivatives from './components/derivatives/derivatives.component.derivatives.js';
+import DerivativesTopics from './components/derivatives/derivatives.component.derivativesTopics.js';
 // import ProgressTracker from './components/userInfo/userInfo.component.GPTProgressTracker';
 
 import SkillComplete from './components/calculus/calculus.component.skillComplete'
 
-import PowerRuleTopics from './components/calculus/calculus.component.powerRuleTopics.js';
-import PowerRuleSkills from './components/calculus/calculus.component.powerRuleSkills.js';
+import PowerRuleTopics from './components/derivatives/derivatives.component.powerRuleTopics.js';
+import PowerRuleSkills from './components/derivatives/derivatives.component.powerRuleSkills.js';
 
 import Markdown from './components/calculus/calculus.component.markdown';
 import PrivacyPolicy from './components/auth/component.auth.privacy';
@@ -74,15 +74,15 @@ import ListClasses from './components/auth/listClasses.component.auth';
 import CreateTargets from './components/class/createTargets.component.class';
 import ViewClass from './components/class/viewClass.component.class';
 
-import TrigonometricTopics from './components/calculus/trigonometricTopics.component.calculus';
-import TrigonometricFunctions from './components/calculus/trigonometricFunctions.component.calculus';
-import TrigonometricDerivatives from './components/calculus/trigonometricDerivatives.component.calculus';
+import TrigonometricTopics from './components/derivatives/derivatives.component.trigonometricTopics.js';
+import TrigonometricFunctions from './components/derivatives/derivatives.component.trigonometricFunctions.js';
+import TrigonometricDerivatives from './components/derivatives/derivatives.component.trigonometricDerivatives.js';
 
-import NaturalTopics from './components/calculus/naturalTopics.component.calculus';
-import NaturalDerivatives from './components/calculus/naturalDerivatives.component.calculus';
+import NaturalTopics from './components/derivatives/derivatives.component.naturalTopics.js';
+import NaturalDerivatives from './components/derivatives/derivatives.component.naturalDerivatives.js';
 
-import IntegrationTopicsDetails from './components/calculus/integrationTopicsDetails.component.calculus';
-import Integration from './components/calculus/integration.component.calculus';
+import IntegrationTopicsDetails from './components/integration/integration.component.integrationTopicsDetails';
+import Integration from './components/integration/integration.component.integration';
 
 import DerivativeRulesStandards from './components/standards/derivativeRulesStandards.component.standards.js';
 import DerivativesStandards from './components/standards/derivativesStandards.component.standards';
@@ -91,21 +91,21 @@ import StandardsTopics from './components/standards/standardsTopics.component.st
 import StandardsTracker from './components/standards/standardsTracker.component.standards';
 
 import SummerPrepTopics from './components/summerPrep/summerPrepTopics.component.summerPrep.js';
-import MultiplicationTopics from './components/summerPrep/multiplicationTopics.component.summerPrep.js';
-import CubesAndSquares from './components/summerPrep/cubesAndSquares.component.summerPrep.js';
-import IdentifyingFunctions from './components/summerPrep/identifyingFunctions.component.summerPrep.js';
-import IdentifyingFunctionsExtractAnswers from './components/summerPrep/identifyingFunctionsExtractAnswers.component.summerPrep.js';
-import PlottingPointsTopics from './components/summerPrep/plottingPointsTopics.component.summerPrep.js';
-import PlottingPoints from './components/summerPrep/plottingPoints.component.summerPrep.js';
-import PlottingPointsPolynomials from './components/summerPrep/plottingPointsPolynomials.component.summerPrep.js';
-import GraphingFunctions from './components/summerPrep/graphingFunctions.component.summerPrep.js';
-import FactoringQuadraticsTopics from './components/summerPrep/factoringQuadraticsTopics.component.summerPrep.js';
-import FactoringQuadratics from './components/summerPrep/factoringQuadratics.component.summerPrep.js';
-import ExponentsSummer from './components/summerPrep/exponentsSummer.component.summerPrep.js';
-import ExponentsSummerGPT from './components/summerPrep/exponentsSummerGPT.component.summerPrep.js';
+import MultiplicationTopics from './components/summerPrep/summerPrep.component.multiplicationTopics.js';
+import CubesAndSquares from './components/summerPrep/summerPrep.component.cubesAndSquares.js';
+import IdentifyingFunctions from './components/summerPrep/summerPrep.component.identifyingFunctions.js';
+import IdentifyingFunctionsExtractAnswers from './components/summerPrep/summerPrep.component.identifyingFunctionsExtractAnswers.js';
+import PlottingPointsTopics from './components/summerPrep/summerPrep.component.plottingPointsTopics.js';
+import PlottingPoints from './components/summerPrep/summerPrep.component.plottingPoints.js';
+import PlottingPointsPolynomials from './components/summerPrep/summerPrep.component.plottingPointsPolynomials.js';
+import GraphingFunctions from './components/summerPrep/summerPrep.component.graphingFunctions.js';
+import FactoringQuadraticsTopics from './components/summerPrep/summerPrep.component.factoringQuadraticsTopics.js';
+import FactoringQuadratics from './components/summerPrep/summerPrep.components.factoringQuadratics.js';
+import ExponentsSummer from './components/summerPrep/summerPrep.component.exponentsSummer.js';
+import ExponentsSummerGPT from './components/summerPrep/summerPrep.component.exponentsSummerGPT.js';
 import SVGGraphs from './components/summerPrep/svgGraphs.component.summerPrep.js';
-import FunctionNotation from './components/summerPrep/functionNotation.component.summerPrep.js';
-import EquationsOfLines from './components/summerPrep/equationsOfLines.component.summerPrep.js';
+import FunctionNotation from './components/summerPrep/summerPrep.component.functionNotation.js';
+import EquationsOfLines from './components/summerPrep/summerPrep.component.equationsOfLines.js';
 
 import LimitsGraphs from './components/limits/limitsGraphs.component.limits.js';
 

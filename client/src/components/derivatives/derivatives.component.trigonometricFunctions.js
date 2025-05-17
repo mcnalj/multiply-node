@@ -8,7 +8,7 @@ import {
 
 import '../../App.scss';
 import '../../index.scss';
-import './calculus.component.derivatives.scss';
+import './derivatives.component.derivatives.scss';
 import { config} from '../constants.js';
 var url = config.url.API_URL;
 

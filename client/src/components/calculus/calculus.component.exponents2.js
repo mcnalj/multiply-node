@@ -30,7 +30,7 @@ import {
 
 import {
   TypedInputAnswerForm
-} from './answerComponents/typedInputAnswerInput.component.answerCompoments.js';
+} from '../infrastructure/answerComponents/typedInputAnswerInput.component.answerCompoments.js';
 
 // import { config} from '../constants.js';
 // var url = config.url.API_URL;

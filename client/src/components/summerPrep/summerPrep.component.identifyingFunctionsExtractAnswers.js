@@ -5,7 +5,7 @@ import { addStyles, StaticMathField } from 'react-mathquill'
 
 import '../../App.scss';
 import '../../index.scss';
-import './identifyingFunctions.component.summerPrep.scss';
+import './summerPrep.component.identifyingFunctions.scss';
 
 import {
     setSessionData,
@@ -17,7 +17,7 @@ import {
     shuffleArray
 } from '../questionBank/multipleChoiceQuestions.js';
 
-import MultipleChoiceButtons from '../calculus/answerComponents/multipleChoiceButtons.component.answerComponent.js';
+import MultipleChoiceButtons from '../infrastructure/answerComponents/multipleChoiceButtons.component.answerComponent.js';
 
 addStyles();
 

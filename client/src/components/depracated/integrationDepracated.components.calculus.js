@@ -17,7 +17,7 @@ import {
     DefiniteIntegrals }
 from '../explanations/integration.component.explanations.js'
 
-import { IntegrationAnswerForm } from './answerForm.component.calculus.js';
+import { IntegrationAnswerForm } from '../calculus/calculus.component.answerForm.js';
 
 import {
   questionTopics

@@ -24,27 +24,27 @@ import {
 
 import {
     matchObjects
-} from './answerComponents/matchObjects.js';
+} from '../infrastructure/answerComponents/matchObjects.js';
 
 import {
     MatchingComponent
-} from './answerComponents/matchingComponent.component.answerComponents.js'; 
+} from '../infrastructure/answerComponents/matchingComponent.component.answerComponents.js';
 
 import {
     populateQuestionArray,
     setOptions
-} from './answerComponents/matchingParentUtilityFunctions.js'; 
+} from '../infrastructure/answerComponents/matchingParentUtilityFunctions.js';
 
 import {
   TypedInputAnswerForm
-} from './answerComponents/typedInputAnswerInput.component.answerCompoments.js';
+} from '../infrastructure/answerComponents/typedInputAnswerInput.component.answerCompoments.js';
 
 import {
   multipleChoiceQuestions,
   shuffleArray
 } from '../questionBank/multipleChoiceQuestions.js';
 
-import MultipleChoiceButtons from './answerComponents/multipleChoiceButtons.component.answerComponent.js';
+import MultipleChoiceButtons from '../infrastructure/answerComponents/multipleChoiceButtons.component.answerComponent.js';
 
 import {
   setAction,
