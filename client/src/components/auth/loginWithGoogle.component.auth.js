@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { GoogleLogin, googleLogout, useGoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import { NavLink } from 'react-router-dom';
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import './loginWithGoogle.component.auth.scss';
 
 import { config } from '../constants.js';
 var url = config.url.API_URL;
 
-export default function LoginWithGoogle({setUserEmail}) {
-
+export default function LoginWithGoogle({setUserEmail, setIsAuthenticated, setUserId}) {
+    
     const [status, setStatus] = useState({ message: "", type: ""});
     const [loading, setLoading] = useState(false);
 
+    const location = useLocation();
     const navigate = useNavigate();
-    
+    const from = location.state?.from || "/calculus"; // Default to "/calculus" if no state is provided
+    // Idk if this is the right default.
+
     let loginTimeout;
 
     const handleLoginSuccess = (response) => {
@@ -38,7 +40,7 @@ export default function LoginWithGoogle({setUserEmail}) {
               credentials: 'include'
             })
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
                 setLoading(false);
                 setStatus({ message: "Login successful!", type: "success" });
                 console.log('Backend Verification Success:', data);
@@ -47,7 +49,30 @@ export default function LoginWithGoogle({setUserEmail}) {
                 setUserEmail(data.user.email);
                 // This is where I should be setting the global userId and setting info for navBar
                 // (or I guess I should do it when I'm doing the backend verification); in record/googleLogin
-                navigate("/calculus");
+                const check = await fetch(`${url}/record/checkAuth`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                const checkData = await check.json();
+                if (checkData.authenticated){
+                    setIsAuthenticated(true);
+                    setUserId(checkData.userId);
+
+                
+                    let redirectPath = '/calculus';
+                    console.log(from);
+                    if (from.includes('summerPrepTopics')) {
+                        redirectPath = '/summerPrepTopics';
+                    } else if (from.includes('calculus')) {
+                        redirectPath = '/calculus';
+                    } else if (from.includes('integration')) {
+                        redirectPath = '/integrationTopics';
+                    }
+                    navigate(redirectPath);
+                } else {
+                    setLoading(false);
+                    setStatus({ message: "Login failed. Please try again.", type: "error" });
+                }
             })
             .catch((err) => {
                 setLoading(false);

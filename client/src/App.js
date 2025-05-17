@@ -42,6 +42,7 @@ import Exponents2 from './components/calculus/calculus.component.exponents2';
 import ExponentsVariety from './components/calculus/calculus.component.exponentsVariety';
 import Derivatives from './components/calculus/calculus.component.derivatives';
 import DerivativesTopics from './components/calculus/calculus.component.derivativesTopics';
+// import ProgressTracker from './components/userInfo/userInfo.component.GPTProgressTracker';
 
 import SkillComplete from './components/calculus/calculus.component.skillComplete'
 
@@ -112,6 +113,7 @@ var url = config.url.API_URL;
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false);
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -137,6 +139,8 @@ function App() {
         console.error("Error checking authentication:", error);
         setIsAuthenticated(false);
         // navigate("/loginWithGoogle");
+      } finally {
+        setAuthChecked(true);
       }
     }
 
@@ -216,7 +220,8 @@ function App() {
           
           <Route path="/categories"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated}
+                    authChecked={authChecked}>
                     <QuizCategories />
                   </Protected>
                 }
@@ -242,14 +247,18 @@ function App() {
 
           <Route path="/multiply"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <Multiplication />
                   </Protected>
                 }
           />
           <Route path="/calculus"
                 element={
+                  <Protected 
+                    isAuthenticated={isAuthenticated}
+                    authChecked={authChecked}>
                     <Calculus userId={userId}/>
+                  </Protected>
                 }
           />
           <Route path="/exponentsTopics"
@@ -259,35 +268,35 @@ function App() {
           />        
           <Route path="/exponents/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <Exponents userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/exponents2/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <Exponents2 userId={userId}/>
                   </Protected>
                 }
           />          
           <Route path="/exponentsVariety/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ExponentsVariety userId={userId}/>
                   </Protected>
                 }
           />                    
           <Route path="/derivatives/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <Derivatives userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/derivativesTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <DerivativesTopics userId={userId}/>
                   </Protected>
                 }
@@ -295,7 +304,7 @@ function App() {
 
           <Route path="/powerRuleTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <PowerRuleTopics userId={userId}/>
                   </Protected>
                 }
@@ -303,7 +312,7 @@ function App() {
 
           <Route path="/powerRuleSkills/:skill"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <PowerRuleSkills userId={userId}/>
                   </Protected>
                 }
@@ -311,7 +320,7 @@ function App() {
 
           <Route path="/skillComplete"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <SkillComplete userId={userId}/>
                   </Protected>
                 }
@@ -319,14 +328,14 @@ function App() {
 
           <Route path="/markdown"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <Markdown userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/progressChoices"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ProgressChoices userId={userId}/>
                   </Protected>
                 }
@@ -337,7 +346,12 @@ function App() {
                     <UserSkillsCompleted userId={userId}/>
                   // </Protected>
                 }
-          />                              
+          />    
+          {/* <Route path="/GPTProgressTracker"
+                element={
+                    <ProgressTracker userId={userId}/>
+                }
+          />                                */}
           <Route path="/singleUsersProgress/:username"
                 element={
                   <Protected isAuthenticated={isAuthenticated}>
@@ -362,145 +376,159 @@ function App() {
           />
           <Route path="/userProgress"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <UserProgress userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/classProgress"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ClassProgress userId={userId}/>
                   </Protected>
                 }
           />
         <Route path="/manageClasses"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ManageClasses userId={userId}/>
                   </Protected>
                 }
           />                    
           <Route path="/createClass"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <CreateClass userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/listClasses"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ListClasses userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/viewClass/:classCode"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ViewClass userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/createTargets"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <CreateTargets userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/trigonometricTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <TrigonometricTopics userId={userId}/>
                   </Protected>
                 }
           />          
           <Route path="/trigonometricFunctions/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <TrigonometricFunctions userId={userId} />
                   </Protected>
                 } 
           />                                                                                                            
           <Route path="/trigonometricDerivatives/:topic"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                       <TrigonometricDerivatives userId={userId} />
                     </Protected>
                   } 
           />
           <Route path="/naturalTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <NaturalTopics userId={userId}/>
                   </Protected>
                 }
           />                    
           <Route path="/naturalDerivatives/:topic"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                       <NaturalDerivatives userId={userId} />
                     </Protected>
                   } 
           />
           <Route path="/integrationTopics"
                 element={
+                  <Protected 
+                    isAuthenticated={isAuthenticated}
+                    authChecked={authChecked}
+                  >
                     <IntegrationTopicsDetails userId={userId}/>
+                  </Protected>
                 }
           />                    
           <Route path="/integration/:topic"
                 element={
-                  
+                  <Protected 
+                    isAuthenticated={isAuthenticated}
+                    authChecked={authChecked}
+                  >
                     <Integration userId={userId}/>
-                  
+                  </Protected>
                 }
           />                                        
           <Route path="/derivativeRules"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected 
+                      isAuthenticated={isAuthenticated}
+                      authChecked={authChecked}
+                    >
                       <DerivativeRules userId={userId} />
                     </Protected>
                   } 
           />
           <Route path="/gptFlashcard"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected 
+                      isAuthenticated={isAuthenticated}
+                      authChecked={authChecked}
+                    >
                       <FlippableCard userId={userId} />
                     </Protected>
                   } 
           />
           <Route path="/gfgFlashcard"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                       <GFGFlippableCard userId={userId} />
                     </Protected>
                   } 
           /> 
           <Route path="/cardStack"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                       <CardStack userId={userId} />
                     </Protected>
                   } 
           /> 
           <Route path="/cardSlide"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                       <CardSlide userId={userId} />
                     </Protected>
                   } 
           /> 
           <Route path="/quizTutorial"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                         <QuizTutorial userId={userId} />
                     </Protected>
                   }
           />
           <Route path="/tutorialTopics"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                         <TutorialTopics userId={userId} />
                     </Protected>
                   }
@@ -514,68 +542,70 @@ function App() {
           />                               */}
           <Route path="/derivativeRulesStandards"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                         <DerivativeRulesStandards userId={userId} />
                     </Protected>
                   }
           />                                        
           <Route path="/standardsCategories"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                         <StandardsCategories userId={userId} />
                     </Protected>
                   }
           />
           <Route path="/standardsTopics/:category"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                       <StandardsTopics userId={userId} />
                    </Protected>
                   }
           />                                                                                                                                                                       
           <Route path="/standardsTracker/:categoryWord/:topic"
                   element={
-                    <Protected isAuthenticated={isAuthenticated}>
+                    <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                       <StandardsTracker userId={userId} />
                    </Protected>
                   }
           />    
           <Route path="/summerPrepTopics"
                 element={
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <SummerPrepTopics userId={userId}/>
+                  </Protected>
                 }
           />
           <Route path="/multiplicationTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <MultiplicationTopics userId={userId}/>
                   </Protected>
                 }
           />                      
           <Route path="/cubesAndSquares/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <CubesAndSquares userId={userId}/>
                   </Protected>
                 }
           />            
           <Route path="/identifyingFunctions"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <IdentifyingFunctions userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/identifyingFunctionsExtractAnswers"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <IdentifyingFunctionsExtractAnswers userId={userId}/>
                   </Protected>
                 }
           />           
           <Route path="/plottingPoints/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <PlottingPoints userId={userId}/>
                   </Protected>
                 }
@@ -583,14 +613,14 @@ function App() {
 
          <Route path="/plottingPointsPolynomials"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <PlottingPointsPolynomials userId={userId}/>
                   </Protected>
                 }
           />                                                                                                                                                                                                                                                                                                                                                     
          <Route path="/plottingPointsTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <PlottingPointsTopics userId={userId}/>
                   </Protected>
                 }
@@ -599,70 +629,74 @@ function App() {
 
           <Route path="/graphingFunctions"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <GraphingFunctions userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/factoringQuadratics/:topic"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <FactoringQuadratics userId={userId}/>
                   </Protected>
                 }
           />
          <Route path="/factoringQuadraticsTopics"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <FactoringQuadraticsTopics userId={userId}/>
                   </Protected>
                 }
           />                                                                                                                                                                                                                                                                                                                                                     
           <Route path="/exponentsSummer"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ExponentsSummer userId={userId}/>
                   </Protected>
                 }
           />  
           <Route path="/exponentsSummerGPT"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ExponentsSummerGPT userId={userId}/>
                   </Protected>
                 }
           />            
           <Route path="/svgGraphs"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <SVGGraphs userId={userId}/>
                   </Protected>
                 }
           />                                                                                                                                                                             
           <Route path="/functionNotation"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <FunctionNotation userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/equationsOfLines"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <EquationsOfLines userId={userId}/>
                   </Protected>
                 }
           />
           <Route path="/limitsGraphs"
                 element={
-                  <Protected isAuthenticated={isAuthenticated}>
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <LimitsGraphs userId={userId}/>
                   </Protected>
                 }
           />                                                                                                                                                       
           <Route path="/loginWithGoogle"
                 element={
-                    <LoginWithGoogle setUserEmail={setUserEmail} />
+                    <LoginWithGoogle
+                      setUserEmail={setUserEmail}
+                      setIsAuthenticated={setIsAuthenticated}
+                      setUserId={setUserId}
+                    />
                 }
           />                                                                                                                                                       
 

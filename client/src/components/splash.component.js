@@ -142,6 +142,11 @@ export default function Splash() {
             </div>
             <div className="row p-4">
                 <div className="col-12 col-md-4">
+                  <NavLink to="/summerPrepTopics">
+                    <p className="link-hover col-7 offset-2">Calculus Prep</p>
+                  </NavLink>
+                </div>
+                <div className="col-12 col-md-4">
                   <NavLink to="/calculus">
                     <p className="link-hover col-6 offset-3">Differentiation</p>
                   </NavLink>
@@ -149,11 +154,6 @@ export default function Splash() {
                 <div className="col-12 col-md-4">
                   <NavLink to="/integrationTopics">
                     <p className="link-hover col-5 offset-3">Integration</p>
-                  </NavLink>
-                </div>
-                <div className="col-12 col-md-4">
-                  <NavLink to="/exponentsTopics">
-                    <p className="link-hover col-5 offset-3">Exponents</p>
                   </NavLink>
                 </div>
             </div>

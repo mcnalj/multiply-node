@@ -69,9 +69,9 @@ export default function CalculusHome({isAuthenticated, userId}) {
   }
 
   const styleMath = {
-    fontSize: "3rem",
+    fontSize: "2rem",
     marginTop: "5%",
-    marginLeft: "-15%",
+    marginLeft: "-10%",
     color: "purple",
   }
 

@@ -25,10 +25,10 @@ export default function Calculus({userId}) {
                     <Button type="button" variant="primary" size="lg">Limits</Button>
                 </NavLink>
                 <br /><br /> */}
-                <NavLink to="/summerPrepTopics">
+                {/* <NavLink to="/summerPrepTopics">
                     <Button type="button" variant="primary" size="lg">Summer Prep</Button>
                 </NavLink>
-                <br /><br />
+                <br /><br /> */}
                 <NavLink to="/powerRuleTopics">
                     <Button type="button" variant="primary" size="lg">Derivatives</Button>
                 </NavLink>
