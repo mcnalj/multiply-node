@@ -78,6 +78,8 @@ import TrigonometricTopics from './components/derivatives/derivatives.component.
 import TrigonometricFunctions from './components/derivatives/derivatives.component.trigonometricFunctions.js';
 import TrigonometricDerivatives from './components/derivatives/derivatives.component.trigonometricDerivatives.js';
 
+import UnitCircle from './components/summerPrep/summerPrep.component.unitCircle.js';
+
 import NaturalTopics from './components/derivatives/derivatives.component.naturalTopics.js';
 import NaturalDerivatives from './components/derivatives/derivatives.component.naturalDerivatives.js';
 
@@ -444,6 +446,14 @@ function App() {
                       <TrigonometricDerivatives userId={userId} />
                     </Protected>
                   } 
+          />
+
+          <Route path="/unitCircle/:topic"
+                element={
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
+                    <UnitCircle userId={userId} />
+                  </Protected>
+                } 
           />
           <Route path="/naturalTopics"
                 element={
