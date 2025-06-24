@@ -161,8 +161,8 @@ const matchObjects = [
       level: 4
     },
     {
-      leftLatex: `\\frac{1}{x^{-\\frac{1}{3}}}`,
-      rightLatex: `\\sqrt[3]{x}`,
+      leftLatex: `\\frac{4}{x^{-\\frac{1}{3}}}`,
+      rightLatex: `4\\sqrt[3]{x}`,
       level: 4
     },  
     {

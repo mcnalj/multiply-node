@@ -1,7 +1,7 @@
 
 
 import React, { useState } from "react";
-import "./gfgFlashcard.component.flashcards.scss";
+import "./flashcards.component.gfgFlashcard.scss";
 const GFGFlippableCard = () => {
 	const cardFront = "Welcome to GFG.";
 	const cardBack = "Computer Science Portal.";

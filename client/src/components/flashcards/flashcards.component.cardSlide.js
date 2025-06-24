@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './cardSlide.component.flashcard.scss'; // Import your CSS file
+import './flashcards.component.cardSlide.scss'; // Import your CSS file
 
 const CardSlide = () => {
 

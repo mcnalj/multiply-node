@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './gptFlashcard.component.flashcards.scss'; // Create a separate CSS file for styling
+import './flashcards.component.gptFlashcard.scss'; // Create a separate CSS file for styling
 
 const FlippableCard = ({username}) => {
   const [isFlipped, setIsFlipped] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, NavLink } from "react-router-dom";
+import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { ProgressBar, Button, Form} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill';
 import {
@@ -9,6 +9,12 @@ import {
 import '../../App.scss';
 import '../../index.scss';
 import './derivatives.component.derivatives.scss';
+
+import {
+  setAction,
+  recordAction
+} from '../infrastructure/recordProgress.js';
+
 import { config} from '../constants.js';
 var url = config.url.API_URL;
 
@@ -18,6 +24,31 @@ addStyles();
 
 const questionTopics = {
     "trigonometricFunctions": [
+        {
+            topicId: 100,
+            topicName:  "unitCircleWarmUp",
+            questionEngine: "unitCircleWarmUp",
+        },
+        {
+            topicId: 200,
+            topicName:  "unitCircleFirstQuadrantMix",
+            questionEngine: "unitCircleFirstQuadrantMix",
+        },
+        {
+            topicId: 300,
+            topicName:  "unitCircleFirstQuadrantSine",
+            questionEngine: "unitCircleFirstQuadrantSine",
+        },                
+        {
+            topicId: 400,
+            topicName:  "unitCircleFirstQuadrantCosine",
+            questionEngine: "unitCircleFirstQuadrantCosine",
+        },
+        {
+            topicId: 500,
+            topicName:  "unitCircleFirstQuadrantTangent",
+            questionEngine: "unitCircleFirstQuadrantTangent",
+        },                                                        
         {
             topicId: 1000,
             topicName:  "basicEvaluation",
@@ -56,7 +87,7 @@ const questionTopics = {
     ]
 }
 
-function UnitCircle({username, pointChoice, hideTriangle}) {
+function UnitCircle({userId, pointChoice, hideTriangle}) {
 
     const svgWidth = 400;
     const svgHeight = 400;
@@ -184,7 +215,7 @@ function UnitCircle({username, pointChoice, hideTriangle}) {
     }
 }
 
-export default function TrigonometricFunctions({username}) {
+export default function TrigonometricFunctions({userId}) {
 
     const parameter = useParams()
     let initialTopic = parseInt(parameter.topic);
@@ -223,7 +254,10 @@ export default function TrigonometricFunctions({username}) {
     const [quizState, setQuizState] = useState(quizStateObj);
     const [currentTopic, setCurrentTopic] = useState(initialTopic);
     // this could be in quizState, right?
-    const [startTime, setStartTime] = useState(new Date());
+    const [startTime, setStartTime] = useState(useRef(new Date()));
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
+
     useEffect(() => {
         setQuizState(quizStateObj);
         console.log("I just set the quizStateObj to this: ");
@@ -255,62 +289,94 @@ export default function TrigonometricFunctions({username}) {
         }
       }
     let questionEngine = setQuestionEngine(initialTopic);
-    
+
     async function recordSuccess (quizStateObj) {
-        let currentTopicObj = questionTopics.trigonometricFunctions.find((name) => name.topicId == currentTopic);
-        let topicName = currentTopicObj.topicName;
-        let totalTime = new Date() - startTime;
-        setStartTime(new Date());
-        let sessionData = {
-            userData: {
-                username: username,
+        try {
+            let currentTopicObj = questionTopics.trigonometricFunctions.find((name) => name.topicId == currentTopic);
+            let topicName = currentTopicObj.topicName;
+            let totalTime = new Date() - startTime.current;
+            
+            const actionDetails = {
+                section: "summerPrep",
+                unit: "trigonometricFunctions",
+                topic: topicName,
+                metStandard: true,
                 questionsAttempted: quizStateObj.questionsAttempted,
                 questionsCorrect: quizStateObj.questionsCorrect,
-            },
-            progress: {
-                calculus: {
-                    trigonometricFunctions: {
-                        skillData: {
-                            skill: topicName,
-                            sessionsData: {
-                                metStandard: true,
-                                questionsAttempted: quizStateObj.questionsAttempted,
-                                questionsCorrect: quizStateObj.questionsCorrect,
-                                questionsIncorrect: quizStateObj.questionsIncorrect,
-                                questionsStreak: quizStateObj.questionsStreak,
-                                datetimeStarted: startTime,
-                                totalTime: totalTime,
-                            }
-                        }
-                    }
-                }
+                questionsIncorrect: quizStateObj.questionsIncorrect,
+                questionsStreak: quizStateObj.questionsStreak,
+                datetimeStarted: startTime.current,
+                totalTime: totalTime,
+            }
+            const action = setAction("skillCompleted", actionDetails, userId);
+            const result = await recordAction(action);
+            navigate("/skillComplete", {state: actionDetails});
+        } catch (error) {    
+            if (error.name === "TypeError") {
+                console.error("Network error or issue with recording progress:", error);
+                setErrorMessage("We are unable to record your progress. Please check your inernet connection.");
+            } else {
+                console.error("Error processing request:", error);
+                setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.");
             }
         }
-        const response = await fetch(`${url}/record/metStandard/trigonometricFunctions`, {
-            method: "POST",
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(sessionData),
-          })
-          .catch(error => {
-            window.alert(error);
-            return;
-          });
-          const answer = await response.json();
-          quizStateObj = {
-            questionsAttempted: 0,
-            questionsCorrect: 0,
-            questionsStreak: 0,
-            questionsIncorrect: 0,
-            progressValue: 0,
-            progressPct: 0,
-            questionsToMeet: 12,
-        }
-        setQuizState(quizStateObj);    
-    };
+    }    
+    
+    // async function recordSuccess (quizStateObj) {
+    //     let currentTopicObj = questionTopics.trigonometricFunctions.find((name) => name.topicId == currentTopic);
+    //     let topicName = currentTopicObj.topicName;
+    //     let totalTime = new Date() - startTime;
+    //     setStartTime(new Date());
+    //     let sessionData = {
+    //         userData: {
+    //             username: username,
+    //             questionsAttempted: quizStateObj.questionsAttempted,
+    //             questionsCorrect: quizStateObj.questionsCorrect,
+    //         },
+    //         progress: {
+    //             calculus: {
+    //                 trigonometricFunctions: {
+    //                     skillData: {
+    //                         skill: topicName,
+    //                         sessionsData: {
+    //                             metStandard: true,
+    //                             questionsAttempted: quizStateObj.questionsAttempted,
+    //                             questionsCorrect: quizStateObj.questionsCorrect,
+    //                             questionsIncorrect: quizStateObj.questionsIncorrect,
+    //                             questionsStreak: quizStateObj.questionsStreak,
+    //                             datetimeStarted: startTime,
+    //                             totalTime: totalTime,
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     const response = await fetch(`${url}/record/metStandard/trigonometricFunctions`, {
+    //         method: "POST",
+    //         mode: 'cors',
+    //         credentials: 'include',
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify(sessionData),
+    //       })
+    //       .catch(error => {
+    //         window.alert(error);
+    //         return;
+    //       });
+    //       const answer = await response.json();
+    //       quizStateObj = {
+    //         questionsAttempted: 0,
+    //         questionsCorrect: 0,
+    //         questionsStreak: 0,
+    //         questionsIncorrect: 0,
+    //         progressValue: 0,
+    //         progressPct: 0,
+    //         questionsToMeet: 12,
+    //     }
+    //     setQuizState(quizStateObj);    
+    // };
 
     function setQuestion(questionEngine) {
         let questionLatex = '';
@@ -408,6 +474,17 @@ export default function TrigonometricFunctions({username}) {
             if (metStandard && hideTriangle) {
                 console.log("recording success")
                 recordSuccess(quizStateObj);
+                setStartTime(new Date());
+                quizStateObj = {
+                    questionsAttempted: 0,
+                    questionsCorrect: 0,
+                    questionsStreak: 0,
+                    questionsIncorrect: 0,
+                    progressValue: 0,
+                    progressPct: 0,
+                    questionsToMeet: 12,
+             }
+                setQuizState(quizStateObj);
             }
             updateSituation({answerMessage: '', userAnswer: ''})
             setBoxStyle({backgroundColor:"white", color: "black", borderWidth: "0", borderColor: "gray"})

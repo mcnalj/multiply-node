@@ -3,7 +3,7 @@ import { Card, Form } from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
 import '../../App.scss';
 import '../../index.scss';
-import './derivativeRules.component.flashcards.scss';
+import './flashcards.component.derivativeRules.scss';
 
 import { config} from '../constants.js';
 var url = config.url.API_URL;

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill'
 import '../../App.scss';
@@ -29,7 +29,7 @@ import {
 
 import { getRandomIntInclusive } from '../math-scripts/utilities-scripts.js';
 
-import PowerRule from '../explanations/powerRule.component.explanations.js'
+import PowerRule from '../explanations/explanations.component.powerRule.js'
 import {  PowerRuleCoefficients,
           PowerRuleFractionalCoefficients,
           PowerRuleNegativeExponents,
@@ -41,7 +41,13 @@ import {  PowerRuleCoefficients,
           PowerRuleNegativeFractionalExponentsIntegerCoefficients,
           PowerRuleNegativeFractionalExponentsFractionalCoefficients,
 
-       } from '../explanations/powerRule.component.explanations.js'
+       } from '../explanations/explanations.component.powerRule.js'
+
+import {
+  setAction,
+  recordAction
+} from '../infrastructure/recordProgress.js';
+
 
 import { config } from '../constants.js';
 var url = config.url.API_URL;
@@ -135,7 +141,7 @@ const questionTopics = {
 }
 addStyles();
 
-const startTime = new Date();
+// const startTime = useRef(new Date());
 
 function setQuestionEngine(topicId) {
 
@@ -168,7 +174,11 @@ export default function TopDerivatives({username}) {
   )
 }
 
-export function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
+export function Derivatives({userId, currentTopic, setCurrentTopic, questionTopics}) {
+  const startTime = useRef(new Date());
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
+
   let unit = "derivatives";
   let standard = 8;
   
@@ -282,59 +292,97 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       });
       // questionField.reflow();
   }
-  async function done(liftedState){
-    let topicName = '';
-    const endTime = new Date()
-    const totalTime = endTime - startTime;
-    const currentTopicName = questionTopics.find((name) => name.topicId == currentTopic)
-    if (currentTopicName) {
-      topicName = currentTopicName.topicName;
-    }  else {
-      topicName = "errantName";
-    }
-    let sessionObj = {
-      "metStandard": true,
-      "questionsAttempted": liftedState.questionsAttempted,
-      "questionsCorrect": liftedState.questionsCorrect,
-      "questionsIncorrect": liftedState.questionsIncorrect,
-      "questionsStreak": liftedState.questionsStreak,
-      "datetimeStarted": startTime,
-      "totalTime": totalTime,
-    }
-    let sessionData = {
-      userData: {
-          username: username,
-          questionsAttempted: liftedState.questionsAttempted,
-          questionsCorrect: liftedState.questionsCorrect,
-      },
-      progress: {
-        calculus: {
-            derivatives: {
-                skillData: {
-                  skill: topicName,
-                  sessionsData: sessionObj
-                }
-            }
-        }        
+  async function done(liftedState) {
+    try {
+      const endTime = new Date();
+      const totalTime = endTime - startTime.current;
+      // Determine topic name
+      let topicName = '';
+      const currentTopicName = questionTopics.find((name) => name.topicId == currentTopic);
+      if (currentTopicName) {
+        topicName = currentTopicName.topicName;
+      }  else {
+        topicName = "errantName";
+      }
+      const actionDetails = {
+        section: "calculus",
+        unit: "derivatives",
+        topic: topicName,
+        "metStandard": true,
+        "questionsAttempted": liftedState.questionsAttempted,
+        "questionsCorrect": liftedState.questionsCorrect,
+        "questionsIncorrect": liftedState.questionsIncorrect,
+        "questionsStreak": liftedState.questionsStreak,
+        "datetimeStarted": startTime.current,
+        "totalTime": totalTime,
+      }
+      const action = setAction("skillCompleted", actionDetails, userId);
+      const result = await recordAction(action);
+
+      navigate("/skillComplete", {state: actionDetails});
+    } catch (error) {
+      if (error.name === "TypeError") {
+        console.error("Network error or issue with recording progress:", error);
+        setErrorMessage("We are unable to record your progress. Please check your inernet connection.");
+      } else {
+        console.error("Error processing request:", error);
+        setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.");
       }
     }
-    // TODO - This is not saving any incorrect answers and might not have the total right.
-    const response = await fetch(`${url}/record/metStandard/derivatives`, {
-      method: "POST",
-      mode: 'cors',
-      credentials: 'include',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(sessionData),
-    })
-    .catch(error => {
-      window.alert(error);
-      return;
-    });
-    const answer = await response.json();
-    // we need to go somewhere from here.
-  };
+  }
+  // async function done(liftedState){
+  //   let topicName = '';
+  //   const endTime = new Date()
+  //   const totalTime = endTime - startTime;
+  //   const currentTopicName = questionTopics.find((name) => name.topicId == currentTopic)
+  //   if (currentTopicName) {
+  //     topicName = currentTopicName.topicName;
+  //   }  else {
+  //     topicName = "errantName";
+  //   }
+  //   let sessionObj = {
+  //     "metStandard": true,
+  //     "questionsAttempted": liftedState.questionsAttempted,
+  //     "questionsCorrect": liftedState.questionsCorrect,
+  //     "questionsIncorrect": liftedState.questionsIncorrect,
+  //     "questionsStreak": liftedState.questionsStreak,
+  //     "datetimeStarted": startTime,
+  //     "totalTime": totalTime,
+  //   }
+  //   let sessionData = {
+  //     userData: {
+  //         username: username,
+  //         questionsAttempted: liftedState.questionsAttempted,
+  //         questionsCorrect: liftedState.questionsCorrect,
+  //     },
+  //     progress: {
+  //       calculus: {
+  //           derivatives: {
+  //               skillData: {
+  //                 skill: topicName,
+  //                 sessionsData: sessionObj
+  //               }
+  //           }
+  //       }        
+  //     }
+  //   }
+  //   // TODO - This is not saving any incorrect answers and might not have the total right.
+  //   const response = await fetch(`${url}/record/metStandard/derivatives`, {
+  //     method: "POST",
+  //     mode: 'cors',
+  //     credentials: 'include',
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(sessionData),
+  //   })
+  //   .catch(error => {
+  //     window.alert(error);
+  //     return;
+  //   });
+  //   const answer = await response.json();
+  //   // we need to go somewhere from here.
+  // };
 
     // I used this to add new topics
     // const response = await fetch("http://localhost:5000/topic/add", {

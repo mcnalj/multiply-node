@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import './styles.component.auth.scss';
+import './auth.component.styles.scss';
 import { config} from '../constants';
 var url = config.url.API_URL;
 

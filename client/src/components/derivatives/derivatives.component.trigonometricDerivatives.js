@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ProgressBar, Button, Offcanvas} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField, MathQuill } from 'react-mathquill'
 import '../../App.scss';
@@ -17,6 +17,11 @@ import {
 } from '../math-scripts/derivative-scripts.js'
 
 import { getRandomIntInclusive } from '../math-scripts/utilities-scripts.js';
+
+import {
+  setAction,
+  recordAction
+} from '../infrastructure/recordProgress.js';
 
 import { config} from '../constants.js';
 var url = config.url.API_URL;
@@ -37,8 +42,6 @@ const questionTopics = {
 }
 addStyles();
 
-const startTime = new Date();
-
 function setQuestionEngine(topicId) {
   let engineArray = questionTopics["trigonometricFunctions"];
   let engine = engineArray.find((engine) => engine.topicId == topicId)
@@ -55,7 +58,6 @@ export default function TrigonometricDerivatives({username}) {
   const parameter = useParams()
   var initialTopic = parseInt(parameter.topic);
 
-
   const [currentTopic, setCurrentTopic] = useState(initialTopic);
   return (
     <>
@@ -69,10 +71,14 @@ export default function TrigonometricDerivatives({username}) {
   )
 }
 
-export function Derivatives({username, currentTopic, setCurrentTopic, questionTopics}) {
+export function Derivatives({userId, currentTopic, setCurrentTopic, questionTopics}) {
   // TODO: shouldn't these be trigonometricFunctions
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
   let unit = "derivatives";
   let standard = 10;
+
+  const startTime = useRef(new Date());
   
   // why do we need this?
   const [topics, setTopics] = useState(
@@ -169,60 +175,43 @@ export function Derivatives({username, currentTopic, setCurrentTopic, questionTo
       });
   }
   async function done(liftedState){
-    let topicName = '';
-    const endTime = new Date()
-    const totalTime = endTime - startTime;
-    // I'm getting to done, but this is why it's not saving. QuestionTopics is undefined
-    const currentTopicName = questionTopics.find((name) => name.topicId == currentTopic)
-    if (currentTopicName) {
-      topicName = currentTopicName.topicName;
-    }  else {
-      topicName = "errantName";
-    }
-    let sessionObj = {
-      "metStandard": true,
-      "questionsAttempted": liftedState.questionsAttempted,
-      "questionsCorrect": liftedState.questionsCorrect,
-      "questionsIncorrect": liftedState.questionsIncorrect,
-      "questionsStreak": liftedState.questionsStreak,
-      "datetimeStarted": startTime,
-      "totalTime": totalTime,
-    }
-    let sessionData = {
-      userData: {
-          username: username,
-          questionsAttempted: liftedState.questionsAttempted,
-          questionsCorrect: liftedState.questionsCorrect,
-      },
-      progress: {
-        calculus: {
-            trigonometricFunctions: {
-                skillData: {
-                  skill: topicName,
-                  sessionsData: sessionObj
-                }
-            }
-        }        
+    try {
+      const endTime = new Date();
+      const totalTime = endTime - startTime.current;
+      // Determine topic name
+      let topicName = '';
+      const currentTopicName = questionTopics.find((name) => name.topicId == currentTopic)
+      if (currentTopicName) {
+        topicName = currentTopicName.topicName;
+      }  else {
+        topicName = "errantName";
+      }
+      const actionDetails = {
+        section: "calculus",
+        unit: "derivatives",
+        topic: topicName,
+        "metStandard": true,
+        "questionsAttempted": liftedState.questionsAttempted,
+        "questionsCorrect": liftedState.questionsCorrect,
+        "questionsIncorrect": liftedState.questionsIncorrect,
+        "questionsStreak": liftedState.questionsStreak,
+        "datetimeStarted": startTime.current,
+        "totalTime": totalTime,
+      }
+      const action = setAction("skillCompleted", actionDetails, userId);
+      const result = await recordAction(action);
+
+      navigate("/skillComplete", {state: actionDetails});
+    } catch (error) {
+      if (error.name === "TypeError") {
+        console.error("Network error or issue with recording progress:", error);
+        setErrorMessage("We are unable to record your progress. Please check your inernet connection.");
+      } else {
+        console.error("Error processing request:", error);
+        setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.");
       }
     }
-    console.dir(sessionData);
-    // TODO - This is not saving any incorrect answers and might not have the total right.
-    const response = await fetch(`${url}/record/metStandard/trigonometricFunctions`, {
-      method: "POST",
-      mode: 'cors',
-      credentials: 'include',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(sessionData),
-    })
-    .catch(error => {
-      window.alert(error);
-      return;
-    });
-    const answer = await response.json();
-    // we need to go somewhere from here.
-  };
+  }
 
   const changeEngine = function (e) {
     let topicId = e.currentTarget.dataset.key;

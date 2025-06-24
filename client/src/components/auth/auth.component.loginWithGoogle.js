@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { GoogleLogin, googleLogout, useGoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
-import './loginWithGoogle.component.auth.scss';
+import './auth.component.loginWithGoogle.scss';
 
 import { config } from '../constants.js';
 var url = config.url.API_URL;

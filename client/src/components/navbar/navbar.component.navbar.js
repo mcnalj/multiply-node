@@ -5,7 +5,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Image from 'react-bootstrap/Image';
 import Dropdown from 'react-bootstrap/Dropdown';
-import './styles.component.navbar.scss';
+import './navbar.component.styles.scss';
 import { config} from '../constants';
 
 var url = config.url.API_URL;

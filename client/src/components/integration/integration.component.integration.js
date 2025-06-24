@@ -7,7 +7,7 @@ import '../../App.scss';
 import '../../index.scss';
 import './integration.component.integration.scss';
 
-import IndefiniteIntegralSingleTerm from '../explanations/integration.component.explanations.js'
+import IndefiniteIntegralSingleTerm from '../explanations/explanations.component.integration.js'
 import { 
     IndefiniteIntegralsBinomial,
     IndefiniteIntegralsPolynomial,
@@ -16,7 +16,7 @@ import {
     IndefiniteIntegralsNaturalLog,
     IndefiniteIntegralsNaturalLogBinomial,
     DefiniteIntegrals }
-from '../explanations/integration.component.explanations.js'
+from '../explanations/explanations.component.integration.js'
 
 import { IntegrationAnswerForm } from './integration.component.answerForm.js';
 

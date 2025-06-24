@@ -7,10 +7,10 @@ import Protected from './components/Protected';
 import Navigation from "./components/navbar/navbar.component.navbar";
 import Splash from './components/splash.component.js';
 import Success from './components/success.component';
-import Login from './components/auth/login.component.auth';
-import Register from './components/auth/register.component.auth';
-import LogOut from './components/auth/logout.component.auth';
-import LoginWithGoogle from './components/auth/loginWithGoogle.component.auth';
+import Login from './components/auth/auth.component.login.js';
+import Register from './components/auth/auth.component.register.js';
+import LogOut from './components/auth/auth.component.logout.js';
+import LoginWithGoogle from './components/auth/auth.component.loginWithGoogle.js';
 
 import CalculusHome from './components/calculus/calculus.component.calculusHome.js';
 
@@ -34,7 +34,7 @@ import GetAPIWithEffect from './components/sandbox/getAPIWithEffect.component';
 import GetAPIAxios from './components/sandbox/getAPIAxios.component';
 import GetTrivia from './components/sandbox/getTrivia.component';
 
-import Multiplication from './components/multiply/multiplication.component.multiply';
+import Multiplication from './components/multiply/multiply.component.multiplication.js';
 import Calculus from './components/calculus/calculus.component.calculus';
 import ExponentsTopics from './components/calculus/calculus.component.exponentsTopics';
 import Exponents from './components/calculus/calculus.component.exponents';
@@ -50,14 +50,14 @@ import PowerRuleTopics from './components/derivatives/derivatives.component.powe
 import PowerRuleSkills from './components/derivatives/derivatives.component.powerRuleSkills.js';
 
 import Markdown from './components/calculus/calculus.component.markdown';
-import PrivacyPolicy from './components/auth/component.auth.privacy';
-import TermsOfService from './components/auth/component.auth.termsofservice';
+import PrivacyPolicy from './components/auth/auth.component.privacy.js';
+import TermsOfService from './components/auth/auth.component.termsofservice.js';
 
-import DerivativeRules from './components/flashcards/derivativeRules.component.flashcards';
-import FlippableCard from './components/flashcards/gptFlashcard.component.flashcards';
-import GFGFlippableCard from './components/flashcards/gfgFlashcard.component.flashcards';
-import CardStack from './components/flashcards/cardStack.component.flashcard';
-import CardSlide from './components/flashcards/cardSlide.component.flashcard';
+import DerivativeRules from './components/flashcards/flashcards.component.derivativeRules.js';
+import FlippableCard from './components/flashcards/flashcards.component.gptFlashcard.js';
+import GFGFlippableCard from './components/flashcards/flashcards.component.gfgFlashcard.js';
+import CardStack from './components/flashcards/flashcards.component.cardStack.js';
+import CardSlide from './components/flashcards/flashcards.component.cardSlide.js';
 
 import UserSkillsCompleted from './components/userInfo/userInfo.component.userSkillsCompleted.js';
 import UserProgress from './components/userInfo/userInfo.component.progress';
@@ -68,11 +68,11 @@ import UsersCC from './components/userInfo/userInfo.component.usersCC.js';
 import UserActionsCC from './components/userInfo/userInfo.component.userActionsCC.js';
 import Roadmap from './components/userInfo/userInfo.component.userActionsGPT.js';
 
-import ManageClasses from './components/auth/manageClasses.component.auth';
-import CreateClass from './components/auth/createClass.component.auth';
-import ListClasses from './components/auth/listClasses.component.auth';
-import CreateTargets from './components/class/createTargets.component.class';
-import ViewClass from './components/class/viewClass.component.class';
+import ManageClasses from './components/auth/auth.component.manageClasses.js';
+import CreateClass from './components/auth/auth.component.createClass.auth.js';
+import ListClasses from './components/auth/auth.component.listClasses.js';
+import CreateTargets from './components/class/class.component.createTargets';
+import ViewClass from './components/class/class.component.viewClass';
 
 import TrigonometricTopics from './components/derivatives/derivatives.component.trigonometricTopics.js';
 import TrigonometricFunctions from './components/derivatives/derivatives.component.trigonometricFunctions.js';
@@ -106,8 +106,9 @@ import ExponentsSummerGPT from './components/summerPrep/summerPrep.component.exp
 import SVGGraphs from './components/summerPrep/svgGraphs.component.summerPrep.js';
 import FunctionNotation from './components/summerPrep/summerPrep.component.functionNotation.js';
 import EquationsOfLines from './components/summerPrep/summerPrep.component.equationsOfLines.js';
+import UnitCircleTopics from './components/summerPrep/summerPrep.component.unitCircleTopics.js';
 
-import LimitsGraphs from './components/limits/limitsGraphs.component.limits.js';
+import LimitsGraphs from './components/limits/limits.component.limitsGraphs.js';
 
 var url = config.url.API_URL;
 
@@ -680,6 +681,13 @@ function App() {
                 element={
                   <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <EquationsOfLines userId={userId}/>
+                  </Protected>
+                }
+          />
+          <Route path="/unitCircleTopics"
+                element={
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
+                    <UnitCircleTopics userId={userId}/>
                   </Protected>
                 }
           />

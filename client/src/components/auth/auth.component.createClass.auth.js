@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from 'react-router-dom';
-import './styles.component.auth.scss';
+import './auth.component.styles.scss';
 
 import { config } from '../constants.js';
 var url = config.url.API_URL;

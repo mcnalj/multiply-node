@@ -12,27 +12,32 @@ export default function SummerPrepTopics({username}) {
             topicName: "multiplication", buttonText: "Multiplication", path: "/multiplicationTopics"         
         },
         {
-            topicName: "exponents", buttonText: "Exponents", path: "/exponentsTopics"
-        },
-        {
             topicName: "functions", buttonText: "Functions", path: "/plottingPointsTopics"
         },
         {
+            topicName: "exponents", buttonText: "Exponents", path: "/exponentsTopics"
+        },
+        {
             topicName: "quadratics", buttonText: "FactoringQuadratics", path: "/factoringQuadraticsTopics"
-        }
+        },
+        {
+            topicName: "unitCircle", buttonText: "The Unit Circle", path: "/unitCircleTopics"
+        }        
     ];
 
     const multiplicationSkills = ["squares", "cubes", "mixed"];
-    const exponentsSkills = ["positive", "negative", "fractional", "negativeFractional", "mixed"];
     const functionsSkills = ["functionNotation", "plottingPointsPolynomials", "plottingPointsSine", "plottingPointsCosine", "identifyingFunctions", "equationsOfLines"];
+    const exponentsSkills = ["positive", "negative", "fractional", "negativeFractional", "mixed"];
     const quadraticsSkills = ["differenceOfSquares", "factoringQuadratics"];
+    const unitCircleSkills = ["essentialUnitCircle", "halfUnitCircle", "fullUnitCircle"];
 
     const section = "summerPrep";
 
     const [multiplicationTopicsStatus, setMultiplicationTopicsStatus] = useState();
-    const [exponentsTopicsStatus, setExponentsTopicsStatus] = useState();
     const [functionsTopicsStatus, setFunctionsTopicsStatus] = useState();
+    const [exponentsTopicsStatus, setExponentsTopicsStatus] = useState();
     const [quadraticsTopicsStatus, setQuadraticsTopicsStatus] = useState();
+    const [unitCircleTopicsStatus, setUnitCircleTopicsStatus] = useState();
     const [error, setError] = useState(null);
     
     useEffect(() => {
@@ -40,6 +45,7 @@ export default function SummerPrepTopics({username}) {
         fetchStatusObject(url, username, exponentsSkills, setExponentsTopicsStatus, setError, section, "exponents");
         fetchStatusObject(url, username, functionsSkills, setFunctionsTopicsStatus, setError, section, "functions");
         fetchStatusObject(url, username, quadraticsSkills, setQuadraticsTopicsStatus, setError, section, "quadratics");
+        fetchStatusObject(url, username, unitCircleSkills, setUnitCircleTopicsStatus, setError, section, "unitCircle");
     }, [username, section]);
 
     const buttonStyle = {
@@ -76,13 +82,6 @@ export default function SummerPrepTopics({username}) {
                 </div>
                 <br /><br />
                 <div style={buttonStyle}>
-                    <NavLink to="/exponentsTopics">
-                        <Button type="button" variant="primary" size="lg">Exponents</Button>
-                        {getIcon(exponentsTopicsStatus)}
-                    </NavLink>
-                </div>
-                <br /><br />
-                <div style={buttonStyle}>
                     <NavLink to="/plottingPointsTopics">
                         <Button type="button" variant="primary" size="lg">Functions</Button>
                         {getIcon(functionsTopicsStatus)}
@@ -90,9 +89,23 @@ export default function SummerPrepTopics({username}) {
                 </div>
                 <br /><br />
                 <div style={buttonStyle}>
+                    <NavLink to="/exponentsTopics">
+                        <Button type="button" variant="primary" size="lg">Exponents</Button>
+                        {getIcon(exponentsTopicsStatus)}
+                    </NavLink>
+                </div>
+                <br /><br />
+                <div style={buttonStyle}>
                     <NavLink to="/factoringQuadraticsTopics">
                         <Button type="button" variant="primary" size="lg">Factoring Quadratics</Button>
                         {getIcon(quadraticsTopicsStatus)}
+                    </NavLink>
+                </div>
+                <br /><br />
+                <div style={buttonStyle}>
+                    <NavLink to="/unitCircleTopics">
+                        <Button type="button" variant="primary" size="lg">The Unit Circle</Button>
+                        {getIcon(unitCircleTopicsStatus)}
                     </NavLink>
                 </div>
                 <br /><br />

@@ -5,7 +5,7 @@ import { addStyles, StaticMathField } from 'react-mathquill'
 
 import '../../App.scss';
 import '../../index.scss';
-import './limitsGraphs.component.limits.scss';
+import './limits.component.limitsGraphs.scss';
 import {
     SVGCoordinatePlane,    
 } from '../SVGs/graphs/svgGraphCore.component.graphs.js';

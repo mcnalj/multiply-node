@@ -19,7 +19,7 @@ import {
 
 import {  
   FunctionCoordinates
-} from '../explanations/summerPrep.component.explanations.js'
+} from '../explanations/explanations.component.summerPrep.js'
 
 import {
   setAction,
