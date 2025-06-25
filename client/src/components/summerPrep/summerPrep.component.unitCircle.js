@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, NavLink, useNavigate } from "react-router-dom";
 import { ProgressBar, Button, Form} from 'react-bootstrap';
 import { addStyles, StaticMathField, EditableMathField } from 'react-mathquill';
@@ -8,6 +8,7 @@ import {
 
 import '../../App.scss';
 import '../../index.scss';
+import './summerPrep.component.unitCircle.scss';
 // import './derivatives.component.derivatives.scss';
 
 import {
@@ -25,75 +26,92 @@ const questionTopics = {
         {
             topicId: 100,
             topicName:  "unitCircleWarmUpFirstQuadrant",
+            questionsToMeet: 15
         },
         {
             topicId: 120,
             topicName:  "unitCircleWarmUpSecondQuadrant",
+            questionsToMeet: 12
         },
         {
             topicId: 140,
             topicName:  "unitCircleWarmUpThirdQuadrant",
+            questionsToMeet: 12
         },
         {
             topicId: 160,
             topicName:  "unitCircleWarmUpFourthQuadrant",
+            questionsToMeet: 12
         },        
         {
             topicId: 200,
             topicName:  "unitCircleSineFirstQuadrant",
+            questionsToMeet: 8
         },                
         {
             topicId: 220,
             topicName:  "unitCircleSineFirstHalf",
+            questionsToMeet: 12
         },
         {
             topicId: 240,
             topicName:  "unitCircleSineFullCircle",
+            questionsToMeet: 16
         },
         {
             topicId: 300,
             topicName:  "unitCircleCosineFirstQuadrant",
+            questionsToMeet: 8
         },                
         {
             topicId: 320,
             topicName:  "unitCircleCosineFirstHalf",
+            questionsToMeet: 12
         },
         {
             topicId: 340,
             topicName:  "unitCircleCosineFullCircle",
+            questionsToMeet: 16
         },
         {
             topicId: 400,
             topicName:  "unitCircleTangentFirstQuadrant",
+            questionsToMeet: 8
         },                
         {
             topicId: 420,
             topicName:  "unitCircleTangentFirstHalf",
+            questionsToMeet: 12
         },
         {
             topicId: 440,
             topicName:  "unitCircleTangentFullCircle",
+            questionsToMeet: 16
         },                        
         {
             topicId: 1001,
             topicName:  "unitCircleFirstQuadrant",
+            questionsToMeet: 12
         },                                                        
         {
             topicId: 1020,
             topicName:  "unitCircleFirstHalf",
+            questionsToMeet: 12
         },
         {
             topicId: 1040,
             topicName:  "unitCircleFullCircle",
+            questionsToMeet: 12
         },
         {
             topicId: 1000,
             topicName:  "essentialUnitCircle",
+            questionsToMeet: 12
         }, 
     ]
 }
 
-function UnitCircleImage({userId, pointChoice, hideTriangle}) {
+function UnitCircleImage({pointChoice, hideTriangle}) {
 
     const svgWidth = 400;
     const svgHeight = 400;
@@ -134,6 +152,7 @@ function UnitCircleImage({userId, pointChoice, hideTriangle}) {
   return (
         <div className="row m-0 p-0">
             {/* <div className="col-12 m-0 p-0"> */}
+            {/* <div className="mx-auto" style={{ maxWidth: "500px", width: "100%", marginTop: '-5%'}} > */}
             <div className="mx-auto" style={{ maxWidth: "500px", width: "100%"}} >
                 <svg
                     viewBox={`0 0 ${svgWidth} ${svgHeight}`}
@@ -186,11 +205,13 @@ function UnitCircleImage({userId, pointChoice, hideTriangle}) {
     } else {
         return (
             <div className="row m-0 p-0">
-                <div className="col-12 m-0 p-0">
+                {/* <div className="col-12 m-0 p-0"> */}
+                <div className="mx-auto" style={{ maxWidth: "500px", width: "100%"}} >
                     <svg
                         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
                         width="100%"
                         height="100%"
+                        style={{display: 'block'}}
                         xmlns="http://www.w3.org/2000/svg">
                     {/* Circle */}
                     <circle cx={centerX} cy={centerY} r={radius} fill="none" stroke="black" />
@@ -222,28 +243,10 @@ function UnitCircleImage({userId, pointChoice, hideTriangle}) {
 }
 
 export default function UnitCircle({userId}) {
-        const points = [
-    { angle: 0, label: '0', sin: '0', cos: '1', sinOffset: -15, cosOffset: 20, hypotenuseColor: 'blue' },
-    { angle: Math.PI / 6, label: 'π/6', sin: '1/2', cos: '√3/2', sinOffset: 5, cosOffset: 20, hypotenuseColor: 'black' },
-    { angle: Math.PI / 4, label: 'π/4', sin: '√2/2', cos: '√2/2', sinOffset: 5, cosOffset: 20, hypotenuseColor: 'black' },
-    { angle: Math.PI / 3, label: 'π/3', sin: '√3/2', cos: '1/2', sinOffset: 5, cosOffset: 20, hypotenuseColor: 'black' },
-    { angle: Math.PI / 2, label: 'π/2', sin: '1', cos: '0', sinOffset: 5, cosOffset: 20, hypotenuseColor: 'green' },
-    { angle: ( 2 * Math.PI ) / 3, label: '2π/3', sin: '√3/2', cos: '-1/2', sinOffset: -35, cosOffset: 20, hypotenuseColor: 'black' },
-    { angle: ( 3 * Math.PI ) / 4, label: '3π/4', sin: '√2/2', cos: '-√2/2', sinOffset: -35, cosOffset: 20, hypotenuseColor: 'black' },
-    { angle: ( 5 * Math.PI ) / 6, label: '5π/6', sin: '1/2', cos: '-√3/2', sinOffset: -35, cosOffset: 20, hypotenuseColor: 'black' },
-    { angle: Math.PI, label: 'π', sin: '0', cos: '-1', sinOffset: 5, cosOffset: 20, hypotenuseColor: 'blue' },
-    { angle: ( 7 * Math.PI ) / 6, label: '7π/6', sin: '-1/2', cos: '-√3/2', sinOffset: -45, cosOffset: -10, hypotenuseColor: 'black' },
-    { angle: ( 5 * Math.PI ) / 4, label: '5π/4', sin: '-√2/2', cos: '-√2/2', sinOffset: -40, cosOffset: -10, hypotenuseColor: 'black' },
-    { angle: ( 4 * Math.PI ) / 3, label: '4π/3', sin: '-√3/2', cos: '-1/2', sinOffset: -35, cosOffset: -10, hypotenuseColor: 'black' },
-    { angle: ( 3 * Math.PI ) / 2, label: '3π/2', sin: '-1', cos: '0', sinOffset: 5, cosOffset: -10, hypotenuseColor: 'green' },
-    { angle: ( 5 * Math.PI ) / 3, label: '5π/3', sin: '-√3/2', cos: '1/2', sinOffset: 5, cosOffset: -10, hypotenuseColor: 'black' },
-    { angle: ( 7 * Math.PI ) / 4, label: '7π/4', sin: '-√2/2', cos: '√2/2', sinOffset: 5, cosOffset: -10, hypotenuseColor: 'black' },
-    { angle: ( 11 * Math.PI ) / 6, label: '11π/6', sin: '-1/2', cos: '√3/2', sinOffset: 5, cosOffset: -10, hypotenuseColor: 'black' },
-    { angle: 2 * Math.PI, label: '', sin: '0', cos: '1', sinOffset: -15, cosOffset: 20, hypotenuseColor: 'blue' },
 
-    ];
     const parameter = useParams()
-    let initialTopic = parseInt(parameter.topic);
+    let initialTopic = 120
+    initialTopic = parseInt(parameter.topic);
     const angles = [
         { angle: 0, label: '0', sin: '0', cos: '1', tan: '0' },
         { angle: Math.PI / 6, label: 'π/6', sin: '\\frac{1}{2}', cos: '\\frac{\\sqrt{3}}{2}', tan: '\\frac{\\sqrt{3}}{3}' },
@@ -273,66 +276,83 @@ export default function UnitCircle({userId}) {
         questionsToMeet: 12,
     }    
     const mathFieldRef = useRef(null);
-    const [pointChoice, setPointChoice] = useState(0);
-    const [questionLatex, setQuestionLatex] = useState('sin(' + angles[0].label + ')');
+    const [questionLatex, setQuestionLatex] = useState('sin(' + angles[0].label + ')=');
     const [answerLatex, setAnswerLatex] = useState('0'); 
     const [quizState, setQuizState] = useState(quizStateObj);
     const [currentTopic, setCurrentTopic] = useState(initialTopic);
-    // this could be in quizState, right?
+
     const [startTime, setStartTime] = useState(useRef(new Date()));
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
     const [count, setCount] = useState(0);
+    const [pointChoice, setPointChoice] = useState(0);
+    const [hideTriangle, setHideTriangle] = useState(false);
+    // const [questionParametersObject, setQuestionParameters] = useState(
+    //     {
+    //         trigonometricFunction: 'sin(',
+    //         angleArray: angles.slice(0, 5),
+    //         pointIndexArray: [0, 1, 2, 3, 4],
+    //         isCyclical: false,
+    //     }
+    // );
+
+    const questionParametersObject = useMemo(() => {
+        return setQuestionParametersObject(initialTopic);
+    }, [initialTopic, currentTopic]);
 
     useEffect(() => {
+        // const params = setQuestionParametersObject(initialTopic)
+        // setQuestionParameters(params);
+
+        let tempTopicObj = questionTopics.trigonometricFunctions.find(
+                (name) => name.topicId == currentTopic
+        );
+        quizStateObj.questionsToMeet = tempTopicObj.questionsToMeet;
         setQuizState(quizStateObj);
-        console.log("I just set the quizStateObj to this: ");
-        console.dir(quizStateObj);
         setQuestion(count);
         if (mathFieldRef.current) {
             mathFieldRef.current.focus();
         }
-    }, []);
+    }, [initialTopic,currentTopic]);
 
     const [responseObj, setResponseObj] = useState({
         userAnswer: '',
         correctAnswer: '',
         answerMessage: ''
       });
-    const mathLat = `\\frac{1}{2}`
-    const mathLat2 = `sin (\\pi) = `
-    const mathLat3 = `sin (\\frac{1}{2})`
     const [boxStyle, setBoxStyle] = useState({backgroundColor: "white", color: "black", borderWidth: "0px", borderColor: "gray", padding:0})
-    const [hideTriangle, setHideTriangle] = useState(false);
-    function setQuestionEngine(topicId) {
-        let engineArray = questionTopics["trigonometricFunctions"];
-        let engine = engineArray.find((engine) => engine.topicId == topicId)
-        // TODO Need proper error handling.
-        if (engine) {
-          return(engine.questionEngine);
-        } else {
-          return("We could not find that engine!");
-        }
-      }
-    let questionEngine = setQuestionEngine(initialTopic);
+    
 
     async function recordSuccess (quizStateObj) {
         try {
-            let currentTopicObj = questionTopics.trigonometricFunctions.find((name) => name.topicId == currentTopic);
-            let topicName = currentTopicObj.topicName;
-            let totalTime = new Date() - startTime.current;
+            const {
+                questionsAttempted,
+                questionsCorrect,
+                questionsIncorrect,
+                questionsStreak,
+            } = quizStateObj;
+
+            const currentTopicObj = questionTopics.trigonometricFunctions.find(
+                (name) => name.topicId == currentTopic
+            );
+            if (!currentTopicObj) {
+                throw new Error(`Invalid topicId: ${currentTopic}`)
+            }
+
+            const topicName = currentTopicObj.topicName;
+            const totalTime = new Date() - startTime.current;
             
             const actionDetails = {
                 section: "summerPrep",
-                unit: "trigonometricFunctions",
+                unit: "unitCircle",
                 topic: topicName,
                 metStandard: true,
-                questionsAttempted: quizStateObj.questionsAttempted,
-                questionsCorrect: quizStateObj.questionsCorrect,
-                questionsIncorrect: quizStateObj.questionsIncorrect,
-                questionsStreak: quizStateObj.questionsStreak,
+                questionsAttempted,
+                questionsCorrect,
+                questionsIncorrect,
+                questionsStreak,
                 datetimeStarted: startTime.current,
-                totalTime: totalTime,
+                totalTime,
             }
             const action = setAction("skillCompleted", actionDetails, userId);
             const result = await recordAction(action);
@@ -343,77 +363,160 @@ export default function UnitCircle({userId}) {
                 setErrorMessage("We are unable to record your progress. Please check your inernet connection.");
             } else {
                 console.error("Error processing request:", error);
-                setErrorMessage("error.message" || "Sorry, there was an error recording your progress. Please try again later.");
+                setErrorMessage(error.message || "Sorry, there was an error recording your progress. Please try again later.");
             }
         }
     }    
 
+    // function setQuestionParametersObject(topicId) {
+    //     let trigonometricFunction = ''
+    //     let isCyclical = false;
+    //     if (topicId < 200) {
+    //         setHideTriangle(false);
+    //         trigonometricFunction = 'sin(';
+    //         isCyclical = true;
+    //     }
+    //     if (topicId >= 200 && topicId < 300) {
+    //         trigonometricFunction = 'sin(';
+    //     } else if (topicId >= 300 && topicId < 400) {
+    //         trigonometricFunction = 'cos(';
+    //     } else if (topicId >= 400 && topicId < 500) {
+    //         trigonometricFunction = 'tan(';
+    //     } else if (topicId >= 1000 && topicId < 1100) {
+    //         trigonometricFunction = 'mix';
+    //     } 
+    //     let angleArray = [];
+    //     let pointIndexArray = [];
+    //     if (topicId == 100 || topicId == 200 || topicId == 300 || topicId == 400 || topicId == 1001) {
+    //         angleArray = angles.slice(0, 5);
+    //         pointIndexArray = [0, 1, 2, 3, 4];
+    //     } else if (topicId == 120) {
+    //         angleArray = angles.slice(4, 9);
+    //         pointIndexArray = [4, 5, 6, 7, 8];
+    //     } else if (topicId == 140){
+    //         angleArray = angles.slice(9, 14);
+    //         pointIndexArray = [9, 10, 11, 12, 13];
+    //     } else if (topicId == 160) {
+    //         angleArray = angles.slice(14, 19);
+    //         pointIndexArray = [14, 15, 16, 17, 18];
+    //     } else if (topicId == 220 || topicId == 320 || topicId == 420 || topicId == 1020) {
+    //         angleArray = angles.slice(0, 9);
+    //         pointIndexArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    //     } else if (topicId == 240 || topicId == 340 || topicId == 440 || topicId == 1040) {
+    //         angleArray = angles.slice(0, 19);
+    //         pointIndexArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+    //     } else if (topicId == 1000) {
+    //         angleArray = angles.slice(0, 5) + angles.slice(9, 10).concat(angles.slice(14, 15)).concat(angles.slice(19, 20));
+    //         pointIndexArray = [0, 1, 2, 3, 4, 9, 10, 14, 15, 19];  
+    //     }
+    //     if (topicId >= 1000) {
+    //         angleArray = shuffleArray(angleArray);
+    //         // how do we keep these synched?
+    //         pointIndexArray = shuffleArray(pointIndexArray);
+    //     }
+    //     return {
+    //         trigonometricFunction: trigonometricFunction,
+    //         angleArray: angleArray,
+    //         pointIndexArray: pointIndexArray,
+    //         isCyclical: isCyclical,
+    //     }
+    // }
+
     function setQuestionParametersObject(topicId) {
-        console.log("setQuestionParametersObject called with topicId: " + topicId);
-        let trigonometricFunction = ''
+        const trigFunction =
+            topicId < 200
+            ? 'sin('
+            : topicId < 300
+            ? 'sin('
+            : topicId < 400
+            ? 'cos('
+            : topicId < 500
+            ? 'tan('
+            : topicId < 1100
+            ? 'mix'
+            : '';
+        const isCyclical = topicId < 200;
+
+        const ranges = {
+            100: { slice: [0, 5], indexes: [0, 1, 2, 3, 4] },
+            200: { slice: [0, 5], indexes: [0, 1, 2, 3, 4] },
+            300: { slice: [0, 5], indexes: [0, 1, 2, 3, 4] },
+            400: { slice: [0, 5], indexes: [0, 1, 2, 3, 4] },
+            1001: { slice: [0, 5], indexes: [0, 1, 2, 3, 4] },
+            120: { slice: [4, 9], indexes: [4, 5, 6, 7, 8] },
+            140: { slice: [8, 14], indexes: [8, 9, 10, 11, 12] },
+            160: { slice: [12, 17], indexes: [12, 13, 14, 15, 16] },
+            220: { slice: [0, 9], indexes: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
+            320: { slice: [0, 9], indexes: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
+            420: { slice: [0, 9], indexes: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
+            1020: { slice: [0, 9], indexes: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
+            240: {
+                slice: [0, 19],
+                indexes: Array.from({ length: 19 }, (_, i) => i),
+            },
+            340: {
+                slice: [0, 19],
+                indexes: Array.from({ length: 19 }, (_, i) => i),
+            },
+            440: {
+                slice: [0, 19],
+                indexes: Array.from({ length: 19 }, (_, i) => i),
+            },
+            1040: {
+                slice: [0, 19],
+                indexes: Array.from({ length: 19 }, (_, i) => i),
+            },
+            1000: {
+                custom: true,
+                angles: [0, 1, 2, 3, 4, 9, 10, 14, 15, 19],
+            },
+        };
+        
+        let angleArray = [];
+        let pointIndexArray = [];
+        if (ranges[topicId]) {
+            const range = ranges[topicId];
+            console.log("range: ", range);
+            if (range.custom) {
+                pointIndexArray = range.angles;
+                angleArray = range.angles.map((i) => angles[i]);
+            } else {
+                angleArray = angles.slice(...range.slice);
+                console.log("angleArray: ", angleArray);
+                pointIndexArray = range.indexes;
+            }
+        }
+
+        if (topicId >= 1000) {
+            const combined = angleArray.map((a, i) => ({ angle: a, index: pointIndexArray[i] }));
+            const shuffled = shuffleArray(combined);
+            angleArray = shuffled.map((item) => item.angle);
+            pointIndexArray = shuffled.map((item) => item.index);
+        }
+
         if (topicId < 200) {
             setHideTriangle(false);
-            trigonometricFunction = 'sin(';
         }
-        if (topicId >= 200 && topicId < 300) {
-            trigonometricFunction = 'sin(';
-        } else if (topicId >= 300 && topicId < 400) {
-            trigonometricFunction = 'cos(';
-        } else if (topicId >= 400 && topicId < 500) {
-            trigonometricFunction = 'tan(';
-        } else if (topicId >= 1000 && topicId < 1100) {
-            trigonometricFunction = 'mix';
-        } 
-        let angleArray = [];
-        let pointArray = [];
-        if (topicId == 100 || topicId == 200 || topicId == 300 || topicId == 400 || topicId == 1001) {
-            angleArray = angles.slice(0, 5);
-            pointArray = points.slice(0, 5);
-        } else if (topicId == 120) {
-            angleArray = angles.slice(4, 9);
-            pointArray = points.slice(4, 9);
-        } else if (topicId == 140){
-            angleArray = angles.slice(9, 14);
-            pointArray = points.slice(9, 14);
-        } else if (topicId == 160) {
-            angleArray = angles.slice(14, 19);
-            pointArray = points.slice(14, 19);
-        } else if (topicId == 220 || topicId == 320 || topicId == 420 || topicId == 1020) {
-            angleArray = angles.slice(0, 9);
-            pointArray = points.slice(0, 9);
-        } else if (topicId == 240 || topicId == 340 || topicId == 440 || topicId == 1040) {
-            angleArray = angles.slice(0, 19);
-            pointArray = points.slice(0, 19);
-        } else if (topicId == 1000) {
-            angleArray = angles.slice(0, 5) + angles.slice(9, 10).concat(angles.slice(14, 15)).concat(angles.slice(19, 20));
-            pointArray = points.slice(0, 5).concat(points.slice(9, 10)).concat(points.slice(14, 15)).concat(points.slice(19, 20));  
-        }
-        if (topicId >= 1000) {
-            angleArray = shuffleArray(angleArray);
-            pointArray = shuffleArray(pointArray);
-        }
+
         return {
-            trigonometricFunction: trigonometricFunction,
-            angleArray: angleArray,
-            pointArray: pointArray,
-        }
+            trigonometricFunction: trigFunction,
+            angleArray,
+            pointIndexArray,
+            isCyclical,
+        };
     }
 
-function shuffleArray(array) {
-  const shuffled = [...array]; // copy the array
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1)); // pick a random index
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // swap
-  }
-  return shuffled;
-}
+    function shuffleArray(array) {
+        const shuffled = [...array]; // copy the array
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1)); // pick a random index
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // swap
+        }
+        return shuffled;
+    }
 
     function setQuestion(count) {
-
-        let questionParametersObject = setQuestionParametersObject(initialTopic);
-        console.dir(questionParametersObject);
         let questionLatex = questionParametersObject.trigonometricFunction;
-        console.log(questionLatex);
         if (questionLatex == 'mix') {
             let pickTrig = getRandomIntInclusive(1,10);
             if (pickTrig >= 6) {
@@ -424,14 +527,46 @@ function shuffleArray(array) {
                 questionLatex = 'tan('
             }
         } 
+        // if (questionParametersObject.isCyclical && count >= questionParametersObject.angleArray.length) {
+            if (questionParametersObject.isCyclical && count >= questionParametersObject.pointIndexArray.length) {  
+            count = 0;
+            setCount(0);
+            // setQuestionParametersObject((prev) => {
+            
+            //     if (prev.trigonometricFunction === 'sin(') {
+            //         questionLatex = 'cos(';
+            //     }
+            //     else if (prev.trigonometricFunction === 'cos(') {
+            //         questionLatex = 'tan(';
+            //     }
+            //     else if (prev.trigonometricFunction === 'tan(') {
+            //         count = 15;
+            //     }
+            //     return {
+            //         ...prev,
+            //         trigonometricFunction: questionLatex,
+            //     }
+            // })
+            if (questionParametersObject.trigonometricFunction == 'sin(') {
+                questionLatex = 'cos(';
+                questionParametersObject.trigonometricFunction = 'cos(';
+            } else if (questionParametersObject.trigonometricFunction == 'cos(') {
+                questionLatex = 'tan(';
+                questionParametersObject.trigonometricFunction = 'tan(';
+            } else if (questionParametersObject.trigonometricFunction == 'tan(') {
+                count = 15
+            }
+        }
         let angles = questionParametersObject.angleArray;
-        let labelLatex = angles[count].label + ')';
-        console.log(labelLatex);
-        console.log(questionLatex);
+        console.dir(angles);
+        let labelLatex = angles[count].label + ')=';
         questionLatex = questionLatex + labelLatex;
         let answerLatex = buildAnswerLatex(questionLatex, count);
+        console.log("count: " + count);
+        console.log("questionLatex: " + questionLatex);
+        console.log("answerLatex: " + answerLatex);
 
-        setPointChoice(count);
+        setPointChoice(questionParametersObject.pointIndexArray[count]);
         setQuestionLatex(questionLatex);
         setAnswerLatex(answerLatex);
     }
@@ -439,11 +574,11 @@ function shuffleArray(array) {
     function buildAnswerLatex(questionLatex, count) {
         let answerLatex;
         if (questionLatex.startsWith('sin')) {
-            answerLatex = angles[count].sin;
-        } else if (questionLatex == 'cos(') {
-            answerLatex = angles[count].cos;
-        } else if (questionLatex == 'tan(') {
-            answerLatex = angles[count].tan;
+            answerLatex = questionParametersObject.angleArray[count].sin;
+        } else if (questionLatex.startsWith('cos')) {
+            answerLatex = questionParametersObject.angleArray[count].cos;
+        } else if (questionLatex.startsWith('tan')) {
+            answerLatex = questionParametersObject.angleArray[count].tan;
         }
         return answerLatex;
     }
@@ -473,98 +608,228 @@ function shuffleArray(array) {
         setQuizState(quizStateObject);
     }
     
+    // function handleSubmit(event) {
+    //     if (event) {
+    //         event.preventDefault();
+    //         console.log("handleSubmit called");
+    //     }
+        
+    //     let metStandard = false;
+        
+    //     let answerMessage = '';
+    //     const updatedState = {
+    //         ...quizState,
+    //         questionsAttempted: quizState.questionsAttempted + 1,
+    //         questionsStreak: quizState.questionsStreak,
+    //         questionsCorrect: quizState.questionsCorrect,
+    //         questionsIncorrect: quizState.questionsIncorrect,
+    //         questionsToMeet: quizState.questionsToMeet,
+    //         progressPct: Math.round(((quizState.questionsCorrect + 1)/ quizState.questionsToMeet) * 100),
+    //         progressValue: Math.round(((quizState.questionsCorrect + 1)/ quizState.questionsToMeet) * 100),
+    //     };
+    //     if (responseObj.userAnswer === answerLatex) {
+    //         setBoxStyle({backgroundColor: "green", color:"white", borderWidth: "0px", borderColor: "gray"})
+    //         updatedState.questionsStreak = quizState.questionsStreak + 1;
+    //         updatedState.questionsCorrect = quizState.questionsCorrect + 1;
+    //         if (updatedState.questionsCorrect >= quizState.questionsToMeet) {    
+    //             answerMessage = "Success! You met the standard. Go to the next topic.";
+    //             metStandard = true;              
+    //         }
+    //         answerMessage = "Correct!";
+    //         setCount(count + 1);
+    //     } else {
+    //         setBoxStyle({backgroundColor:"white", color: "red", borderWidth: "2px", borderColor: "red"})
+    //         updatedState.questionsStreak = 0;
+    //         updatedState.questionsIncorrect = quizState.questionsIncorrect + 1;
+    //         answerMessage = "Sorry, that's not it.";           
+    //     }
+    //     updateSituation({answerMessage: answerMessage});
+    //     updatedState.progressPct = Math.round(((quizState.questionsCorrect + 1) / quizState.questionsToMeet) * 100);
+    //     updatedState.progressValue = quizStateObj.progressPct;
+    //     console.dir(quizStateObj);
+    //     setQuizState(quizStateObj);
+    //     setTimeout(function() {
+    //         // if (metStandard && hideTriangle) {
+    //         if (metStandard) {
+    //             console.log("recording success")
+    //             recordSuccess(updatedState);
+    //             setStartTime(new Date());
+    //             updatedState = {
+    //                 questionsAttempted: 0,
+    //                 questionsCorrect: 0,
+    //                 questionsStreak: 0,
+    //                 questionsIncorrect: 0,
+    //                 progressValue: 0,
+    //                 progressPct: 0,
+    //                 questionsToMeet: quizState.questionsToMeet,
+    //          }
+    //             setQuizState(updatedState);
+    //         }
+    //         updateSituation({answerMessage: '', userAnswer: ''})
+    //         setBoxStyle({backgroundColor:"white", color: "black", borderWidth: "0", borderColor: "gray"})
+    //         setQuestion(count + 1);
+    //     }, 1500);
+    
+    // }
+
     function handleSubmit(event) {
-        let metStandard = false;
         event.preventDefault();
-        let answerMessage = '';
-        quizStateObj = quizState;
-        quizStateObj.questionsAttempted = quizState.questionsAttempted + 1;
-        if (responseObj.userAnswer === answerLatex) {
-            setBoxStyle({backgroundColor: "green", color:"white", borderWidth: "0px", borderColor: "gray"})
-            quizStateObj.questionsStreak = quizState.questionsStreak + 1;
-            quizStateObj.questionsCorrect = quizState.questionsCorrect + 1;
-            if (quizStateObj.questionsCorrect >= quizState.questionsToMeet) {    
-                answerMessage = "Success! You met the standard. Go to the next topic.";
-            metStandard = true;              
-            }
-            answerMessage = "Correct";
-            setCount(count + 1);
-        } else {
-            setBoxStyle({backgroundColor:"white", color: "red", borderWidth: "2px", borderColor: "red"})
-            quizStateObj.questionsStreak = 0;
-            quizStateObj.questionsIncorrect = quizState.questionsIncorrect + 1;
-            answerMessage = "Sorry, that's not it.";           
+        
+        let metStandard = false;
+
+        const isCorrect = responseObj.userAnswer === answerLatex;
+
+        const updatedState = {
+            ...quizState,
+            questionsAttempted: quizState.questionsAttempted + 1,
+            questionsStreak: isCorrect ? quizState.questionsStreak + 1 : 0,
+            questionsCorrect: isCorrect ? quizState.questionsCorrect + 1 : quizState.questionsCorrect,
+            questionsIncorrect: !isCorrect ? quizState.questionsIncorrect + 1 : quizState.questionsIncorrect,
+            questionsToMeet: quizState.questionsToMeet,
+            progressPct: Math.round(
+                ((isCorrect ? quizState.questionsCorrect + 1 : quizState.questionsCorrect) /
+                    quizState.questionsToMeet) *
+                    100
+            ),
+            progressValue: Math.round(
+                ((isCorrect ? quizState.questionsCorrect + 1 : quizState.questionsCorrect) /
+                    quizState.questionsToMeet) *
+                    100
+            ),
+        };
+
+        let answerMessage = isCorrect ? "Correct!" : "Sorry, that's not it.";
+        if (isCorrect && updatedState.questionsCorrect >= updatedState.questionsToMeet) {
+            answerMessage = "Success! You met the standard. Go to the next topic.";
+            metStandard = true;
         }
-        updateSituation({answerMessage: answerMessage});
-        quizStateObj.progressPct = Math.round(((quizState.questionsCorrect + 1) / quizState.questionsToMeet) * 100);
-        quizStateObj.progressValue = quizStateObj.progressPct;
-        console.dir(quizStateObj);
-        setQuizState(quizStateObj);
-        setTimeout(function() {
-            if (metStandard && hideTriangle) {
-                console.log("recording success")
-                recordSuccess(quizStateObj);
+
+        setBoxStyle(isCorrect
+            ? {backgroundColor: "green", color: "white", borderWidth: "0px", borderColor: "gray"}
+            : {backgroundColor: "white", color: "red", borderWidth: "2px", borderColor: "red"}
+        );
+        updateSituation({answerMessage});
+
+        setQuizState({ ...updatedState }); // Final state updated
+
+        setTimeout(() => {
+            if (metStandard) {
+                console.log("recording success");
+                recordSuccess(updatedState);
                 setStartTime(new Date());
-                quizStateObj = {
+                setQuizState({
                     questionsAttempted: 0,
                     questionsCorrect: 0,
                     questionsStreak: 0,
                     questionsIncorrect: 0,
                     progressValue: 0,
                     progressPct: 0,
-                    questionsToMeet: 12,
-             }
-                setQuizState(quizStateObj);
+                    questionsToMeet: updatedState.questionsToMeet,
+                });
             }
-            updateSituation({answerMessage: '', userAnswer: ''})
-            setBoxStyle({backgroundColor:"white", color: "black", borderWidth: "0", borderColor: "gray"})
+            updateSituation({answerMessage: '', userAnswer: ''});
+            setBoxStyle({backgroundColor: "white", color: "black", borderWidth: "0", borderColor: "gray"});
+            setCount(count + 1);
+            
+            //Update the question for the next round
             setQuestion(count + 1);
+            // Reset the math field focus
+            if (mathFieldRef.current) {
+                setTimeout(() => mathFieldRef.current.focus(), 10);
+            }
         }, 1500);
     }
+
+    function appendLatex(latex) {
+      setResponseObj((prev) => ({
+        ...prev,
+        userAnswer: (prev.userAnswer || "") + latex,
+      }));
+      if (mathFieldRef.current) {
+        setTimeout(() => mathFieldRef.current.focus(), 0);
+      }
+    }
+
     return (
-        <>
+        <div>
             <div className="row">
                 <div className="col-12">
                     <ProgressBar variant="primary3x^2" style={{borderRadius: '0', backgroundColor: "LightGray"}}now={quizState.progressValue} label={`${quizState.progressPct}%`} max='100'/>
                 </div>
             </div>
-            <div className="row m-0 p-0 fs-6">
-                <p className="m-0 p-0">{responseObj.answerMessage}</p>
-            </div>
-            <div className="row m-0 p-0">
-                <div className="col-5 mt-3 fs-6">
-                    <p><StaticMathField>{questionLatex}</StaticMathField>=</p>
-                </div>
-                <div className="col-7 mt-2">
-                    <form onSubmit={handleSubmit} method="post" action="#">
-                        <div className="row mt-0 p-0">
-                            <div className="col-5 m-0 p-0">
-                            <EditableMathField
-                                type="input"
-                                id="answerInput"
-                                className="form-control text-center fs-4 p-2"
-                                style={boxStyle}
-                                aria-describedby="answer input"
-                                latex={responseObj.userAnswer}
-                                onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
-                                mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
-                                onKeyDown={handleKeyDown}
-                            />
+            <div className="row d-flex justify-content-center m-0 p-0">
+                <div className="col-4 mt-2 formColumn">
+                    <div className="row">
+                        <div className="m-0 p-0 fs-3">
+                            <StaticMathField>{questionLatex}</StaticMathField>
+                        </div>
+                    </div>
+                    <form key={count} onSubmit={handleSubmit} method="post" action="#">
+                        <div className="row mt-3 p-0">
+                            <div className="m-0 p-0">
+                                <EditableMathField
+                                    type="input"
+                                    id="answerInput"
+                                    className="form-control text-center fs-4 p-0"
+                                    style={boxStyle}
+                                    aria-describedby="answer input"
+                                    latex={responseObj.userAnswer}
+                                    onChange={(mathField)=>updateSituation({userAnswer: mathField.latex()})}
+                                    mathquillDidMount={mathField => (mathFieldRef.current = mathField)}
+                                    onKeyDown={handleKeyDown}
+                                />
                             </div>
-                            <div className="col-3 m-1 p-0">
+                        </div>
+                        <div className="row mt-0 p-0">
+                            <div className="mt-2 p-0">
+                                {/* <input
+                                    type="text"
+                                    style={{position: "absolute", left: "-9999px"} }
+                                    value={responseObj.userAnswer}
+                                    readOnly
+                                >
+                                </input> */}
                                 <Button
                                     variant="primary"
                                     type="submit"
-                                    size="sm"
+                                    size="md"
                                 >
                                     SUBMIT
                                 </Button>
                             </div>
                         </div>
+                        <div className="row m-0 p-0 fs-4">
+                            <p className="m-0 p-0">{responseObj.answerMessage}</p>
+                        </div>
                     </form>
                 </div>
+                <div className="col-4 p-2 buttonsColumn">
+                    {
+                        [
+                            ["0", "1", "undefined"],
+                            ["\\frac{1}{2}", "\\frac{\\sqrt{2}}{2}", "\\frac{\\sqrt{3}}{2}"],
+                            ["\\frac{\\sqrt{3}}{3}", "\\sqrt{3}"],
+                        ].map((row, rowIndex)=> (
+                        <div className="row" key={rowIndex}>
+                            <div className="col-12 d-flex gap-2 mb-2">
+                                {row.map((value, colIndex) => (
+                                    <Button
+                                        key={`${rowIndex}-${colIndex}`}
+                                        variant="primary"
+                                        size="sm"
+                                        className="math-button"
+                                        onClick={() => appendLatex(value)}
+                                    >
+                                        <StaticMathField>{value}</StaticMathField>
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                        ))
+                    }
+                </div>
             </div>
-            <div className="row mt-2 p-0">
+            {/* <div className="row mt-2 p-0">
                 <div className="col-8 offset-2">
                     <Form.Check
                         type="switch"
@@ -574,16 +839,16 @@ function shuffleArray(array) {
                         onChange={handleCheckChange}
                     />
                 </div>
-            </div>            
+            </div>             */}
             <UnitCircleImage 
                 pointChoice={pointChoice}
                 hideTriangle={hideTriangle}
             />  
             <div className="row">
-                <NavLink to="/trigonometricTopics" >
+                <NavLink to="/unitCircleTopics" >
                     <Button variant="primary" size="lg">Unit Circle Topics</Button>
                 </NavLink>
             </div>
-        </>
+        </div>
     )
 }
