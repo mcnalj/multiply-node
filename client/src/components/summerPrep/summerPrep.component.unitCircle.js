@@ -111,7 +111,7 @@ const questionTopics = {
     ]
 }
 
-function UnitCircleImage({pointChoice, hideTriangle}) {
+function UnitCircleImage({pointChoice, hideTriangle, showTextValues = true}) {
 
     const svgWidth = 400;
     const svgHeight = 400;
@@ -190,14 +190,18 @@ function UnitCircleImage({pointChoice, hideTriangle}) {
                         textAnchor="middle"
                         fill="blue"
                         fontWeight="bold"
-                    >{points[pointIndex].cos}</text>
+                    >
+                        {points[pointIndex].cos}
+                    </text>
                     <text 
                         x={blueLineX + points[pointIndex].sinOffset}
                         y={centerY - (( radius * Math.sin(angle))/2)}
                         textAnchor="start"
                         fill="green"
                         fontWeight="bold"
-                    >{points[pointIndex].sin}</text>
+                    >
+                        {points[pointIndex].sin}
+                    </text>
                 </svg>
             </div>
         </div>
@@ -234,6 +238,29 @@ function UnitCircleImage({pointChoice, hideTriangle}) {
                         />
                         </g>
                     ))}
+                    {/* Conditionally show text values when showTextValues is true */}
+                    {showTextValues && (
+                        <>
+                            <text 
+                                x={centerX + (radius * Math.cos(angle)/2)}
+                                y={blueLineY + points[pointIndex].cosOffset}
+                                textAnchor="middle"
+                                fill="blue"
+                                fontWeight="bold"
+                            >
+                                {points[pointIndex].cos}
+                            </text>
+                            <text 
+                                x={blueLineX + points[pointIndex].sinOffset}
+                                y={centerY - (( radius * Math.sin(angle))/2)}
+                                textAnchor="start"
+                                fill="green"
+                                fontWeight="bold"
+                            >
+                                {points[pointIndex].sin}
+                            </text>
+                        </>
+                    )}
                     </svg>
                 </div>
             </div>
@@ -314,6 +341,17 @@ export default function UnitCircle({userId}) {
             mathFieldRef.current.focus();
         }
     }, [initialTopic,currentTopic]);
+
+    // Handle hideTriangle side effect separately
+    useEffect(() => {
+        if (currentTopic < 200) {
+            setHideTriangle(false);
+        } else if (currentTopic >= 200 && currentTopic < 1000) {
+            setHideTriangle(false);
+        } else if (currentTopic >= 1000) {
+            setHideTriangle(true);
+        }
+    }, [currentTopic]);
 
     const [responseObj, setResponseObj] = useState({
         userAnswer: '',
@@ -492,10 +530,6 @@ export default function UnitCircle({userId}) {
             const shuffled = shuffleArray(combined);
             angleArray = shuffled.map((item) => item.angle);
             pointIndexArray = shuffled.map((item) => item.index);
-        }
-
-        if (topicId < 200) {
-            setHideTriangle(false);
         }
 
         return {
@@ -750,6 +784,31 @@ export default function UnitCircle({userId}) {
       }
     }
 
+    function makeNegative() {
+      setResponseObj((prev) => {
+        const currentAnswer = prev.userAnswer || "";
+        let negativeAnswer;
+        
+        if (currentAnswer === "") {
+          negativeAnswer = "-";
+        } else if (currentAnswer.startsWith("-")) {
+          // If already negative, remove the negative sign
+          negativeAnswer = currentAnswer.substring(1);
+        } else {
+          // Add negative sign
+          negativeAnswer = "-" + currentAnswer;
+        }
+        
+        return {
+          ...prev,
+          userAnswer: negativeAnswer,
+        };
+      });
+      if (mathFieldRef.current) {
+        setTimeout(() => mathFieldRef.current.focus(), 0);
+      }
+    }
+
     return (
         <div>
             <div className="row">
@@ -808,7 +867,7 @@ export default function UnitCircle({userId}) {
                         [
                             ["0", "1", "undefined"],
                             ["\\frac{1}{2}", "\\frac{\\sqrt{2}}{2}", "\\frac{\\sqrt{3}}{2}"],
-                            ["\\frac{\\sqrt{3}}{3}", "\\sqrt{3}"],
+                            ["\\frac{\\sqrt{3}}{3}", "\\sqrt{3}", "neg"],
                         ].map((row, rowIndex)=> (
                         <div className="row" key={rowIndex}>
                             <div className="col-12 d-flex gap-2 mb-2">
@@ -818,9 +877,9 @@ export default function UnitCircle({userId}) {
                                         variant="primary"
                                         size="sm"
                                         className="math-button"
-                                        onClick={() => appendLatex(value)}
+                                        onClick={() => value === "neg" ? makeNegative() : appendLatex(value)}
                                     >
-                                        <StaticMathField>{value}</StaticMathField>
+                                        <StaticMathField>{value === "neg" ? "±" : value}</StaticMathField>
                                     </Button>
                                 ))}
                             </div>
@@ -843,6 +902,7 @@ export default function UnitCircle({userId}) {
             <UnitCircleImage 
                 pointChoice={pointChoice}
                 hideTriangle={hideTriangle}
+                showTextValues={currentTopic < 200}
             />  
             <div className="row">
                 <NavLink to="/unitCircleTopics" >
