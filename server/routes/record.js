@@ -1,5 +1,3 @@
-
-
 var express = require('express');
 var recordRoutes = express.Router();
 const dbo = require("../db/conn");
@@ -128,7 +126,6 @@ recordRoutes.route('/add').get(checkAuthenticated, async function(req, response)
     var rough = dbo.client.db("calculus").collection("units").findOne({unitName: "derivatives"});
     response.json(rough);
 });
-
 
 // This is the backend route to Check Authentication based on the cookie set below.
 // Backend route to check if the user is authenticated
@@ -852,24 +849,39 @@ recordRoutes.route('/metStandard').post(checkAuthenticated, async function(req, 
 });
 
 // we should make the classTeacher always have to be the logged in user
-recordRoutes.route("/create-class").post(checkAuthenticated, async function (req, res) {
-  const { className, classDescription, classTeacher, classCode} = req.body;
-  const creatingTeacher = await dbo.client.db("employees")
-         .collection("users")
-         .findOne({username: classTeacher});
-  if (!creatingTeacher) {
-    return res.json({msg: 'Sorry, the class teacher you submitted does not exist.', success: false});
+recordRoutes.route("/create-class").post(async function (req, res) {
+  const { className, classDescription, schoolName, teacherName, teacherUsername, classCode } = req.body;
+  
+  // First check if the classCode already exists
+  const existingClass = await dbo.client.db("theCircus")
+         .collection("ccClasses")
+         .findOne({classCode: classCode});
+  
+  if (existingClass) {
+    return res.json({msg: 'Sorry, that class code is taken. Please try a different code.', success: false});
   }
+  
   try {
-    const userRecord = await dbo.client.db("employees")
-          .collection("classes").insertOne(
+    const classRecord = await dbo.client.db("theCircus")
+          .collection("ccClasses").insertOne(
             {
               className: className,
               classDescription: classDescription,
-              classTeacher: classTeacher,
+              schoolName: schoolName,
+              teacherName: teacherName,
+              teacherUsername: teacherUsername,
               classCode: classCode,
-              classMembers: []
+              members: [] // Initialize empty members array
             });
+    
+    // Update the user's classOwnerships array
+    await dbo.client.db("theCircus")
+          .collection("ccUsers")
+          .updateOne(
+            { username: teacherUsername },
+            { $addToSet: { classOwnerships: classCode } }
+          );
+    
     return res.json({msg: 'Success! Your class was created.', success: true})      
   } catch(error) {
     console.error('Error creating instructional class:', error);
@@ -918,6 +930,49 @@ recordRoutes.route("/listClasses").post(async function (req, response) {
   } catch(error) {
     console.error("Error fetching progress:", error);
     response.json({usersData: null})
+  }
+});
+
+// Get owned classes with full information for the current user
+recordRoutes.route("/listOwnedClasses").post(async function (req, response) {
+  try {
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return response.json({ ownedClasses: [], error: "User ID is required" });
+    }
+    
+    // First, get the user's classOwnerships array from ccUsers using userId
+    const userRecord = await dbo.client.db("theCircus")
+      .collection("ccUsers")
+      .findOne({ 
+        $or: [
+          { _id: ObjectId.isValid(userId) ? new ObjectId(userId) : null },
+          { _id: userId }
+        ]
+      }, { projection: { classOwnerships: 1 } });
+    
+    if (!userRecord || !userRecord.classOwnerships || userRecord.classOwnerships.length === 0) {
+      return response.json({ ownedClasses: [] });
+    }
+    
+    // Get full class information for each owned class
+    const classDetails = await dbo.client.db("theCircus")
+      .collection("ccClasses")
+      .find({ classCode: { $in: userRecord.classOwnerships } })
+      .toArray();
+    
+    // Add member count to each class
+    const classesWithCounts = classDetails.map(classInfo => ({
+      ...classInfo,
+      memberCount: classInfo.members ? classInfo.members.length : 0
+    }));
+    
+    response.json({ ownedClasses: classesWithCounts });
+
+  } catch(error) {
+    console.error("Error fetching owned classes:", error);
+    response.json({ ownedClasses: [] });
   }
 });
 
@@ -1141,6 +1196,221 @@ recordRoutes.route("/getStandardsProgress").post(async function (req, response) 
   }
 });
 
+// Class management routes
+
+// Get class information by class code
+recordRoutes.route("/class/info/:classCode").get(async function (req, res) {
+  console.log("got to class info route");
+  const { classCode } = req.params;
+  
+  try {
+    const classInfo = await dbo.client.db("theCircus")
+          .collection("ccClasses")
+          .findOne({ classCode: classCode });
+    
+    if (!classInfo) {
+      return res.status(404).json({ success: false, message: 'Class not found' });
+    }
+    
+    res.json({
+      success: true,
+      className: classInfo.className,
+      classDescription: classInfo.classDescription,
+      schoolName: classInfo.schoolName,
+      teacherName: classInfo.teacherName,
+      teacherUsername: classInfo.teacherUsername,
+      classCode: classInfo.classCode,
+      members: classInfo.members || []
+    });
+  } catch (error) {
+    console.error('Error fetching class info:', error);
+    res.status(500).json({ success: false, message: 'Error fetching class information' });
+  }
+});
+
+// Add students to a class
+recordRoutes.route("/class/addStudents").post(async function (req, res) {
+  const { classCode, students } = req.body;
+  
+  if (!classCode || !students || !Array.isArray(students)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Class code and students array are required' 
+    });
+  }
+  
+  try {
+    let addedCount = 0;
+    let notFoundUsers = [];
+    let alreadyInClass = [];
+    
+    for (const studentIdentifier of students) {
+      // Try to find user by username or email
+      const user = await dbo.client.db("theCircus")
+            .collection("ccUsers")
+            .findOne({
+              $or: [
+                { username: studentIdentifier },
+                { email: studentIdentifier }
+              ]
+            });
+      
+      if (!user) {
+        notFoundUsers.push(studentIdentifier);
+        continue;
+      }
+      
+      // Check if user is already in the class
+      if (user.classMemberships && user.classMemberships.includes(classCode)) {
+        alreadyInClass.push(user.username);
+        continue;
+      }
+      
+      // Add class to user's classMemberships
+      await dbo.client.db("theCircus")
+            .collection("ccUsers")
+            .updateOne(
+              { _id: user._id },
+              { $addToSet: { classMemberships: classCode } }
+            );
+      
+      // Add user to class members
+      await dbo.client.db("theCircus")
+            .collection("ccClasses")
+            .updateOne(
+              { classCode: classCode },
+              { $addToSet: { members: user.username } }
+            );
+      
+      addedCount++;
+    }
+    
+    let message = `Successfully added ${addedCount} students to the class.`;
+    if (notFoundUsers.length > 0) {
+      message += ` Users not found: ${notFoundUsers.join(', ')}.`;
+    }
+    if (alreadyInClass.length > 0) {
+      message += ` Already in class: ${alreadyInClass.join(', ')}.`;
+    }
+    
+    res.json({
+      success: true,
+      message: message,
+      addedCount: addedCount,
+      notFoundUsers: notFoundUsers,
+      alreadyInClass: alreadyInClass
+    });
+    
+  } catch (error) {
+    console.error('Error adding students to class:', error);
+    res.status(500).json({ success: false, message: 'Error adding students to class' });
+  }
+});
+
+// Remove student from a class
+recordRoutes.route("/class/removeStudent").post(async function (req, res) {
+  const { classCode, studentUsername } = req.body;
+  
+  if (!classCode || !studentUsername) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Class code and student username are required' 
+    });
+  }
+  
+  try {
+    // Remove class from user's classMemberships
+    await dbo.client.db("theCircus")
+          .collection("ccUsers")
+          .updateOne(
+            { username: studentUsername },
+            { $pull: { classMemberships: classCode } }
+          );
+    
+    // Remove user from class members
+    await dbo.client.db("theCircus")
+          .collection("ccClasses")
+          .updateOne(
+            { classCode: classCode },
+            { $pull: { members: studentUsername } }
+          );
+    
+    res.json({
+      success: true,
+      message: `Successfully removed ${studentUsername} from the class`
+    });
+    
+  } catch (error) {
+    console.error('Error removing student from class:', error);
+    res.status(500).json({ success: false, message: 'Error removing student from class' });
+  }
+});
+
+// Update class information
+recordRoutes.route("/class/update").post(async function (req, res) {
+  const { classCode, updates } = req.body;
+  console.log(req.body);
+  
+  if (!classCode || !updates) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Class code and updates are required' 
+    });
+  }
+  
+  try {
+    // Only allow updating specific fields (exclude _id, teacherUsername, classCode, members)
+    const allowedFields = ['className', 'classDescription', 'schoolName', 'teacherName'];
+    const updateData = {};
+    
+    // Filter updates to only include allowed fields
+    Object.keys(updates).forEach(key => {
+      if (allowedFields.includes(key) && updates[key] !== undefined) {
+        updateData[key] = updates[key];
+      }
+    });
+    
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No valid fields to update' 
+      });
+    }
+    
+    // Update the class information
+    const result = await dbo.client.db("theCircus")
+          .collection("ccClasses")
+          .updateOne(
+            { classCode: classCode },
+            { $set: updateData }
+          );
+    
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Class not found' 
+      });
+    }
+    
+    if (result.modifiedCount === 0) {
+      return res.json({ 
+        success: true, 
+        message: 'No changes were made (data already up to date)' 
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Class information updated successfully'
+    });
+    
+  } catch (error) {
+    console.error('Error updating class information:', error);
+    res.status(500).json({ success: false, message: 'Error updating class information' });
+  }
+});
+
+// ...existing code...
 module.exports = recordRoutes;
 
 

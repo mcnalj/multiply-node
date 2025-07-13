@@ -31,17 +31,17 @@ const questionTopics = {
         {
             topicId: 120,
             topicName:  "unitCircleWarmUpSecondQuadrant",
-            questionsToMeet: 12
+            questionsToMeet: 15
         },
         {
             topicId: 140,
             topicName:  "unitCircleWarmUpThirdQuadrant",
-            questionsToMeet: 12
+            questionsToMeet: 15
         },
         {
             topicId: 160,
             topicName:  "unitCircleWarmUpFourthQuadrant",
-            questionsToMeet: 12
+            questionsToMeet: 15
         },        
         {
             topicId: 200,

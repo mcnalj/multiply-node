@@ -9,7 +9,7 @@ import './navbar.component.styles.scss';
 import { config} from '../constants';
 
 var url = config.url.API_URL;
-const defaultAvatar = "https://via.placeholder.com/40?text=👤";
+const defaultAvatar = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23808080'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='0.3em' font-size='24' fill='white'%3E👤%3C/text%3E%3C/svg%3E";
 
 export default function Navigation({isAuthenticated, username, avatarUrl}) {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export default function Navigation({isAuthenticated, username, avatarUrl}) {
                 <>
                   <Dropdown.Item href="/userProgress">{isAuthenticated ? "Progress" : ""}</Dropdown.Item>
                   <Dropdown.Item href="/manageClasses">{isAuthenticated ? "Manage Classes" : ""}</Dropdown.Item>
-                  <Dropdown.Item onClick={() => navigate('/updateProfile')}>Update Profile</Dropdown.Item>
+                  <Dropdown.Item onClick={() => navigate('/viewProfile')}>View Profile</Dropdown.Item>
                   <Dropdown.Item href="/privacy">Privacy Policy</Dropdown.Item>
                   <Dropdown.Item href="/termsofservice">Terms of Service</Dropdown.Item>
                   <Dropdown.Item href="/logout">Logout</Dropdown.Item>
@@ -67,7 +67,7 @@ export default function Navigation({isAuthenticated, username, avatarUrl}) {
                 height={40}
                 roundedCircle
                 className="me-2 cursor-pointer"
-                onClick={() => isAuthenticated && navigate('/updateProfile')}
+                onClick={() => isAuthenticated && navigate('/viewProfile')}
               />
               {isAuthenticated ? (
                   <Dropdown>
@@ -83,7 +83,7 @@ export default function Navigation({isAuthenticated, username, avatarUrl}) {
                     <Dropdown.Menu align="end">
                       <Dropdown.Item href="/userProgress">{isAuthenticated ? "Progress" : ""}</Dropdown.Item>
                       <Dropdown.Item href="/manageClasses">{isAuthenticated ? "Manage Classes" : ""}</Dropdown.Item>
-                      <Dropdown.Item onClick={() => navigate('/updateProfile')}>Update Profile</Dropdown.Item>
+                      <Dropdown.Item onClick={() => navigate('/viewProfile')}>View Profile</Dropdown.Item>
                       <Dropdown.Item href="/privacy">Privacy Policy</Dropdown.Item>
                       <Dropdown.Item href="/termsofservice">Terms of Service</Dropdown.Item>
                       <Dropdown.Item href="/logout">Logout</Dropdown.Item>

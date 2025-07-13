@@ -37,7 +37,9 @@ $brownThatGivesWeightToLightPurple: #4B3027;
 // successButton
 $paleGreen: #B0A75F;
 // $limeGreen: #B4BA21;
-$limeGreen: #3CF72F;
+// $limeGreen: #A3D31B; // Lighter shade of green for better readability
+// $limeGreen: #3CF72F; // This is what is used to be.
+$limeGreen: #2A8B22; // Darker shade of green for better readability
 
 $primary: $limeGreen; // buttons and progress
 // $secondary: #D56C33; // orange
@@ -45,7 +47,7 @@ $secondary: $limeGreen; // orange
 $success: $limeGreen; // button
 // $danger: #BD533F;  // red
 $danger: $limeGreen;  // red
-$warning: yellow;
+$warning: #CC9900; // Darker yellow for better readability
 $info: $purpleGray; // progress and score (dark blue), maybe text, maybe html
 $light: $slateGray;  // sand tan
 // $dark: $brownThatGivesWeightToLightPurple; // nav background
@@ -202,7 +204,7 @@ $charcoal: #2C2C2C;
 //   font: inherit;
 //   cursor: pointer;
 // }
-
+ 
 // #buttonField {
 //   background-color: #313c3f;
 //   align-items: center;

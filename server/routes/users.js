@@ -1063,4 +1063,48 @@ usersRoutes.route("/usersCC").get(async function (req, response) {
   }
 });
 
+usersRoutes.route('/fetchUserInfoById/:userId').get(async function(req, res, next) {
+  const { userId } = req.params;
+  if (!userId) {
+    return res.status(400).json({error: "User ID is required"});
+  }
+  if (!ObjectId.isValid(userId)) {
+    return res.status(400).json({ error: "Invalid user ID format"});
+  }
+  try {
+    
+    // Try to find user with ObjectId first, then fallback to string
+    let user = await dbo.client.db("theCircus")
+      .collection("ccUsers")
+      .findOne({_id: new ObjectId(userId)});
+      
+    // If not found, try searching with string ID
+    if (!user) {
+      console.log("ObjectId search failed, trying string ID");
+      user = await dbo.client.db("theCircus")
+        .collection("ccUsers")
+        .findOne({_id: userId});
+    }
+      
+    if (!user) {
+      return res.status(404).json({ error: "User not found"});
+    }
+    
+    // Return all necessary information for ViewProfile component
+    console.dir(user);
+    res.json({
+      givenName: user.given_name,
+      familyName: user.family_name,
+      username: user.username,
+      avatarUrl: user.avatarUrl || user.avatar, // Support both field names
+      lastLogin: user.lastLogin,
+      createdAt: user.createdAt,
+      classMemberships: user.classMemberships || []
+    });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({error: "Server error"});
+  } 
+});
+
 module.exports = usersRoutes;

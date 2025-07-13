@@ -11,6 +11,7 @@ import Login from './components/auth/auth.component.login.js';
 import Register from './components/auth/auth.component.register.js';
 import LogOut from './components/auth/auth.component.logout.js';
 import LoginWithGoogle from './components/auth/auth.component.loginWithGoogle.js';
+import ViewProfile from './components/userInfo/userInfo.component.viewProfile.js';
 
 import CalculusHome from './components/calculus/calculus.component.calculusHome.js';
 
@@ -73,6 +74,9 @@ import CreateClass from './components/auth/auth.component.createClass.auth.js';
 import ListClasses from './components/auth/auth.component.listClasses.js';
 import CreateTargets from './components/class/class.component.createTargets';
 import ViewClass from './components/class/class.component.viewClass';
+import AddStudentsToClass from './components/class/class.component.addStudentsToClass.js';
+import EditClass from './components/class/class.component.editClass.js';
+import ViewClassProgress from './components/class/class.component.viewClassProgress.js';
 
 import TrigonometricTopics from './components/derivatives/derivatives.component.trigonometricTopics.js';
 import TrigonometricFunctions from './components/derivatives/derivatives.component.trigonometricFunctions.js';
@@ -248,6 +252,14 @@ function App() {
           <Route path="/apiAxios" element={<GetAPIAxios /> } />
           <Route path="/getTrivia" element={<GetTrivia /> } />
 
+          <Route path="/viewProfile"
+                element={
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
+                    <ViewProfile userId={userId} />
+                  </Protected>
+                }
+          />
+
           <Route path="/multiply"
                 element={
                   <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
@@ -394,14 +406,14 @@ function App() {
         <Route path="/manageClasses"
                 element={
                   <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
-                    <ManageClasses userId={userId}/>
+                    <ManageClasses userId={userId} username={username}/>
                   </Protected>
                 }
-          />                    
+          />                     
           <Route path="/createClass"
                 element={
                   <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
-                    <CreateClass userId={userId}/>
+                    <CreateClass userId={userId} username={username}/>
                   </Protected>
                 }
           />
@@ -416,6 +428,27 @@ function App() {
                 element={
                   <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ViewClass userId={userId}/>
+                  </Protected>
+                }
+          />
+          <Route path="/addStudentsToClass/:classCode"
+                element={
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
+                    <AddStudentsToClass userId={userId}/>
+                  </Protected>
+                }
+          />
+          <Route path="/editClass/:classCode"
+                element={
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
+                    <EditClass userId={userId}/>
+                  </Protected>
+                }
+          />
+          <Route path="/classProgress/:classCode"
+                element={
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
+                    <ViewClassProgress userId={userId}/>
                   </Protected>
                 }
           />
