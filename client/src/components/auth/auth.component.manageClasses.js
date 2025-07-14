@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Badge, ListGroup } from 'react-bootstrap';
 import { config} from '../constants';
 var url = config.url.API_URL;
 
 export default function ManageClasses({userId, username}) {
+    const navigate = useNavigate();
+    
     return (
         <Container fluid className="pt-4">
             <Row className="justify-content-center">
@@ -18,9 +20,14 @@ export default function ManageClasses({userId, username}) {
                                 <NavLink className="btn btn-primary btn-lg" to="/createClass">
                                     Create a Class
                                 </NavLink>
-                                <NavLink className="btn btn-outline-secondary" to="/success">
-                                    Home
-                                </NavLink>
+                                <Button 
+                                    variant="outline-secondary" 
+                                    onClick={() => navigate(-1)}
+                                    className="d-flex align-items-center justify-content-center"
+                                >
+                                    <i className="fas fa-arrow-left me-2"></i>
+                                    Back
+                                </Button>
                             </div>
                         </Card.Body>
                     </Card>
@@ -121,7 +128,7 @@ function ClassList({userId, username}) {
                                     <div className="d-flex flex-column gap-2 ms-3">
                                         <NavLink 
                                             className="btn btn-outline-primary btn-sm" 
-                                            to={`/classProgress/${classInfo.classCode}`}
+                                            to={`/viewClassProgress/${classInfo.classCode}`}
                                         >
                                             View Progress
                                         </NavLink>

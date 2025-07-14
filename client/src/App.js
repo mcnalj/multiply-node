@@ -41,7 +41,7 @@ import ExponentsTopics from './components/calculus/calculus.component.exponentsT
 import Exponents from './components/calculus/calculus.component.exponents';
 import Exponents2 from './components/calculus/calculus.component.exponents2';
 import ExponentsVariety from './components/calculus/calculus.component.exponentsVariety';
-import Derivatives from './components/derivatives/derivatives.component.derivatives.js';
+import TopDerivatives from './components/derivatives/derivatives.component.derivatives.js';
 import DerivativesTopics from './components/derivatives/derivatives.component.derivativesTopics.js';
 // import ProgressTracker from './components/userInfo/userInfo.component.GPTProgressTracker';
 
@@ -61,7 +61,7 @@ import CardStack from './components/flashcards/flashcards.component.cardStack.js
 import CardSlide from './components/flashcards/flashcards.component.cardSlide.js';
 
 import UserSkillsCompleted from './components/userInfo/userInfo.component.userSkillsCompleted.js';
-import UserProgress from './components/userInfo/userInfo.component.progress';
+import UserProgress from './components/userInfo/userInfo.component.userProgress';
 import ClassProgress from './components/userInfo/userInfo.component.classProgress';
 import ProgressChoices from './components/userInfo/userInfo.component.progressChoices';
 import SingleUsersProgress from './components/userInfo/userInfo.component.singleUsersProgress';
@@ -124,6 +124,7 @@ function App() {
   const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [userRoles, setUserRoles] = useState({});  // New state for user roles  
   
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -166,6 +167,7 @@ function App() {
             if (data.username) {
                 setUsername(data.username);
                 setAvatarUrl(data.avatar);
+                setUserRoles(data.userRoles || {});  // Set user roles from response, default to empty object if undefined
                 setLoading(false);
             } else {
                 // navigate("/loginWithGoogle");
@@ -198,6 +200,8 @@ function App() {
           isAuthenticated={isAuthenticated}
           username={username}
           avatarUrl={avatarUrl}
+          userRoles={userRoles}
+          userId={userId}
         />
       )}
       <div className="appContent container-fluid m-0 p-0">
@@ -305,7 +309,7 @@ function App() {
           <Route path="/derivatives/:topic"
                 element={
                   <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
-                    <Derivatives userId={userId}/>
+                    <TopDerivatives userId={userId}/>
                   </Protected>
                 }
           />
@@ -389,11 +393,9 @@ function App() {
                     <Roadmap userId={userId}/>
                 }
           />
-          <Route path="/userProgress"
+          <Route path="/userProgress/:userId"
                 element={
-                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
-                    <UserProgress userId={userId}/>
-                  </Protected>
+                    <UserProgress/>
                 }
           />
           <Route path="/classProgress"
@@ -445,7 +447,7 @@ function App() {
                   </Protected>
                 }
           />
-          <Route path="/classProgress/:classCode"
+          <Route path="/viewClassProgress/:classCode"
                 element={
                   <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <ViewClassProgress userId={userId}/>

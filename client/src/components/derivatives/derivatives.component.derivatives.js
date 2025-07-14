@@ -155,7 +155,7 @@ function setQuestionEngine(topicId) {
   }
 }
 
-export default function TopDerivatives({username}) {
+export default function TopDerivatives({userId}) {
 
   const parameter = useParams()
   var initialTopic = parseInt(parameter.topic);
@@ -164,11 +164,11 @@ export default function TopDerivatives({username}) {
   const [currentTopic, setCurrentTopic] = useState(initialTopic);
   return (
     <>
-      <Derivatives 
+      <Derivatives
+        userId={userId}
         currentTopic={currentTopic}
         setCurrentTopic={setCurrentTopic}
         questionTopics={questionTopics.derivatives}
-        username={username}
       />
     </>
   )
@@ -316,6 +316,7 @@ export function Derivatives({userId, currentTopic, setCurrentTopic, questionTopi
         "datetimeStarted": startTime.current,
         "totalTime": totalTime,
       }
+      console.log("Here is userId:", userId);
       const action = setAction("skillCompleted", actionDetails, userId);
       const result = await recordAction(action);
 
@@ -351,7 +352,7 @@ export function Derivatives({userId, currentTopic, setCurrentTopic, questionTopi
   //   }
   //   let sessionData = {
   //     userData: {
-  //         username: username,
+  //         username: username, // this is no longer available here
   //         questionsAttempted: liftedState.questionsAttempted,
   //         questionsCorrect: liftedState.questionsCorrect,
   //     },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, NavLink } from 'react-router-dom';
+import { useParams, NavLink, Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Table, Alert, Spinner, Badge } from 'react-bootstrap';
 import { config } from '../constants';
 
@@ -10,6 +10,7 @@ export default function ViewClassProgress({ userId }) {
     
     const [classData, setClassData] = useState(null);
     const [students, setStudents] = useState([]);
+    const [progressData, setProgressData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState('');
@@ -23,7 +24,7 @@ export default function ViewClassProgress({ userId }) {
     const fetchClassData = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${url}/record/class/info/${classCode}`, {
+            const response = await fetch(`${url}/class/progress/${classCode}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -34,7 +35,8 @@ export default function ViewClassProgress({ userId }) {
             if (response.ok) {
                 const data = await response.json();
                 setClassData(data);
-                setStudents(data.members || []);
+                setStudents(data.studentProgress || []);
+                setProgressData(data.studentProgress || []);
             } else {
                 setMessage('Failed to load class information');
                 setMessageType('danger');
@@ -142,25 +144,48 @@ export default function ViewClassProgress({ userId }) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {students.map((studentName, index) => (
+                                            {students.map((student, index) => (
                                                 <tr key={index}>
-                                                    <td className="fw-bold">{studentName}</td>
-                                                    {/* Totals - placeholder data */}
-                                                    <td className="text-center">--</td>
-                                                    <td className="text-center">--</td>
-                                                    <td className="text-center">--</td>
-                                                    {/* Summer Prep - placeholder data */}
-                                                    <td className="text-center">--</td>
-                                                    <td className="text-center">--</td>
-                                                    <td className="text-center">--</td>
-                                                    {/* Derivatives - placeholder data */}
-                                                    <td className="text-center">--</td>
-                                                    <td className="text-center">--</td>
-                                                    <td className="text-center">--</td>
-                                                    {/* Integrals - placeholder data */}
-                                                    <td className="text-center">--</td>
-                                                    <td className="text-center">--</td>
-                                                    <td className="text-center">--</td>
+                                                    <td className="fw-bold">
+                                                        {student.userId ? (
+                                                            <Link 
+                                                                to={`/userProgress/${student.userId}`}
+                                                                className="text-decoration-none"
+                                                                style={{
+                                                                    color: '#9966CC',
+                                                                    transition: 'all 0.2s ease'
+                                                                }}
+                                                                onMouseEnter={(e) => {
+                                                                    e.target.style.color = '#663399';
+                                                                    e.target.style.textDecoration = 'underline';
+                                                                }}
+                                                                onMouseLeave={(e) => {
+                                                                    e.target.style.color = '#9966CC';
+                                                                    e.target.style.textDecoration = 'none';
+                                                                }}
+                                                            >
+                                                                {student.displayName || student.username || student}
+                                                            </Link>
+                                                        ) : (
+                                                            student.displayName || student.username || student
+                                                        )}
+                                                    </td>
+                                                    {/* Totals */}
+                                                    <td className="text-center">{student.totals?.lastAction || '--'}</td>
+                                                    <td className="text-center">{student.totals?.totalActions || 0}</td>
+                                                    <td className="text-center">{student.totals?.totalTime || 0} min</td>
+                                                    {/* Summer Prep */}
+                                                    <td className="text-center">{student.summerPrep?.lastAction || '--'}</td>
+                                                    <td className="text-center">{student.summerPrep?.totalActions || 0}</td>
+                                                    <td className="text-center">{student.summerPrep?.totalTime || 0} min</td>
+                                                    {/* Derivatives */}
+                                                    <td className="text-center">{student.derivatives?.lastAction || '--'}</td>
+                                                    <td className="text-center">{student.derivatives?.totalActions || 0}</td>
+                                                    <td className="text-center">{student.derivatives?.totalTime || 0} min</td>
+                                                    {/* Integrals */}
+                                                    <td className="text-center">{student.integrals?.lastAction || '--'}</td>
+                                                    <td className="text-center">{student.integrals?.totalActions || 0}</td>
+                                                    <td className="text-center">{student.integrals?.totalTime || 0} min</td>
                                                 </tr>
                                             ))}
                                         </tbody>

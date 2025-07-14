@@ -41,9 +41,46 @@ usersRoutes.route('/fetchUsername').get(async function(req, res, next) {
       if (!user) {
         return res.status(404).json({ error: "User not found"});
       }
-      res.json({username: user.username, avatar:user.avatar});
+      res.json({username: user.username, avatar:user.avatar, userRoles: user.roles || {} });
   } catch (error) {
     console.error("Error fetching user:", error);
+    res.status(500).json({error: "Server error"});
+  } 
+});
+
+usersRoutes.route('/getCurrentUser').get(checkAuthenticated, async function(req, res, next) {
+  const { userId } = req.query;
+  
+  try {
+    let user;
+    
+    if (userId) {
+      // Get specific user by ID
+      user = await dbo.client.db("theCircus")
+        .collection("ccUsers")
+        .findOne({_id: userId});
+    } else {
+      // Get current authenticated user from session
+      const username = req.session.passport.user.username;
+      user = await dbo.client.db("theCircus")
+        .collection("ccUsers")
+        .findOne({username: username});
+    }
+    
+    if (!user) {
+      return res.status(404).json({error: "User not found"});
+    }
+    
+    res.json({
+      username: user.username, 
+      avatar: user.avatar, 
+      userRoles: user.roles || {},
+      given_name: user.given_name,
+      family_name: user.family_name,
+      classMemberships: user.classMemberships || []
+    });
+  } catch (error) {
+    console.error("Error fetching current user:", error);
     res.status(500).json({error: "Server error"});
   } 
 });
@@ -1064,47 +1101,62 @@ usersRoutes.route("/usersCC").get(async function (req, response) {
 });
 
 usersRoutes.route('/fetchUserInfoById/:userId').get(async function(req, res, next) {
+  
   const { userId } = req.params;
+  console.log(userId)
   if (!userId) {
     return res.status(400).json({error: "User ID is required"});
   }
-  if (!ObjectId.isValid(userId)) {
-    return res.status(400).json({ error: "Invalid user ID format"});
-  }
   try {
-    
-    // Try to find user with ObjectId first, then fallback to string
-    let user = await dbo.client.db("theCircus")
+    const user = await dbo.client.db("theCircus")
       .collection("ccUsers")
-      .findOne({_id: new ObjectId(userId)});
-      
-    // If not found, try searching with string ID
-    if (!user) {
-      console.log("ObjectId search failed, trying string ID");
-      user = await dbo.client.db("theCircus")
-        .collection("ccUsers")
-        .findOne({_id: userId});
-    }
-      
+      .findOne({_id: userId});
     if (!user) {
       return res.status(404).json({ error: "User not found"});
     }
-    
-    // Return all necessary information for ViewProfile component
-    console.dir(user);
     res.json({
-      givenName: user.given_name,
-      familyName: user.family_name,
-      username: user.username,
-      avatarUrl: user.avatarUrl || user.avatar, // Support both field names
-      lastLogin: user.lastLogin,
-      createdAt: user.createdAt,
-      classMemberships: user.classMemberships || []
+      username: user.username, 
+      given_name: user.given_name,
+      family_name: user.family_name,
+      classMemberships: user.classMemberships || [],
+      avatar: user.avatar, 
+      userRoles: user.roles || {} 
     });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({error: "Server error"});
   } 
+});
+
+usersRoutes.route('/getUserActions/:userId').get(async function(req, res, next) {
+  const { userId } = req.params;
+  if (!userId) {
+    return res.status(400).json({error: "User ID is required"});
+  }
+  
+  try {
+    // Try to find actions using both string and ObjectId formats
+    const actions = await dbo.client.db("theCircus")
+      .collection("ccUserActions")
+      .find({
+        $or: [
+          {userId: userId},                    // String format
+          {userId: ObjectId.isValid(userId) ? new ObjectId(userId) : null}  // ObjectId format
+        ],
+        actionType: "skillCompleted"
+      })
+      .sort({timeStamp: -1})
+      .toArray();
+    
+    res.json({
+      msg: 'User actions retrieved successfully',
+      success: true,
+      actions: actions
+    });
+  } catch (error) {
+    console.error("Error fetching user actions:", error);
+    res.status(500).json({error: "Server error"});
+  }
 });
 
 module.exports = usersRoutes;
