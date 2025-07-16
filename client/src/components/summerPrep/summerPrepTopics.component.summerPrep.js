@@ -4,6 +4,7 @@ import { Button, Alert } from 'react-bootstrap';
 import { FaCheckCircle, FaHourglassHalf, FaAdjust, FaSpinner, FaDotCircle } from 'react-icons/fa';
 import { fetchStatus, fetchStatusObject } from '../infrastructure/fetchStatus';
 import { config} from '../constants';
+import CircusBall2 from '../SVGs/icons/circusBall2';
 var url = config.url.API_URL;
 
 export default function SummerPrepTopics({username}) {
@@ -166,6 +167,9 @@ export default function SummerPrepTopics({username}) {
                     <Button type="button" variant="primary" size="lg">SVG Graphs</Button>
                 </NavLink> */}
                 <br /><br />
+            </div>
+            <div id ="SVG Div">
+                <CircusBall2 />
             </div>
         </div>
     );

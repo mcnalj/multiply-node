@@ -20,14 +20,19 @@ export default function ManageClasses({userId, username}) {
                                 <NavLink className="btn btn-primary btn-lg" to="/createClass">
                                     Create a Class
                                 </NavLink>
-                                <Button 
+                                <br></br>
+                                <NavLink className="btn btn-primary btn-lg" to="/calculus">
+                                    Back to Calculus
+                                </NavLink>
+
+                                {/* <Button 
                                     variant="outline-secondary" 
                                     onClick={() => navigate(-1)}
                                     className="d-flex align-items-center justify-content-center"
                                 >
                                     <i className="fas fa-arrow-left me-2"></i>
                                     Back
-                                </Button>
+                                </Button> */}
                             </div>
                         </Card.Body>
                     </Card>

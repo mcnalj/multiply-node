@@ -77,7 +77,8 @@ usersRoutes.route('/getCurrentUser').get(checkAuthenticated, async function(req,
       userRoles: user.roles || {},
       given_name: user.given_name,
       family_name: user.family_name,
-      classMemberships: user.classMemberships || []
+      classMemberships: user.classMemberships || [],
+      progressStreak: user.progressStreak || null
     });
   } catch (error) {
     console.error("Error fetching current user:", error);
@@ -1067,7 +1068,7 @@ usersRoutes.route("/usersCC").get(async function (req, response) {
     // const users = await dbo.client.db("theCircus")
     //   .collection("ccUsers")
     //   .find({}).toArray();
-
+ 
     const users = await dbo.client.db("theCircus")
     .collection("ccUsers")
     .aggregate([
@@ -1156,6 +1157,211 @@ usersRoutes.route('/getUserActions/:userId').get(async function(req, res, next) 
   } catch (error) {
     console.error("Error fetching user actions:", error);
     res.status(500).json({error: "Server error"});
+  }
+});
+
+usersRoutes.route('/updateStreak').post(async function(req, res) {
+  const { userId } = req.body;
+  
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    // Find the user
+    const user = await dbo.client.db("theCircus")
+      .collection("ccUsers")
+      .findOne({ _id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Initialize progressStreak object if it doesn't exist
+    let progressStreak = user.progressStreak || {
+      currentStreak: 0,
+      longestStreak: 0,
+      lastCompletedDate: null,
+      freezes: 4,
+      history: []
+    };
+
+    // Helper function to format date as YYYY-MM-DD
+    const formatDate = (date) => {
+      return date.toISOString().split('T')[0];
+    };
+
+    // Helper function to get date difference in days
+    const getDaysDifference = (date1, date2) => {
+      const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+      return Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    };
+
+    const todayString = formatDate(today);
+    const yesterdayString = formatDate(yesterday);
+
+    // If this is the first completion or lastCompletedDate is not today
+    if (!progressStreak.lastCompletedDate || formatDate(new Date(progressStreak.lastCompletedDate)) !== todayString) {
+      
+      if (!progressStreak.lastCompletedDate) {
+        // First time completing a skill
+        progressStreak.currentStreak = 1;
+        progressStreak.longestStreak = 1;
+        progressStreak.lastCompletedDate = today;
+        progressStreak.history.push({
+          date: todayString,
+          completed: "yes"
+        });
+      } else {
+        const lastCompletedDay = new Date(progressStreak.lastCompletedDate);
+        const lastCompletedString = formatDate(lastCompletedDay);
+        
+        // If last completed date was yesterday, increment streak
+        if (lastCompletedString === yesterdayString) {
+          progressStreak.currentStreak += 1;
+          if (progressStreak.currentStreak > progressStreak.longestStreak) {
+            progressStreak.longestStreak = progressStreak.currentStreak;
+          }
+          progressStreak.lastCompletedDate = today;
+          progressStreak.history.push({
+            date: todayString,
+            completed: "yes"
+          });
+        }
+        // If last completed date was before yesterday, handle gap with freezes
+        else if (lastCompletedDay < yesterday) {
+          const gapDays = getDaysDifference(lastCompletedDay, yesterday);
+          
+          // Fill in the gap days
+          const gapDate = new Date(lastCompletedDay);
+          gapDate.setDate(gapDate.getDate() + 1); // Start from day after last completed
+          
+          let freezesUsed = 0;
+          const newHistoryEntries = [];
+          
+          // Process each gap day
+          for (let i = 0; i < gapDays; i++) {
+            const currentGapDate = new Date(gapDate);
+            currentGapDate.setDate(gapDate.getDate() + i);
+            const gapDateString = formatDate(currentGapDate);
+            
+            if (freezesUsed < progressStreak.freezes) {
+              // Use a freeze
+              newHistoryEntries.push({
+                date: gapDateString,
+                completed: "freeze"
+              });
+              freezesUsed++;
+            } else {
+              // No freeze available
+              newHistoryEntries.push({
+                date: gapDateString,
+                completed: "no"
+              });
+            }
+          }
+          
+          // Add gap entries to history
+          progressStreak.history.push(...newHistoryEntries);
+          
+          // Update freezes
+          progressStreak.freezes -= freezesUsed;
+          
+          // Check if we maintained the streak or need to reset
+          if (freezesUsed === gapDays) {
+            // All gap days covered by freezes - maintain streak
+            progressStreak.currentStreak += 1;
+            if (progressStreak.currentStreak > progressStreak.longestStreak) {
+              progressStreak.longestStreak = progressStreak.currentStreak;
+            }
+          } else {
+            // Some gap days not covered - reset streak
+            progressStreak.currentStreak = 1;
+            progressStreak.freezes = 4; // Reset freezes
+          }
+          
+          // Add today's completion
+          progressStreak.lastCompletedDate = today;
+          progressStreak.history.push({
+            date: todayString,
+            completed: "yes"
+          });
+        }
+        // If last completed date was today, do nothing (already completed today)
+        else {
+          // Already completed today, no update needed
+        }
+      }
+    }
+
+    // Update the user's progressStreak in the database
+    await dbo.client.db("theCircus")
+      .collection("ccUsers")
+      .updateOne(
+        { _id: userId },
+        { $set: { progressStreak: progressStreak } }
+      );
+
+    res.json({
+      success: true,
+      message: "Progress streak updated successfully",
+      progressStreak: progressStreak
+    });
+
+  } catch (error) {
+    console.error("Error updating progress streak:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+usersRoutes.route('/updateCircusPeanuts').post(checkAuthenticated, async function(req, res) {
+  const { userId, circusPeanuts } = req.body;
+  
+  if (!userId || circusPeanuts === undefined) {
+    return res.status(400).json({ error: "User ID and circusPeanuts are required" });
+  }
+
+  try {
+    // Find the user
+    const user = await dbo.client.db("theCircus")
+      .collection("ccUsers")
+      .findOne({ _id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Initialize status object if it doesn't exist
+    let status = user.status || {
+      circusPeanuts: 0
+    };
+
+    // Add the circus peanuts to the current total
+    status.circusPeanuts = (status.circusPeanuts || 0) + circusPeanuts;
+
+    // Update the user's status in the database
+    await dbo.client.db("theCircus")
+      .collection("ccUsers")
+      .updateOne(
+        { _id: userId },
+        { $set: { status: status } }
+      );
+
+    res.json({
+      success: true,
+      message: "Circus peanuts updated successfully",
+      totalCircusPeanuts: status.circusPeanuts,
+      addedCircusPeanuts: circusPeanuts
+    });
+
+  } catch (error) {
+    console.error("Error updating circus peanuts:", error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 

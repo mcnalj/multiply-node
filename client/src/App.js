@@ -95,7 +95,7 @@ import DerivativesStandards from './components/standards/derivativesStandards.co
 import StandardsCategories from './components/standards/standardsCategories.component.standards';
 import StandardsTopics from './components/standards/standardsTopics.component.standards';
 import StandardsTracker from './components/standards/standardsTracker.component.standards';
-
+ 
 import SummerPrepTopics from './components/summerPrep/summerPrepTopics.component.summerPrep.js';
 import MultiplicationTopics from './components/summerPrep/summerPrep.component.multiplicationTopics.js';
 import CubesAndSquares from './components/summerPrep/summerPrep.component.cubesAndSquares.js';
@@ -115,6 +115,7 @@ import EquationsOfLines from './components/summerPrep/summerPrep.component.equat
 import UnitCircleTopics from './components/summerPrep/summerPrep.component.unitCircleTopics.js';
 
 import LimitsGraphs from './components/limits/limits.component.limitsGraphs.js';
+import ProgressStreak from './components/infrastructure/progressStreak.js';
 
 var url = config.url.API_URL;
 
@@ -740,6 +741,13 @@ function App() {
                 element={
                   <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
                     <LimitsGraphs userId={userId}/>
+                  </Protected>
+                }
+          />
+          <Route path="/progressStreak"
+                element={
+                  <Protected isAuthenticated={isAuthenticated} authChecked={authChecked}>
+                    <ProgressStreak />
                   </Protected>
                 }
           />                                                                                                                                                       

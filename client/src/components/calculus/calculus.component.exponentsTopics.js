@@ -43,6 +43,14 @@ export default function ExponentsTopics({userId}) {
                 unit={unit}
                 backLink={backLink}
                 backLinkText={backLinkText} />
+            <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                <a title="Vincent Le Moign, CC BY 4.0 &lt;https://creativecommons.org/licenses/by/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:599-circus-tent.svg">
+                    <img width="171" alt="599-circus-tent" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/599-circus-tent.svg/512px-599-circus-tent.svg.png?20180429190026" />
+                </a>
+                <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+                    Vincent Le Moign, CC BY 4.0 &lt;https://creativecommons.org/licenses/by/4.0&gt;, via Wikimedia Commons
+                </p>
+            </div>
         </>
     );
 }
