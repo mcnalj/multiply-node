@@ -116,6 +116,9 @@ import UnitCircleTopics from './components/summerPrep/summerPrep.component.unitC
 
 import LimitsGraphs from './components/limits/limits.component.limitsGraphs.js';
 import ProgressStreak from './components/infrastructure/progressStreak.js';
+import SectionHome from './components/pathways/sectionHome.component.js';
+import SkillsHome from './components/pathways/skillsHome.component.js';
+import TopicsHome from './components/pathways/topicsHome.component.js';
 
 var url = config.url.API_URL;
 
@@ -216,6 +219,9 @@ function App() {
                                                   userId={userId}
                                               />}
           />
+          <Route path="/sectionHome" element={<SectionHome />} />
+          <Route path="/topicsHome/:unit" element={<TopicsHome />} />
+          <Route path="/skillsHome/:unit/:topic" element={<SkillsHome />} />
 
           <Route path="/login" element={<Login
                                             // setIsAuthenticated={setIsAuthenticated}
