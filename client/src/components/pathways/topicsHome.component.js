@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import topicsPathwayArray from '../infrastructure/topicsPathwayArray';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import PathwayLayout, { PathwayConnector } from './shared/pathwayLayout';
 import PathwayCircle from './shared/pathwayCircle';
+import { getUnitColor } from './shared/pathwayColors';
 
 const TopicsHome = () => {
   // Get the unit parameter from the URL
@@ -30,10 +31,20 @@ const TopicsHome = () => {
     return topicItem?.topicDisplayName || toTitleCase(topic);
   };
 
+  // Get skill count for a topic
+  const getSkillCount = (topic) => {
+    const topicSkills = unitData.filter(item => item.topic === topic);
+    return topicSkills.length;
+  };
+
   const handleTopicClick = (topic) => {
     console.log(`Clicked on topic: ${topic} in unit: ${unit}`);
     // Navigate to dynamic SkillsHome with unit and topic parameters
     navigate(`/skillsHome/${unit}/${topic}`);
+  };
+
+  const handleBackClick = () => {
+    navigate('/sectionHome?shrunk=true');
   };
 
   // If no unit is provided or no topics found
@@ -55,20 +66,60 @@ const TopicsHome = () => {
   }
 
   return (
-    <PathwayLayout title={`${unitDisplayName} Topics`}>
-      {uniqueTopics.map((topic, index) => (
-        <React.Fragment key={topic}>
-          <PathwayCircle
-            title={getTopicDisplayName(topic)}
-            onClick={() => handleTopicClick(topic)}
-            isActive={true}
-            showAnimation={false}
-          />
-          {/* Connecting line to next circle (except for last one) */}
-          {index < uniqueTopics.length - 1 && <PathwayConnector />}
-        </React.Fragment>
-      ))}
-    </PathwayLayout>
+    <div style={{ position: 'relative' }}>
+      {/* Back Button - Top Left (scrolls with page) */}
+      <Button
+        onClick={handleBackClick}
+        style={{
+          position: 'absolute',
+          top: '30px',
+          left: '20px',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#FFD700',
+          border: 'none',
+          boxShadow: '0 4px 12px rgba(255, 215, 0, 0.3)',
+          fontSize: '20px',
+          color: '#333',
+          zIndex: 1000,
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.transform = 'scale(1.1)';
+          e.target.style.boxShadow = '0 6px 16px rgba(255, 215, 0, 0.4)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.transform = 'scale(1)';
+          e.target.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.3)';
+        }}
+        title="Back to Units"
+      >
+        ←
+      </Button>
+
+      {/* Pathway Content */}
+      <PathwayLayout title={`${unitDisplayName} Topics`}>
+        {uniqueTopics.map((topic, index) => (
+          <React.Fragment key={topic}>
+            <PathwayCircle
+              title={getTopicDisplayName(topic)}
+              onClick={() => handleTopicClick(topic)}
+              isActive={true}
+              showAnimation={false}
+              level={getSkillCount(topic)}
+              skillCount={true}
+              circleColor={getUnitColor(unit)}
+            />
+            {/* Connecting line to next circle (except for last one) */}
+            {index < uniqueTopics.length - 1 && <PathwayConnector />}
+          </React.Fragment>
+        ))}
+      </PathwayLayout>
+    </div>
   );
 };
 

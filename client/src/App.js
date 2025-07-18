@@ -117,6 +117,7 @@ import UnitCircleTopics from './components/summerPrep/summerPrep.component.unitC
 import LimitsGraphs from './components/limits/limits.component.limitsGraphs.js';
 import ProgressStreak from './components/infrastructure/progressStreak.js';
 import SectionHome from './components/pathways/sectionHome.component.js';
+import CourseHome from './components/pathways/courseHome.component.js';
 import SkillsHome from './components/pathways/skillsHome.component.js';
 import TopicsHome from './components/pathways/topicsHome.component.js';
 
@@ -219,6 +220,7 @@ function App() {
                                                   userId={userId}
                                               />}
           />
+          <Route path="/courseHome" element={<CourseHome />} />
           <Route path="/sectionHome" element={<SectionHome />} />
           <Route path="/topicsHome/:unit" element={<TopicsHome />} />
           <Route path="/skillsHome/:unit/:topic" element={<SkillsHome />} />

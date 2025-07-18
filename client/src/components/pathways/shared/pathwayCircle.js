@@ -6,7 +6,9 @@ const PathwayCircle = ({
   isActive = true, 
   showAnimation = false,
   size = 200,
-  level = null 
+  level = null,
+  skillCount = false,
+  circleColor = '#007bff'
 }) => {
   const radius = size / 2;
   const centerPoint = radius;
@@ -73,9 +75,9 @@ const PathwayCircle = ({
           cx={centerPoint}
           cy={centerPoint}
           r={blueCircleRadius}
-          fill={isActive ? "#007bff" : "#6c757d"}
+          fill={isActive ? circleColor : "#6c757d"}
           strokeWidth={blueStrokeWidth}
-          stroke={isActive ? "#0056b3" : "#495057"}
+          stroke={isActive ? circleColor : "#495057"}
           style={{ cursor: 'pointer', opacity: isActive ? 1 : 0.7 }}
           onClick={onClick}
         />
@@ -90,17 +92,17 @@ const PathwayCircle = ({
           onClick={onClick}
         />
         
-        {/* Level indicator (if provided) */}
+        {/* Level/Skill count indicator (if provided) */}
         {level && (
           <text
             x={centerPoint}
-            y={centerPoint + radius * 0.75}
+            y={centerPoint + radius * 0.5}
             textAnchor="middle"
-            fill="#666"
+            fill="#DDD"
             fontSize={size * 0.06}
             fontWeight="bold"
           >
-            Level {level}
+            {skillCount ? `${level} Skills` : `Level ${level}`}
           </text>
         )}
       </svg>

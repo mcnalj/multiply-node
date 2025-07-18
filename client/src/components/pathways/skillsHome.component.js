@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import topicsPathwayArray from '../infrastructure/topicsPathwayArray';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import PathwayLayout, { PathwayConnector } from './shared/pathwayLayout';
 import PathwayCircle from './shared/pathwayCircle';
+import { getUnitColor } from './shared/pathwayColors';
 
 const SkillsHome = () => {
   // Get the unit and topic parameters from the URL
   const { unit, topic } = useParams();
+  const navigate = useNavigate();
   
   // Filter for the specified unit and topic, and get skills
   const skillsData = topicsPathwayArray.filter(item => 
@@ -33,6 +35,10 @@ const SkillsHome = () => {
     // TODO: Navigate to specific skill activity or handle skill selection
   };
 
+  const handleBackClick = () => {
+    navigate(`/topicsHome/${unit}`);
+  };
+
   // If no unit/topic is provided or no skills found
   if (!unit || !topic || sortedSkills.length === 0) {
     return (
@@ -55,21 +61,59 @@ const SkillsHome = () => {
   }
 
   return (
-    <PathwayLayout title={`${topicDisplayName} Skills`}>
-      {sortedSkills.map((skillData, index) => (
-        <React.Fragment key={skillData.skill}>
-          <PathwayCircle
-            title={skillData.skillDisplayName}
-            onClick={() => handleSkillClick(skillData)}
-            isActive={skillData.isLive}
-            showAnimation={false}
-            level={skillData.level}
-          />
-          {/* Connecting line to next circle (except for last one) */}
-          {index < sortedSkills.length - 1 && <PathwayConnector />}
-        </React.Fragment>
-      ))}
-    </PathwayLayout>
+    <div style={{ position: 'relative' }}>
+      {/* Back Button - Top Left (scrolls with page) */}
+      <Button
+        onClick={handleBackClick}
+        style={{
+          position: 'absolute',
+          top: '30px',
+          left: '20px',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#FFD700',
+          border: 'none',
+          boxShadow: '0 4px 12px rgba(255, 215, 0, 0.3)',
+          fontSize: '20px',
+          color: '#333',
+          zIndex: 1000,
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.transform = 'scale(1.1)';
+          e.target.style.boxShadow = '0 6px 16px rgba(255, 215, 0, 0.4)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.transform = 'scale(1)';
+          e.target.style.boxShadow = '0 4px 12px rgba(255, 215, 0, 0.3)';
+        }}
+        title="Back to Topics"
+      >
+        ←
+      </Button>
+
+      {/* Pathway Content */}
+      <PathwayLayout title={`${topicDisplayName} Skills`}>
+        {sortedSkills.map((skillData, index) => (
+          <React.Fragment key={skillData.skill}>
+            <PathwayCircle
+              title={skillData.skillDisplayName}
+              onClick={() => handleSkillClick(skillData)}
+              isActive={skillData.isLive}
+              showAnimation={false}
+              level={skillData.level}
+              circleColor={getUnitColor(unit)}
+            />
+            {/* Connecting line to next circle (except for last one) */}
+            {index < sortedSkills.length - 1 && <PathwayConnector />}
+          </React.Fragment>
+        ))}
+      </PathwayLayout>
+    </div>
   );
 };
 
